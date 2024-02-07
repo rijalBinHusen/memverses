@@ -1,13 +1,16 @@
 <script>
 	import Counter from './Counter.svelte';
+	import Seo from '../components/seo.svelte';
 	// import welcome from '$lib/images/svelte-welcome.webp';
-	// import welcome_fallback from '$lib/images/svelte-welcome.png';
+	import welcome_fallback from '$lib/images/svelte-welcome.png';
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
+<Seo 
+	title="Halaman utama" 
+	description="Halaman utama kita" 
+	link="localhost:3000" 
+	thumbnail={welcome_fallback}
+/>
 
 <section>
 	<h1>
