@@ -1,14 +1,20 @@
-<script>
-	import Counter from './Counter.svelte';
+<script lang="ts">
 	import Seo from '../components/seo.svelte';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../components/Modal.svelte';
+	import { Folder, type FolderInterface } from "./Folder";
 
 	let showModal = false;
 
 	function toggleModal() {
 		showModal = !showModal;
 	}
+
+	let listFolder:FolderInterface[] = [];
+	
+	const folderOperation = new Folder();
+	const retrieveFolder = folderOperation.getFolder();
+	if(retrieveFolder) listFolder = retrieveFolder;
 
 </script>
 
@@ -22,7 +28,13 @@
 <section>
 	<h1>Hafal al-Quran</h1>
 
-	<Counter />
+	<div>
+		{
+			listFolder.length ?
+		 	listFolder.toString()
+		 	: "Buat folder baru, tekan tombol + dibawah :)"
+		}
+	</div>
 	<div class="button-wraper">
 		<button on:click={toggleModal}>+</button>
 	</div>
