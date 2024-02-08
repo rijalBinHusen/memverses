@@ -1,8 +1,15 @@
 <script>
 	import Counter from './Counter.svelte';
 	import Seo from '../components/seo.svelte';
-	// import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
+	import Modal from '../components/Modal.svelte';
+
+	let showModal = false;
+
+	function toggleModal() {
+		showModal = !showModal;
+	}
+
 </script>
 
 <Seo 
@@ -17,8 +24,9 @@
 
 	<Counter />
 	<div class="button-wraper">
-		<button>+</button>
+		<button on:click={toggleModal}>+</button>
 	</div>
+	<Modal on:closeModal={toggleModal} isOpen={showModal} />
 </section>
 
 <style>
