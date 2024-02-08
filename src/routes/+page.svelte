@@ -26,7 +26,17 @@
 	<div class="button-wraper">
 		<button on:click={toggleModal}>+</button>
 	</div>
-	<Modal on:closeModal={toggleModal} isOpen={showModal} />
+	<Modal
+		on:closeModal={toggleModal} 
+		isOpen={showModal} 
+		title="Buat folder baru"
+	>
+		<div>
+			<label for="nama-folder">Masukkan nama folder</label>
+			<input type="text" name="nama-folder" id="nama-folder">
+			<button>Buat</button>
+		</div>
+	</Modal>
 </section>
 
 <style>

@@ -3,7 +3,7 @@
   import { createEventDispatcher } from "svelte";
 
   export let isOpen = false;
-  // export let title: string = "";
+  export let title: string = "";
 
   const dispatch = createEventDispatcher();
 
@@ -18,9 +18,14 @@
 
   <!-- Modal content -->
   <div class="modal-content">
-    <button class="close" on:click={closeTheModal}>&times;</button>
-    <p>Some text in the Modal..</p>
+    <div>
+
+      <button class="close" on:click={closeTheModal}>&times;</button>
+      <p>{title || "Tambahkan data"}</p>
+    </div>
+    <slot />
   </div>
+
 
 </div>
 </body>
