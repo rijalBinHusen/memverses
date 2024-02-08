@@ -16,6 +16,17 @@
 	const retrieveFolder = folderOperation.getFolder();
 	if(retrieveFolder) listFolder = retrieveFolder;
 
+	// form operation
+	let folderName = "";
+	function createFolder() {
+		if(folderName === "") return;
+
+		folderOperation.createFolder(folderName);
+		folderName = "" //empty the form
+		toggleModal() // close modal
+		listFolder = folderOperation.lists
+	}
+
 </script>
 
 <Seo 
@@ -31,7 +42,7 @@
 	<div>
 		{
 			listFolder.length ?
-		 	listFolder.toString()
+		 	JSON.stringify(listFolder)
 		 	: "Buat folder baru, tekan tombol + dibawah :)"
 		}
 	</div>
@@ -45,8 +56,8 @@
 	>
 		<div>
 			<label for="nama-folder">Masukkan nama folder</label>
-			<input type="text" name="nama-folder" id="nama-folder">
-			<button>Buat</button>
+			<input bind:value={folderName} type="text" name="nama-folder" id="nama-folder">
+			<button on:click={createFolder}>Buat</button>
 		</div>
 	</Modal>
 </section>
