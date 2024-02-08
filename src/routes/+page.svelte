@@ -16,9 +16,34 @@
 	<h1>Hafal al-Quran</h1>
 
 	<Counter />
+	<div class="button-wraper">
+		<button>+</button>
+	</div>
 </section>
 
 <style>
+
+	.button-wraper {
+		display: flex;
+		position: fixed;
+		bottom: 1rem;
+		justify-content: end;
+		width: 100%;
+		padding-right: 2rem;
+	}
+ 
+	.button-wraper button {
+		width: 3rem;
+		height: 3rem;
+		/* background-color: rgb(174, 78, 243); */
+		background-color: var(--color-theme-1);
+		cursor: pointer;
+		font-weight: bolder;
+		font-size: x-large;
+		border-radius: .5rem;
+		border: 3px solid black;
+	}
+
 	section {
 		display: flex;
 		flex-direction: column;
