@@ -9,6 +9,7 @@ export class Folder {
     lists = <FolderInterface[]>[];
 
     getFolder(): FolderInterface[]|void {
+        if(typeof window === 'undefined') return;
         const retrieveFolder = window.localStorage.getItem(this.#storageName);
 
         if(retrieveFolder === null) return
@@ -33,6 +34,7 @@ export class Folder {
     }
 
     saveToLocalStorage () {
+        if(typeof window === 'undefined') return;
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 }
