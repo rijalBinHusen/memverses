@@ -1,0 +1,7 @@
+@import "../scss/variables";
+
+.container {
+    max-width: $width-max;
+    min-width: $width-min;
+    min-height: 30rem;
+}
