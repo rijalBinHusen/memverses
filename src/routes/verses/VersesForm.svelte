@@ -6,21 +6,23 @@
         {/each}
     </select>
 
-    {#if currentVerse.jumlah_ayat > 0 }
+    {#if startChapter > 0 }
     <div class="select-chapter">
 
         <label for="start-chapter">Mulai dari ayat</label>
-        <input type="number" bind:value={startChapter} name="start-chapter" id="start-chapter">
+        <input type="number" min="1" bind:value={startChapter} name="start-chapter" id="start-chapter">
     
         <label for="end-chapter">Sampai dengan ayat</label>
-        <input type="number" bind:value={endChapter} name="end-chapter" id="end-chapter">
+        <input type="number" max={currentVerse.jumlah_ayat} bind:value={endChapter} name="end-chapter" id="end-chapter">
     </div>
     {/if}
 
-    <button>Terapkan</button>
+    <button on:click={submitVerseChapter}>Tambahkan</button>
 </div>
 
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
 
     interface Verse {
         nomor: number,
@@ -52,6 +54,17 @@
 
         currentVerse = listVersesAndInfo[findIndex];
         endChapter = currentVerse.jumlah_ayat;
+        startChapter = 1;
+    }
+
+    const dispatch = createEventDispatcher();
+
+    function submitVerseChapter() {
+        dispatch("verseAndChapterSubmitted", {
+            verse: currentVerse.nomor,
+            startChapter,
+            endChapter
+        })
     }
 
 </script>

@@ -2,7 +2,7 @@
 	import Seo from '../../components/seo.svelte';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../../components/Modal.svelte';
-    import { VersesOperation } from './verses';
+    import { VersesOperation, type VersesFormInterface } from './verses';
     import VersesForm from './VersesForm.svelte';
 
     let folderTitle = "";
@@ -14,6 +14,16 @@
 
 	async function toggleModal() {
 		showModal = !showModal;
+	}
+
+	function addVersesToMemorize(e: any) {
+
+		const form = e.detail as VersesFormInterface;
+		for (let i = form.startChapter; i <= form.endChapter; i++) {
+			
+			versesOperation.addVerses(form.verse, i)
+		}
+		toggleModal();
 	}
 
 </script>
@@ -50,7 +60,9 @@
 		isOpen={showModal} 
 		title="Tambahkan surah atau ayat"
 	>
-		<VersesForm />
+		<VersesForm 
+			on:verseAndChapterSubmitted={addVersesToMemorize}
+		/>
 	</Modal>
 </section>
 

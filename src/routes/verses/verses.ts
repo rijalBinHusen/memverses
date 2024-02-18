@@ -5,21 +5,29 @@
 
 // setting should be content what language user set as quran translation
 
+// reate static chpater all verses
+// retrieve every chapter every show
+
 import { Folder } from "../Folder"
 
-interface Verses {
-    verses: number
+export interface Verse {
+    idFolder: string
+    verse: number
     chapter: number
-    content: string
-    translation: string
-    readed: number //today
+    readed: number
+}
+
+export interface VersesFormInterface {
+    verse: number,
+    startChapter: number
+    endChapter: number
 }
 
 export class VersesOperation {
     #idFolder = "";
     titleFolder: string = "";
     #storageName = "memorize-quran-verses";
-    lists = <Verses[]>[];
+    lists = <Verse[]>[];
 
     constructor() {
         this.getIdFolder();
@@ -62,7 +70,7 @@ export class VersesOperation {
 
         if(retrieveVerses === null) return
 
-        const versesParsed: Verses[] = JSON.parse(retrieveVerses)
+        const versesParsed: Verse[] = JSON.parse(retrieveVerses)
         this.lists = versesParsed;
         return versesParsed;
     }
@@ -70,6 +78,36 @@ export class VersesOperation {
     saveToLocalStorage () {
         if(typeof window === 'undefined') return;
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
+    }
+
+    addVerses(verse: number, chapter: number) {
+        const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.verse === verse && vers.chapter === chapter);
+        if(findIndex > -1) return;
+        
+        this.lists.push({
+            idFolder: this.#idFolder,
+            verse,
+            chapter,
+            readed: 0
+        })
+
+        this.saveToLocalStorage();
+    }
+
+    getUnReadedVchapter(limiter: number): Verse[]|undefined {
+        if(!this.lists.length) return;
+        
+        const filterList = this.lists.filter((vers) => vers.idFolder === this.#idFolder && vers.readed === 0);
+
+        if(filterList.length) return filterList.slice(0, limiter);
+
+        // reset readed
+        this.lists = this.lists.map((vers) => ({
+            ...vers, readed: 0
+        }))
+
+        this.saveToLocalStorage();
+        return this.lists.slice(0, limiter)
     }
 }
 
