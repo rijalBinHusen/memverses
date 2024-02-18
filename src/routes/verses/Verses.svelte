@@ -33,6 +33,7 @@
 			versesOperation.addVerses(form.verse, i)
 		}
 		toggleModal();
+		retrieveChapterToRead();
 	}
 
 	async function retrieveChapterToRead() {
@@ -46,6 +47,8 @@
 		if(!folderInfo.id) return;
 		
 		folderOperation.updateFolder(folderInfo.id, settingInfo);
+		folderInfo = { ...folderInfo, ...settingInfo};
+		
 		toggleModal();
 		retrieveChapterToRead();
 	}
@@ -73,7 +76,7 @@
 		
 			{#each chapters as chapter}
 				<div class="chapter">
-					<div class="arabic">
+					<div class="arabic" style={'font-size:'+ folderInfo.arabicSize + 'px'}>
 
 						{ folderInfo.showFirstLetter 
 							? chapter.arabic.slice(0, 10)

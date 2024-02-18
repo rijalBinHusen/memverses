@@ -6,6 +6,7 @@ export interface FolderInterface {
     readTarget: number
     showFirstLetter: boolean
     showTafseer: boolean
+    arabicSize: number
 }
 
 export type FolderUpdate = {
@@ -37,7 +38,8 @@ export class Folder {
             nextChapterOnSecond: 3,
             readTarget: 3,
             showFirstLetter: false,
-            showTafseer: false
+            showTafseer: false,
+            arabicSize: 25
         });
         this.saveToLocalStorage();
     }

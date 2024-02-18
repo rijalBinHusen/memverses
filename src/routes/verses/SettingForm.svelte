@@ -24,6 +24,14 @@
         <span>Kali</span>
     </div>
 
+    <label for="arabic-size">Ukuran text arab</label>
+    <div id="arabic-size">
+        <button>-</button>
+        <input bind:value={setting.arabicSize} type="number" name="" id="">
+        <button>+</button>
+        <span>Pixel</span>
+    </div>
+
     <input 
         checked={setting.showFirstLetter}
         type="checkbox" 
@@ -54,7 +62,8 @@
         nextChapterOnSecond: 3,
         readTarget: 7,
         showFirstLetter: true,
-        showTafseer: true
+        showTafseer: true,
+        arabicSize: 25
     }
 
     const dispatch = createEventDispatcher();
