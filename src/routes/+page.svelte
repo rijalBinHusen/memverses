@@ -43,9 +43,9 @@
 		{#if listFolder.length}
 		
 			{#each listFolder as folder}
-				<div class="folder">
+				<a href={'/verses?id-folder='+folder.id} class="folder">
 					{folder.name} <button>Edit</button>
-				</div>
+				</a>
 
 			{/each}
 			

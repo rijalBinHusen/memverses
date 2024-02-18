@@ -142,21 +142,27 @@ export class VersesOperation {
 
         let chapterToShow = <Verse[]>[]
         
-        const filterList = this.lists.filter((vers) => vers.idFolder === this.#idFolder && vers.readed === 0);
+        const filterList = this.lists.filter((vers) => vers.idFolder == this.#idFolder);
 
         if(filterList.length) {
-            chapterToShow = filterList.slice(0, limiter);
-        }
+            const filterUnreaded = filterList.filter((vers) => vers.readed === 0)
 
-        else {
+            if(filterUnreaded.length) {
 
-            // reset readed
-            this.lists = this.lists.map((vers) => ({
-                ...vers, readed: 0
-            }))
-            this.saveToLocalStorage();
-            chapterToShow = this.lists.slice(0, limiter)
-        }
+                chapterToShow = filterUnreaded.slice(0, limiter);
+            }
+
+            else {
+    
+                // reset readed
+                this.lists = this.lists.map((vers) => ({
+                    ...vers, readed: 0
+                }))
+                this.saveToLocalStorage();
+                chapterToShow = this.lists.slice(0, limiter)
+            }
+        } else return;
+
 
         const result = <ChapterToShow[]>[]
         let verseRetrieved = <verseAndChapterDetail>{};
