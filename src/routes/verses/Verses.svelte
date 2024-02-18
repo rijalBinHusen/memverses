@@ -49,19 +49,30 @@
 	<h1>{folderTitle}</h1>
 
 	<div>
-		<!-- {#if listFolder.length}
+		{#if chapters.length}
 		
-			{#each listFolder as folder}
-				<div class="folder">
-					{folder.name} <button>Edit</button>
+			{#each chapters as chapter}
+				<div class="chapter">
+					<div class="arabic">
+						{chapter.arabic}
+					</div>
+					<div class="translation">
+						{chapter.translate}
+					</div>
+					<div class="navigation">
+						Readed: {chapter.readed}
+						<button class="move">
+							Pindahkan
+						</button>
+						<button>Read</button>
+					</div>
 				</div>
 
 			{/each}
 			
 		{:else}
-		 	<div>Buat folder baru, tekan tombol + dibawah :)</div>
-		{/if} -->
-		<div>{JSON.stringify(chapters)}</div>
+		 	<div>Tidak ayat untuk dibaca, tekan tombol + dibawah :)</div>
+		{/if}
 	</div>
 	<div class="bottom-nav">
 		<button on:click={toggleModal}>+</button>
