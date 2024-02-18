@@ -2,10 +2,12 @@
 	import Seo from '../../components/seo.svelte';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../../components/Modal.svelte';
-    import { VersesOperation, type VersesFormInterface } from './verses';
+    import { VersesOperation, type VersesFormInterface, type ChapterToShow } from './verses';
     import VersesForm from './VersesForm.svelte';
+    import { onMount } from 'svelte';
 
     let folderTitle = "";
+	let chapters = <ChapterToShow[]>[];
     
     const versesOperation = new VersesOperation();
     folderTitle = versesOperation.retrieveTitleFolder();
@@ -25,6 +27,14 @@
 		}
 		toggleModal();
 	}
+
+	async function retrieveChapterToRead() {
+		const data = await versesOperation.getUnReadedChapter(5);
+		if(data) chapters = data;
+	}
+
+	onMount(() => retrieveChapterToRead())
+
 
 </script>
 
@@ -51,6 +61,7 @@
 		{:else}
 		 	<div>Buat folder baru, tekan tombol + dibawah :)</div>
 		{/if} -->
+		<div>{JSON.stringify(chapters)}</div>
 	</div>
 	<div class="bottom-nav">
 		<button on:click={toggleModal}>+</button>

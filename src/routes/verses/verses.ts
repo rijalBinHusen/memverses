@@ -10,11 +10,54 @@
 
 import { Folder } from "../Folder"
 
+interface ArabicQuran {
+    [chapter: string]: string
+}
+
+interface Translate {
+    [language: string]: {
+        name: string
+        text: {
+            [chapter: string]: string
+        }
+    }
+}
+
+interface Tafsir {
+    [language: string]: {
+        [organtization: string]: {
+            name: string
+            source: string
+            text: {
+                [chapter: string]: string
+            }
+        }
+    }
+}
+
+export interface verseAndChapterDetail {
+    [verse: string]: {
+        number: string
+        name: string
+        name_latin: string
+        number_of_ayah: string
+        text: ArabicQuran
+        translations: Translate
+        tafsir: Tafsir
+    }
+};
+
 export interface Verse {
     idFolder: string
     verse: number
     chapter: number
     readed: number
+}
+
+export interface ChapterToShow extends Verse {
+    arabic: string
+    translate: string
+    tafsir: string
 }
 
 export interface VersesFormInterface {
@@ -94,20 +137,52 @@ export class VersesOperation {
         this.saveToLocalStorage();
     }
 
-    getUnReadedVchapter(limiter: number): Verse[]|undefined {
+    async getUnReadedChapter(limiter: number): Promise<ChapterToShow[]|undefined> {
         if(!this.lists.length) return;
+
+        let chapterToShow = <Verse[]>[]
         
         const filterList = this.lists.filter((vers) => vers.idFolder === this.#idFolder && vers.readed === 0);
 
-        if(filterList.length) return filterList.slice(0, limiter);
+        if(filterList.length) {
+            chapterToShow = filterList.slice(0, limiter);
+        }
 
-        // reset readed
-        this.lists = this.lists.map((vers) => ({
-            ...vers, readed: 0
-        }))
+        else {
 
-        this.saveToLocalStorage();
-        return this.lists.slice(0, limiter)
+            // reset readed
+            this.lists = this.lists.map((vers) => ({
+                ...vers, readed: 0
+            }))
+            this.saveToLocalStorage();
+            chapterToShow = this.lists.slice(0, limiter)
+        }
+
+        const result = <ChapterToShow[]>[]
+        let verseRetrieved = <verseAndChapterDetail>{};
+
+        for (let chapter of chapterToShow) {
+
+            const verseStr = chapter.verse + "";
+            const chapterStr = chapter.chapter + ""
+
+            const isVerseRetrieved = verseRetrieved && verseRetrieved[verseStr] && verseRetrieved[verseStr].number === (verseStr)
+            if(!isVerseRetrieved) {
+                const fetchVerse = await fetch(`/verses/${chapter.verse}.json`);
+                if(!fetchVerse) return;
+                verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
+            }
+            
+            result.push({
+                ...chapter,
+                arabic: verseRetrieved[verseStr].text[chapterStr],
+                translate: verseRetrieved[verseStr].translations["id"].text[chapterStr],
+                tafsir: verseRetrieved[verseStr].tafsir["id"]["kemenag"].text[chapterStr]
+            })
+        }
+
+        // return the completed verses and chapter
+        return result;
     }
 }
 

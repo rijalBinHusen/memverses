@@ -21,7 +21,7 @@
 </div>
 
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 
 
     interface Verse {
@@ -46,7 +46,7 @@
         listVersesAndInfo = data;
     }
 
-    getListVerses();
+    onMount(() => getListVerses());
 
     function selectVerse() {
         const findIndex = listVersesAndInfo.findIndex((verse) => verse.nomor === verseNumber);
