@@ -6,12 +6,15 @@
     import VersesForm from './VersesForm.svelte';
     import { onMount } from 'svelte';
     import SettingForm from './SettingForm.svelte';
+	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
 
     let folderTitle = "";
+	let folderInfo = <FolderInterface>{};
 	let chapters = <ChapterToShow[]>[];
     
     const versesOperation = new VersesOperation();
     folderTitle = versesOperation.retrieveTitleFolder();
+	folderInfo = versesOperation.getFolderInfo();
 
 	let showModal = false;
 	let currentForm = "";
@@ -35,6 +38,14 @@
 	async function retrieveChapterToRead() {
 		const data = await versesOperation.getUnReadedChapter(5);
 		if(data) chapters = data;
+	}
+
+	function updateFolderSetting(e: any) {
+		const settingInfo = e.detail as FolderUpdate;
+		const folderOperation = new Folder();
+		if(!folderInfo) return;
+		folderOperation.updateFolder(folderInfo.id, settingInfo);
+		toggleModal();
 	}
 
 	onMount(() => retrieveChapterToRead())
@@ -90,7 +101,10 @@
 		title={currentForm === 'setting' ? 'Setting' : 'Tambahkan surah atau ayat'}
 	>
 		{#if currentForm === 'setting'}
-			<SettingForm />
+			<SettingForm 
+				setting={folderInfo}
+				on:updateSetting={updateFolderSetting}
+			/>
 		{:else}
 		<VersesForm 
 			on:verseAndChapterSubmitted={addVersesToMemorize}
@@ -101,5 +115,5 @@
 
 <style lang="scss">
 	@import "../../scss/bottom-nav.scss";
-	@import "./verses.scss"
+	@import "./verses.scss";
 </style>

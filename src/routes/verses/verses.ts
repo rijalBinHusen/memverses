@@ -8,7 +8,7 @@
 // reate static chpater all verses
 // retrieve every chapter every show
 
-import { Folder } from "../Folder"
+import { Folder, type FolderInterface } from "../Folder"
 
 interface ArabicQuran {
     [chapter: string]: string
@@ -71,6 +71,7 @@ export class VersesOperation {
     titleFolder: string = "";
     #storageName = "memorize-quran-verses";
     lists = <Verse[]>[];
+    folderInfo = <FolderInterface>{};
 
     constructor() {
         this.getIdFolder();
@@ -104,6 +105,7 @@ export class VersesOperation {
         if(!folderInfo) return "Folder tidak ditemukan";
 
         this.titleFolder = folderInfo.name;
+        this.folderInfo = folderInfo
         return this.titleFolder;
     }
 
@@ -189,6 +191,10 @@ export class VersesOperation {
 
         // return the completed verses and chapter
         return result;
+    }
+
+    getFolderInfo (): FolderInterface {
+        return this.folderInfo;
     }
 }
 

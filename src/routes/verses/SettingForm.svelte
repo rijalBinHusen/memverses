@@ -3,7 +3,7 @@
     <label for="chapter-total">Tampilkan ayat sebanyak</label>
     <div id="chapter-total">
         <button>-</button>
-        <input type="number" name="" id="">
+        <input bind:value={setting.chapterToShow} type="number" name="" id="">
         <button>+</button>
         <span>Ayat</span>
     </div>
@@ -11,7 +11,7 @@
     <label for="next-chapter-on-second">Tampilkan ayat selanjutnya dalam</label>
     <div id="next-chapter-on-second">
         <button>-</button>
-        <input type="number" name="" id="">
+        <input bind:value={setting.nextChapterOnSecond} type="number" name="" id="">
         <button>+</button>
         <span>Detik</span>
     </div>
@@ -19,26 +19,36 @@
     <label for="target-per-day">Target membaca per hari</label>
     <div id="target-per-day">
         <button>-</button>
-        <input type="number" name="" id="">
+        <input bind:value={setting.readTarget} type="number" name="" id="">
         <button>+</button>
         <span>Kali</span>
     </div>
 
+    <input checked={setting.showFirstLetter} bind:value={setting.showFirstLetter} type="checkbox" id="show-only-first-letter">
     <label for="show-only-first-letter">Hanya tampilkan kata pertama</label>
-    <div id="show-only-first-letter">
-        <input type="radio" name="text" id="first-letter-only">
-        <label for="first-letter-only">Iya</label>
 
-        <input type="radio" name="text" id="full-text">
-        <label for="full-text">Tidak</label>
-    </div>
-
+    <input checked={setting.showTafseer} bind:value={setting.showTafseer} type="checkbox" name="show-tafsir" id="show-tafsir">
     <label for="show-tafsir">Tampilkan tafsir</label>
-    <div id="show-tafsir">
-        <input type="radio" name="tafsir" id="tafsir-on">
-        <label for="tafsir-on">Iya</label>
-
-        <input type="radio" name="tafsir" id="tafsir-off">
-        <label for="tafsir-off">Tidak</label>
-    </div>
+    
+    <button on:click={submitSetting}>
+        Terapkan
+    </button>
 </div>
+
+<script lang="ts">
+    import { createEventDispatcher } from "svelte";
+    import { type FolderUpdate } from "../Folder";
+    export const setting = <FolderUpdate>{
+        chapterToShow: 5,
+        nextChapterOnSecond: 3,
+        readTarget: 7,
+        showFirstLetter: true,
+        showTafseer: true
+    }
+
+    const dispatch = createEventDispatcher();
+
+    function submitSetting() {
+        dispatch("updateSetting", setting)
+    }
+</script>
