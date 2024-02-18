@@ -40,11 +40,18 @@
 	<h1>Hafal al-Quran</h1>
 
 	<div>
-		{
-			listFolder.length ?
-		 	JSON.stringify(listFolder)
+		{#if listFolder.length}
+		
+			{#each listFolder as folder}
+				<div class="folder">
+					{folder.name} <button>Edit</button>
+				</div>
+
+			{/each}
+			
+		{:else}
 		 	: "Buat folder baru, tekan tombol + dibawah :)"
-		}
+		{/if}
 	</div>
 	<div class="bottom-nav">
 		<button on:click={toggleModal}>+</button>
@@ -64,4 +71,5 @@
 
 <style lang="scss">
 	@import "../scss/bottom-nav.scss";
+	@import "./Folder/folder.scss"
 </style>
