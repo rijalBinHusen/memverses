@@ -21,7 +21,7 @@
     <div>
 
       <button class="close" on:click={closeTheModal}>&times;</button>
-      <p>{title || "Tambahkan data"}</p>
+      <h1>{title || "Tambahkan data"}</h1>
     </div>
     <slot />
   </div>
@@ -30,7 +30,8 @@
 </div>
 </body>
 
-<style>    
+<style lang="scss">
+  @import "../scss/variables";
 
   /* The Modal (background) */
   .modal {
@@ -57,7 +58,7 @@
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: $width-min;
   }
   
   /* The Close Button */
@@ -66,6 +67,11 @@
     float: right;
     font-size: 28px;
     font-weight: bold;
+    background-color: $danger-color;
+    color: black;
+    padding: $padding-button;
+    border-radius: 50%;
+    border: 3px solid $primary-color;
   }
   
   .close:hover,
