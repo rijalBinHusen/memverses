@@ -180,7 +180,7 @@ export class VersesOperation {
 
             const isVerseRetrieved = verseRetrieved && verseRetrieved[verseStr] && verseRetrieved[verseStr].number === (verseStr)
             if(!isVerseRetrieved) {
-                const fetchVerse = await fetch(`/verses/${chapter.verse}.json`);
+                const fetchVerse = await fetch(`/verses/${chapter.verse}.json`, { cache: "force-cache"});
                 if(!fetchVerse) return;
                 verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
             }

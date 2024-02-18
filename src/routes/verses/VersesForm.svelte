@@ -45,7 +45,7 @@
 
     async function getListVerses (): Promise<Verse[]|undefined> {
         // retrieve on static json
-        const retrieve = await fetch("/verses.static.json");
+        const retrieve = await fetch("/verses.static.json", { cache: "force-cache"});
 
         if(!retrieve) return;
         const data = await retrieve.json() as Verse[];
