@@ -37,4 +37,15 @@ export class Folder {
         if(typeof window === 'undefined') return;
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
+
+    getFolderInfoById(id: string): FolderInterface|undefined {
+
+        const folders = this.getFolder();
+        if(!folders) return;
+
+        const findIndex = folders.findIndex((folder) => folder.id === id)
+        if(findIndex < 0) return;
+
+        return folders[findIndex];
+    }
 }

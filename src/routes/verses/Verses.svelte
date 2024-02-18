@@ -2,12 +2,18 @@
 	import Seo from '../../components/seo.svelte';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../../components/Modal.svelte';
+    import { VersesOperation } from './verses';
 
 	let showModal = false;
 
 	function toggleModal() {
 		showModal = !showModal;
 	}
+
+    let folderTitle = "";
+    
+    const versesOperation = new VersesOperation();
+    folderTitle = versesOperation.retrieveTitleFolder();
 
 </script>
 
@@ -19,7 +25,7 @@
 />
 
 <section>
-	<h1>Hello verses</h1>
+	<h1>{folderTitle}</h1>
 
 	<div>
 		<!-- {#if listFolder.length}
