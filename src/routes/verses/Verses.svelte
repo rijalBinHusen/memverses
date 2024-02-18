@@ -101,4 +101,5 @@
 
 <style lang="scss">
 	@import "../../scss/bottom-nav.scss";
+	@import "./verses.scss"
 </style>
