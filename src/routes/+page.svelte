@@ -61,7 +61,7 @@
 		isOpen={showModal} 
 		title="Buat folder baru"
 	>
-		<div class="folder-form">
+		<div class="form">
 			<label for="nama-folder">Masukkan nama folder</label>
 			<input bind:value={folderName} type="text" name="nama-folder" id="nama-folder">
 			<button class="primary-button" on:click={createFolder}>Buat folder</button>
@@ -73,16 +73,5 @@
 	@import "../scss/bottom-nav.scss";
 	@import "./Folder/folder.scss";
 	@import "../scss/primary-button.scss";
-
-	.folder-form {
-		display: grid;
-		margin: 1rem 0 1rem 0;
-	}
-
-	.folder-form input {
-		display: flex;
-		margin: .5rem 0 .5rem 0;
-		padding: .5rem 0 .5rem 0;
-		font-size: large;
-	}
+	@import "../scss/form.scss"
 </style>

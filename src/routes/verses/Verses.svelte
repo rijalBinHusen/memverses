@@ -113,7 +113,7 @@
 	<Modal
 		on:closeModal={ () => toggleModal()} 
 		isOpen={showModal} 
-		title={currentForm === 'setting' ? 'Setting' : 'Tambahkan surah atau ayat'}
+		title={currentForm === 'setting' ? 'Setting' : 'Tambahkan ayat'}
 	>
 		{#if currentForm === 'setting'}
 			<SettingForm 

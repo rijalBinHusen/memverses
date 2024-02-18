@@ -1,0 +1,23 @@
+@import "primary-button.scss";
+
+.form {
+    display: grid;
+    margin: 1rem 0 1rem 0;
+}
+
+.form input[type=text], select {
+    display: flex;
+    padding: .5rem 0 .5rem 0;
+    font-size: large;
+}
+
+label {
+    margin: .5rem 0 .5rem 0;
+    display: flex;
+}
+
+.form input[type=number] {
+    width: 3rem;
+    padding: .3rem .5rem .3rem .5rem;
+    font-size: large;
+}

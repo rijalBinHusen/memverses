@@ -1,4 +1,11 @@
-<div>
+<style lang="scss">
+    @import "../../scss/form.scss";
+    .primary-button {
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="form">
     <label for="list-verses">Pilih surah</label>
     <select bind:value={verseNumber} on:change={selectVerse} name="list-verses" id="list-verses">
         {#each listVersesAndInfo as verses}
@@ -10,14 +17,14 @@
     <div class="select-chapter">
 
         <label for="start-chapter">Mulai dari ayat</label>
-        <input type="number" min="1" bind:value={startChapter} name="start-chapter" id="start-chapter">
+        <input type="number" min="1" max={endChapter} bind:value={startChapter} name="start-chapter" id="start-chapter">
     
         <label for="end-chapter">Sampai dengan ayat</label>
-        <input type="number" max={currentVerse.jumlah_ayat} bind:value={endChapter} name="end-chapter" id="end-chapter">
+        <input type="number" min={startChapter} max={currentVerse.jumlah_ayat} bind:value={endChapter} name="end-chapter" id="end-chapter">
     </div>
     {/if}
 
-    <button on:click={submitVerseChapter}>Tambahkan</button>
+    <button class="primary-button" on:click={submitVerseChapter}>Tambahkan</button>
 </div>
 
 <script lang="ts">
