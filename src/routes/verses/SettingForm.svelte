@@ -25,8 +25,7 @@
     </div>
 
     <input 
-        checked={setting.showFirstLetter} 
-        bind:value={setting.showFirstLetter} 
+        checked={setting.showFirstLetter}
         type="checkbox" 
         id="show-only-first-letter"
         on:change={() => setting.showFirstLetter = !setting.showFirstLetter}
@@ -34,8 +33,7 @@
     <label for="show-only-first-letter">Hanya tampilkan kata pertama</label>
 
     <input 
-        checked={setting.showTafseer} 
-        bind:value={setting.showTafseer} 
+        checked={setting.showTafseer}
         type="checkbox" 
         name="show-tafsir" 
         id="show-tafsir"
