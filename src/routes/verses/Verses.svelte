@@ -3,17 +3,18 @@
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../../components/Modal.svelte';
     import { VersesOperation } from './verses';
-
-	let showModal = false;
-
-	function toggleModal() {
-		showModal = !showModal;
-	}
+    import VersesForm from './VersesForm.svelte';
 
     let folderTitle = "";
     
     const versesOperation = new VersesOperation();
     folderTitle = versesOperation.retrieveTitleFolder();
+
+	let showModal = false;
+
+	async function toggleModal() {
+		showModal = !showModal;
+	}
 
 </script>
 
@@ -47,13 +48,9 @@
 	<Modal
 		on:closeModal={toggleModal} 
 		isOpen={showModal} 
-		title="Buat folder baru"
+		title="Tambahkan surah atau ayat"
 	>
-		<!-- <div>
-			<label for="nama-folder">Masukkan nama folder</label>
-			<input bind:value={folderName} type="text" name="nama-folder" id="nama-folder">
-			<button on:click={createFolder}>Buat</button>
-		</div> -->
+		<VersesForm />
 	</Modal>
 </section>
 

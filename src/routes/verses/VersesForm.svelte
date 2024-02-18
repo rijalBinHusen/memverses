@@ -1,0 +1,57 @@
+<div>
+    <label for="list-verses">Pilih surah</label>
+    <select bind:value={verseNumber} on:change={selectVerse} name="list-verses" id="list-verses">
+        {#each listVersesAndInfo as verses}
+            <option value={verses.nomor}> {verses.nama_latin} </option>
+        {/each}
+    </select>
+
+    {#if currentVerse.jumlah_ayat > 0 }
+    <div class="select-chapter">
+
+        <label for="start-chapter">Mulai dari ayat</label>
+        <input type="number" bind:value={startChapter} name="start-chapter" id="start-chapter">
+    
+        <label for="end-chapter">Sampai dengan ayat</label>
+        <input type="number" bind:value={endChapter} name="end-chapter" id="end-chapter">
+    </div>
+    {/if}
+
+    <button>Terapkan</button>
+</div>
+
+<script lang="ts">
+
+    interface Verse {
+        nomor: number,
+        nama_latin: string,
+        jumlah_ayat: number
+    }
+
+	let listVersesAndInfo = <Verse[]>[];
+    let currentVerse = <Verse>{};
+    let verseNumber = 0;
+    let startChapter = 0;
+    let endChapter = 0;
+
+    async function getListVerses (): Promise<Verse[]|undefined> {
+        // retrieve on static json
+        const retrieve = await fetch("/verses.static.json");
+
+        if(!retrieve) return;
+        const data = await retrieve.json() as Verse[];
+        
+        listVersesAndInfo = data;
+    }
+
+    getListVerses();
+
+    function selectVerse() {
+        const findIndex = listVersesAndInfo.findIndex((verse) => verse.nomor === verseNumber);
+        if(findIndex < 0) return;
+
+        currentVerse = listVersesAndInfo[findIndex];
+        endChapter = currentVerse.jumlah_ayat;
+    }
+
+</script>
