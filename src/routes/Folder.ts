@@ -43,6 +43,7 @@ export class Folder {
     }
 
     updateFolder(id: string, keyValue: FolderUpdate) {
+        if(!this.lists.length) this.getFolder();
         const findIndex = this.lists.findIndex((folder) => folder.id === id);
         if(findIndex < 0) return;
 

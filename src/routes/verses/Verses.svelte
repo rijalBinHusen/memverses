@@ -43,7 +43,8 @@
 	function updateFolderSetting(e: any) {
 		const settingInfo = e.detail as FolderUpdate;
 		const folderOperation = new Folder();
-		if(!folderInfo) return;
+		if(!folderInfo.id) return;
+		
 		folderOperation.updateFolder(folderInfo.id, settingInfo);
 		toggleModal();
 	}

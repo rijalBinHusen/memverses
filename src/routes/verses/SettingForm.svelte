@@ -24,10 +24,23 @@
         <span>Kali</span>
     </div>
 
-    <input checked={setting.showFirstLetter} bind:value={setting.showFirstLetter} type="checkbox" id="show-only-first-letter">
+    <input 
+        checked={setting.showFirstLetter} 
+        bind:value={setting.showFirstLetter} 
+        type="checkbox" 
+        id="show-only-first-letter"
+        on:change={() => setting.showFirstLetter = !setting.showFirstLetter}
+    >
     <label for="show-only-first-letter">Hanya tampilkan kata pertama</label>
 
-    <input checked={setting.showTafseer} bind:value={setting.showTafseer} type="checkbox" name="show-tafsir" id="show-tafsir">
+    <input 
+        checked={setting.showTafseer} 
+        bind:value={setting.showTafseer} 
+        type="checkbox" 
+        name="show-tafsir" 
+        id="show-tafsir"
+        on:change={() => setting.showTafseer = !setting.showTafseer}
+    >
     <label for="show-tafsir">Tampilkan tafsir</label>
     
     <button on:click={submitSetting}>
@@ -38,7 +51,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { type FolderUpdate } from "../Folder";
-    export const setting = <FolderUpdate>{
+    export let setting = <FolderUpdate>{
         chapterToShow: 5,
         nextChapterOnSecond: 3,
         readTarget: 7,
