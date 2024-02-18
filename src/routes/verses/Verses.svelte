@@ -37,7 +37,7 @@
 	}
 
 	async function retrieveChapterToRead() {
-		const data = await versesOperation.getUnReadedChapter(folderInfo.chapterToShow);
+		const data = await versesOperation.getUnReadedChapter();
 		if(data) chapters = data;
 	}
 
@@ -48,7 +48,7 @@
 		
 		folderOperation.updateFolder(folderInfo.id, settingInfo);
 		folderInfo = { ...folderInfo, ...settingInfo};
-		
+
 		toggleModal();
 		retrieveChapterToRead();
 	}
@@ -78,7 +78,7 @@
 				<div class="chapter">
 					<div class="arabic" style={'font-size:'+ folderInfo.arabicSize + 'px'}>
 
-						{ folderInfo.showFirstLetter 
+						{ chapter.showFirstLetter
 							? chapter.arabic.slice(0, 10)
 							: chapter.arabic
 						}

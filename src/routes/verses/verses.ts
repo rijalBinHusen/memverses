@@ -58,6 +58,7 @@ export interface ChapterToShow extends Verse {
     arabic: string
     translate: string
     tafsir: string
+    showFirstLetter: boolean
 }
 
 export interface VersesFormInterface {
@@ -96,7 +97,6 @@ export class VersesOperation {
     }
 
     retrieveTitleFolder (): string {
-        if(this.titleFolder) return this.titleFolder;
 
         const folderClass = new Folder();
 
@@ -139,19 +139,23 @@ export class VersesOperation {
         this.saveToLocalStorage();
     }
 
-    async getUnReadedChapter(limiter: number): Promise<ChapterToShow[]|undefined> {
+    async getUnReadedChapter(): Promise<ChapterToShow[]|undefined> {
         if(!this.lists.length) return;
+        this.retrieveTitleFolder();
+        
+        const idFolder = this.folderInfo.id
+        const chapterLimiter = this.folderInfo.chapterToShow;
 
         let chapterToShow = <Verse[]>[]
         
-        const filterList = this.lists.filter((vers) => vers.idFolder == this.#idFolder);
+        const filterList = this.lists.filter((vers) => vers.idFolder == idFolder);
 
         if(filterList.length) {
             const filterUnreaded = filterList.filter((vers) => vers.readed === 0)
 
             if(filterUnreaded.length) {
 
-                chapterToShow = filterUnreaded.slice(0, limiter);
+                chapterToShow = filterUnreaded.slice(0, chapterLimiter);
             }
 
             else {
@@ -161,7 +165,7 @@ export class VersesOperation {
                     ...vers, readed: 0
                 }))
                 this.saveToLocalStorage();
-                chapterToShow = this.lists.slice(0, limiter)
+                chapterToShow = this.lists.slice(0, chapterLimiter)
             }
         } else return;
 
@@ -185,7 +189,8 @@ export class VersesOperation {
                 ...chapter,
                 arabic: verseRetrieved[verseStr].text[chapterStr],
                 translate: verseRetrieved[verseStr].translations["id"].text[chapterStr],
-                tafsir: verseRetrieved[verseStr].tafsir["id"]["kemenag"].text[chapterStr]
+                tafsir: verseRetrieved[verseStr].tafsir["id"]["kemenag"].text[chapterStr],
+                showFirstLetter: this.folderInfo.showFirstLetter
             })
         }
 
