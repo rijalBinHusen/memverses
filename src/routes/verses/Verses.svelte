@@ -5,6 +5,7 @@
     import { VersesOperation, type VersesFormInterface, type ChapterToShow } from './verses';
     import VersesForm from './VersesForm.svelte';
     import { onMount } from 'svelte';
+    import SettingForm from './SettingForm.svelte';
 
     let folderTitle = "";
 	let chapters = <ChapterToShow[]>[];
@@ -13,9 +14,12 @@
     folderTitle = versesOperation.retrieveTitleFolder();
 
 	let showModal = false;
+	let currentForm = "";
 
-	async function toggleModal() {
+	async function toggleModal(form?: 'setting'|'form') {
 		showModal = !showModal;
+		if(!form) currentForm = "";
+		else currentForm = form;
 	}
 
 	function addVersesToMemorize(e: any) {
@@ -46,6 +50,9 @@
 />
 
 <section>
+	<div class="setting-btn">
+		<button on:click={ () => toggleModal('setting')}>&#9881;</button>
+	</div>
 	<h1>{folderTitle}</h1>
 
 	<div>
@@ -75,16 +82,20 @@
 		{/if}
 	</div>
 	<div class="bottom-nav">
-		<button on:click={toggleModal}>+</button>
+		<button on:click={ () => toggleModal('form')}>+</button>
 	</div>
 	<Modal
-		on:closeModal={toggleModal} 
+		on:closeModal={ () => toggleModal()} 
 		isOpen={showModal} 
-		title="Tambahkan surah atau ayat"
+		title={currentForm === 'setting' ? 'Setting' : 'Tambahkan surah atau ayat'}
 	>
+		{#if currentForm === 'setting'}
+			<SettingForm />
+		{:else}
 		<VersesForm 
 			on:verseAndChapterSubmitted={addVersesToMemorize}
 		/>
+		{/if}
 	</Modal>
 </section>
 
