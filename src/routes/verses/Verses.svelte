@@ -1,8 +1,7 @@
 <script lang="ts">
-	import Seo from '../components/seo.svelte';
+	import Seo from '../../components/seo.svelte';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
-	import Modal from '../components/Modal.svelte';
-	import { Folder, type FolderInterface } from "./Folder";
+	import Modal from '../../components/Modal.svelte';
 
 	let showModal = false;
 
@@ -10,37 +9,20 @@
 		showModal = !showModal;
 	}
 
-	let listFolder:FolderInterface[] = [];
-	
-	const folderOperation = new Folder();
-	const retrieveFolder = folderOperation.getFolder();
-	if(retrieveFolder) listFolder = retrieveFolder;
-
-	// form operation
-	let folderName = "";
-	function createFolder() {
-		if(folderName === "") return;
-
-		folderOperation.createFolder(folderName);
-		folderName = "" //empty the form
-		toggleModal() // close modal
-		listFolder = folderOperation.lists
-	}
-
 </script>
 
 <Seo 
-	title="Halaman utama" 
-	description="Halaman utama kita" 
+	title="Hafalan surah alquran" 
+	description="Daftar surah alquran untuk dihafalkan" 
 	link="localhost:3000" 
 	thumbnail={welcome_fallback}
 />
 
 <section>
-	<h1>Hafal al-Quran</h1>
+	<h1>Hello verses</h1>
 
 	<div>
-		{#if listFolder.length}
+		<!-- {#if listFolder.length}
 		
 			{#each listFolder as folder}
 				<div class="folder">
@@ -51,7 +33,7 @@
 			
 		{:else}
 		 	<div>Buat folder baru, tekan tombol + dibawah :)</div>
-		{/if}
+		{/if} -->
 	</div>
 	<div class="bottom-nav">
 		<button on:click={toggleModal}>+</button>
@@ -61,15 +43,14 @@
 		isOpen={showModal} 
 		title="Buat folder baru"
 	>
-		<div>
+		<!-- <div>
 			<label for="nama-folder">Masukkan nama folder</label>
 			<input bind:value={folderName} type="text" name="nama-folder" id="nama-folder">
 			<button on:click={createFolder}>Buat</button>
-		</div>
+		</div> -->
 	</Modal>
 </section>
 
 <style lang="scss">
-	@import "../scss/bottom-nav.scss";
-	@import "./Folder/folder.scss";
+	@import "../../scss/bottom-nav.scss";
 </style>
