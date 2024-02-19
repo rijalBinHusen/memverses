@@ -1,0 +1,49 @@
+@import "../../scss//variables";
+@import "../../scss/primary-button.scss";
+
+.setting {
+    display: grid;
+    gap: .6rem;
+}
+
+label {
+    font-size: medium;
+    font-weight: lighter;
+}
+
+.increment-decrement {
+
+    display: flex;
+    justify-items: center;
+    gap: .3rem;
+
+    button {
+        font-size: medium;
+        font-weight: bold;
+        padding: 0rem .6rem 0rem .6rem;
+        border: 2px solid;
+        cursor: pointer;
+    }
+
+    :nth-child(1){
+        background-color: $danger-color;
+        border-color: black;
+    }
+
+    :nth-child(3) {
+        border-color: $primary-color;
+    }
+
+    input[type=number] {
+        width: 4rem;
+        font-size: larger;
+        font-weight: bold;
+        padding: .2rem;
+        pointer-events: none;
+    }
+
+    span {
+        margin: auto 0 auto 0;
+        font-weight: bold;
+    }
+}

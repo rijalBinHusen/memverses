@@ -1,7 +1,7 @@
 <div class="setting">
         
     <label for="chapter-total">Tampilkan ayat sebanyak</label>
-    <div id="chapter-total">
+    <div class="increment-decrement" id="chapter-total">
         <button>-</button>
         <input bind:value={setting.chapterToShow} type="number" name="" id="">
         <button>+</button>
@@ -9,7 +9,7 @@
     </div>
     
     <label for="next-chapter-on-second">Tampilkan ayat selanjutnya dalam</label>
-    <div id="next-chapter-on-second">
+    <div class="increment-decrement" id="next-chapter-on-second">
         <button>-</button>
         <input bind:value={setting.nextChapterOnSecond} type="number" name="" id="">
         <button>+</button>
@@ -17,7 +17,7 @@
     </div>
     
     <label for="target-per-day">Target membaca per hari</label>
-    <div id="target-per-day">
+    <div class="increment-decrement" id="target-per-day">
         <button>-</button>
         <input bind:value={setting.readTarget} type="number" name="" id="">
         <button>+</button>
@@ -25,31 +25,38 @@
     </div>
 
     <label for="arabic-size">Ukuran text arab</label>
-    <div id="arabic-size">
+    <div class="increment-decrement" id="arabic-size">
         <button>-</button>
         <input bind:value={setting.arabicSize} type="number" name="" id="">
         <button>+</button>
         <span>Pixel</span>
     </div>
 
-    <input 
-        checked={setting.showFirstLetter}
-        type="checkbox" 
-        id="show-only-first-letter"
-        on:change={() => setting.showFirstLetter = !setting.showFirstLetter}
-    >
-    <label for="show-only-first-letter">Hanya tampilkan kata pertama</label>
+    <div class="checkbox">
+        
+        <input 
+            checked={setting.showFirstLetter}
+            type="checkbox" 
+            id="show-only-first-letter"
+            on:change={() => setting.showFirstLetter = !setting.showFirstLetter}
+        >
+        <label for="show-only-first-letter">Hanya tampilkan kata pertama</label>
 
-    <input 
-        checked={setting.showTafseer}
-        type="checkbox" 
-        name="show-tafsir" 
-        id="show-tafsir"
-        on:change={() => setting.showTafseer = !setting.showTafseer}
-    >
-    <label for="show-tafsir">Tampilkan tafsir</label>
+    </div>
+
+    <div class="checkbox">
+        
+        <input 
+            checked={setting.showTafseer}
+            type="checkbox" 
+            name="show-tafsir" 
+            id="show-tafsir"
+            on:change={() => setting.showTafseer = !setting.showTafseer}
+        >
+        <label for="show-tafsir">Tampilkan tafsir</label>
     
-    <button on:click={submitSetting}>
+    </div>
+    <button class="primary-button" on:click={submitSetting}>
         Terapkan
     </button>
 </div>
@@ -72,3 +79,8 @@
         dispatch("updateSetting", setting)
     }
 </script>
+
+<style lang="scss">
+    @import "SettingForm.scss";
+
+</style>
