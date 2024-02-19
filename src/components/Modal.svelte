@@ -18,8 +18,8 @@
 
   <!-- Modal content -->
   <div class="modal-content">
-    <div>
-
+    
+    <div class="modal-title">
       <button class="close" on:click={closeTheModal}>&times;</button>
       <h1>{title || "Tambahkan data"}</h1>
     </div>
@@ -58,7 +58,7 @@
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: $width-min;
+    max-width: max-content;
   }
   
   /* The Close Button */
