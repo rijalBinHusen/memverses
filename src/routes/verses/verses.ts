@@ -151,7 +151,7 @@ export class VersesOperation {
         const filterList = this.lists.filter((vers) => vers.idFolder == idFolder);
 
         if(filterList.length) {
-            const filterUnreaded = filterList.filter((vers) => vers.readed === 0)
+            const filterUnreaded = filterList.filter((vers) => vers.readed < this.folderInfo.readTarget)
 
             if(filterUnreaded.length) {
 

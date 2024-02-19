@@ -36,7 +36,7 @@ export class Folder {
             name,
             chapterToShow: 5,
             nextChapterOnSecond: 3,
-            readTarget: 3,
+            readTarget: 1,
             showFirstLetter: false,
             showTafseer: false,
             arabicSize: 25

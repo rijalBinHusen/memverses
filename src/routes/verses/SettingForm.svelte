@@ -2,33 +2,33 @@
         
     <label for="chapter-total">Tampilkan ayat sebanyak</label>
     <div class="increment-decrement" id="chapter-total">
-        <button>-</button>
+        <button on:click={() => decrement('chapterToShow')}>-</button>
         <input bind:value={setting.chapterToShow} type="number" name="" id="">
-        <button>+</button>
+        <button on:click={() => increment('chapterToShow')}>+</button>
         <span>Ayat</span>
     </div>
     
     <label for="next-chapter-on-second">Tampilkan ayat selanjutnya dalam</label>
     <div class="increment-decrement" id="next-chapter-on-second">
-        <button>-</button>
+        <button on:click={() => decrement('nextChapterOnSecond')}>-</button>
         <input bind:value={setting.nextChapterOnSecond} type="number" name="" id="">
-        <button>+</button>
+        <button on:click={() => increment('nextChapterOnSecond')}>+</button>
         <span>Detik</span>
     </div>
     
     <label for="target-per-day">Target membaca per hari</label>
     <div class="increment-decrement" id="target-per-day">
-        <button>-</button>
+        <button on:click={() => decrement('readTarget')}>-</button>
         <input bind:value={setting.readTarget} type="number" name="" id="">
-        <button>+</button>
+        <button on:click={() => increment('readTarget')}>+</button>
         <span>Kali</span>
     </div>
 
     <label for="arabic-size">Ukuran text arab</label>
     <div class="increment-decrement" id="arabic-size">
-        <button>-</button>
+        <button on:click={() => decrement('arabicSize')}>-</button>
         <input bind:value={setting.arabicSize} type="number" name="" id="">
-        <button>+</button>
+        <button on:click={() => increment('arabicSize')}>+</button>
         <span>Pixel</span>
     </div>
 
@@ -71,6 +71,22 @@
         showFirstLetter: true,
         showTafseer: true,
         arabicSize: 25
+    }
+
+    type varNumber = 'chapterToShow'|'nextChapterOnSecond'|'readTarget'|'arabicSize';
+    
+    function decrement(whatVar: varNumber) {
+        //@ts-ignore
+        if(typeof whatVar === "undefined" || setting[whatVar] == 1) return;
+        //@ts-ignore
+        setting[whatVar] = setting[whatVar] -1
+    }
+    
+    function increment(whatVar: varNumber) {
+        if(typeof whatVar === "undefined") return;
+
+        //@ts-ignore
+        setting[whatVar] = setting[whatVar] +1
     }
 
     const dispatch = createEventDispatcher();
