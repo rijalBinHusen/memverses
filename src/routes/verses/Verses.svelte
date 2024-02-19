@@ -93,11 +93,13 @@
 						</div>
 					{/if}
 					<div class="navigation">
-						Readed: {chapter.readed}
 						<button class="move">
 							Pindahkan
 						</button>
 						<button>Read</button>
+						<span>
+							Readed: {chapter.readed}
+						</span>
 					</div>
 				</div>
 
