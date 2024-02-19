@@ -71,7 +71,7 @@
 	</div>
 	<h1>{folderTitle}</h1>
 
-	<div>
+	<div class="wraper">
 		{#if chapters.length}
 		
 			{#each chapters as chapter}
