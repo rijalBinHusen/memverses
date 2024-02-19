@@ -7,6 +7,7 @@
     import { onMount } from 'svelte';
     import SettingForm from './SettingForm.svelte';
 	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
+	import Chapter from './Chapter.svelte';
 
     let folderTitle = "";
 	let folderInfo = <FolderInterface>{};
@@ -74,35 +75,12 @@
 	<div class="wraper">
 		{#if chapters.length}
 		
-			{#each chapters as chapter}
-				<div class="chapter">
-					<div class="arabic" style={'font-size:'+ folderInfo.arabicSize + 'px'}>
-
-						{ chapter.showFirstLetter
-							? chapter.arabic.slice(0, 10)
-							: chapter.arabic
-						}
-					</div>
-					<div class="translation">
-						{chapter.translate}
-					</div>
-					{#if folderInfo.showTafseer }
-						
-						<div class="tafsir">
-							{chapter.tafsir}
-						</div>
-					{/if}
-					<div class="navigation">
-						<button class="move">
-							Pindahkan
-						</button>
-						<button>Read</button>
-						<span>
-							Readed: {chapter.readed}
-						</span>
-					</div>
-				</div>
-
+			{#each chapters as chapt}
+				<Chapter 
+					chapter={chapt}
+					arabicSize={folderInfo.arabicSize}
+					showTafseer={folderInfo.showTafseer}
+				/>
 			{/each}
 			
 		{:else}
