@@ -8,6 +8,7 @@
     import SettingForm from './SettingForm.svelte';
 	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
 	import Chapter from './Chapter.svelte';
+    import { flip } from 'svelte/animate';
 
     let folderTitle = "";
 	let folderInfo = <FolderInterface>{};
@@ -93,13 +94,15 @@
 	<div class="wraper">
 		{#if chapters.length}
 		
-			{#each chapters as chapt}
-				<Chapter
-					chapter={chapt}
-					arabicSize={folderInfo.arabicSize}
-					showTafseer={folderInfo.showTafseer}
-					on:readed={readChapter}
-				/>
+			{#each chapters as chapt (chapt)}
+				<div animate:flip>
+					<Chapter
+						chapter={chapt}
+						arabicSize={folderInfo.arabicSize}
+						showTafseer={folderInfo.showTafseer}
+						on:readed={readChapter}
+					/>
+				</div>
 			{/each}
 			
 		{:else}

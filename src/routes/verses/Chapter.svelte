@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { type ChapterToShow } from "./verses";
-    import { fade } from "svelte/transition";
+    
     export let chapter = <ChapterToShow>{};
     export let arabicSize = 25;
     export let showTafseer = false;
@@ -15,7 +15,7 @@
     }
 </script>
 
-<div class="chapter" transition:fade={{ delay: 250, duration: 800 }}>
+<div class="chapter">
     <div class="arabic" style={'font-size:'+ arabicSize + 'px'}>
 
         { chapter.showFirstLetter
