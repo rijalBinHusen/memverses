@@ -198,6 +198,17 @@ export class VersesOperation {
         return result;
     }
 
+    readChapter(verse: number, chapter: number) {
+        const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.verse === verse && vers.chapter === chapter);
+        // not foound
+        if(findIndex === -1) return;
+
+        const record = { ...this.lists[findIndex] };
+        this.lists[findIndex] = { ...record, readed: record.readed+ 1 }
+        this.saveToLocalStorage();
+        console.log(this.lists[findIndex])
+    }
+
     getFolderInfo (): FolderInterface {
         return this.folderInfo;
     }

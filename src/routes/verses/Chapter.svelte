@@ -1,8 +1,16 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
     import { type ChapterToShow } from "./verses";
     export let chapter = <ChapterToShow>{};
     export let arabicSize = 25;
     export let showTafseer = false;
+
+    const dispatch = createEventDispatcher();
+
+    function read(chap: number, verse: number) {
+
+        dispatch("readed", { chap, verse })
+    }
 </script>
 
 <div class="chapter">
@@ -26,7 +34,7 @@
         <button class="move">
             Pindahkan
         </button>
-        <button>Read</button>
+        <button on:click={() => read(chapter.chapter, chapter.verse)}>Read</button>
         <span>
             Readed: {chapter.readed}
         </span>

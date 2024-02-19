@@ -54,6 +54,15 @@
 		retrieveChapterToRead();
 	}
 
+	function readChapter (e: any) {
+		const chapterInfo = e.detail as { chap: number, verse: number }
+		versesOperation.readChapter(chapterInfo.verse, chapterInfo.chap)
+
+		const findIndex = chapters.findIndex((chap) => chap.verse === chapterInfo.verse && chap.chapter === chapterInfo.chap);
+		if(findIndex === -1) return;
+		chapters.splice(findIndex, 1);
+	}
+
 	onMount(() => retrieveChapterToRead())
 
 
@@ -76,10 +85,11 @@
 		{#if chapters.length}
 		
 			{#each chapters as chapt}
-				<Chapter 
+				<Chapter
 					chapter={chapt}
 					arabicSize={folderInfo.arabicSize}
 					showTafseer={folderInfo.showTafseer}
+					on:readed={readChapter}
 				/>
 			{/each}
 			
