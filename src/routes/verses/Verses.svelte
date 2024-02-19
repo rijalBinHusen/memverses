@@ -60,7 +60,16 @@
 
 		const findIndex = chapters.findIndex((chap) => chap.verse === chapterInfo.verse && chap.chapter === chapterInfo.chap);
 		if(findIndex === -1) return;
-		chapters.splice(findIndex, 1);
+		
+		if(chapters.length > 1) {
+			
+			const allChapter = [...chapters];
+			allChapter.splice(findIndex, 1);
+			chapters = allChapter;
+		} else {
+			
+			retrieveChapterToRead();
+		}
 	}
 
 	onMount(() => retrieveChapterToRead())

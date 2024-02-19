@@ -26,19 +26,16 @@
     cursor: pointer;
     border: 3px solid;
 
-
     &:first-child {
         border-color: $primary-color;
-
         &:hover {
-            background-color: $secondary-color;
-            border-color: crimson;
+            color: $primary-color;
         }
     }
     &:nth-child(2) {
         border-color: green;
         &:hover {
-            border-color: crimson;
+            color: green;
         }
     }
 }

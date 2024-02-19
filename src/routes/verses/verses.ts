@@ -206,7 +206,6 @@ export class VersesOperation {
         const record = { ...this.lists[findIndex] };
         this.lists[findIndex] = { ...record, readed: record.readed+ 1 }
         this.saveToLocalStorage();
-        console.log(this.lists[findIndex])
     }
 
     getFolderInfo (): FolderInterface {
