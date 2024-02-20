@@ -1,11 +1,14 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { type VerseToShow } from "./Chapter";
+    import { type VerseToShow, ChaptersOperation } from "./Chapter";
     
     export let chapter = <VerseToShow>{};
     export let arabicSize = 25;
     export let showTafseer = false;
 
+    const chaptersOps = new ChaptersOperation();
+    const folder = chaptersOps.getFoldersList();
+    
     const dispatch = createEventDispatcher();
 
     function read(chap: number, verse: number) {
@@ -39,9 +42,17 @@
         </span>
 
         <div>
-            <button class="move">
-                Pindahkan
-            </button>
+            <div class="dropdown">
+                <button class="dropbtn">Pindah ke</button>
+                <div class="dropdown-content">
+                {#if folder && folder.length}
+
+                  {#each folder as fold }
+                  <span>{fold.name}</span>
+                  {/each}
+                {/if}
+                </div>
+              </div>
             <button on:click={() => read(chapter.chapter, chapter.verse)}>Read</button>
         </div>
     </div>

@@ -68,4 +68,11 @@ export class Folder {
 
         return folders[findIndex];
     }
+
+    getListFolderExcept(idFolder: string): FolderInterface[]|undefined {
+        const filters = this.lists.filter((fold) => fold.id !== idFolder);
+
+        if(filters.length) return filters;
+    }
+
 }

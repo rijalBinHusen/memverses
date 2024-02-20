@@ -212,5 +212,13 @@ export class ChaptersOperation {
     getFolderInfo (): FolderInterface {
         return this.folderInfo;
     }
+
+    getFoldersList(){
+        const folderClass = new Folder();
+
+        folderClass.getFolder();
+
+        return folderClass.getListFolderExcept(this.#idFolder);
+    }
 }
 
