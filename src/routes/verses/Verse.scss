@@ -2,6 +2,11 @@
 
 .arabic {
     direction: rtl;
+    @font-face {
+        font-family: "Noto Naskh Arabic";
+        src: url("/src/lib/NotoNaskhArabic-Medium.ttf") format("truetype");
+    };
+    font-family: 'Noto Naskh Arabic';
 }
 
 .chapter {
