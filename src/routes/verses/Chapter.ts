@@ -140,6 +140,7 @@ export class ChaptersOperation {
     }
 
     async getUnReadedVerse(): Promise<VerseToShow[]|undefined> {
+        
         if(!this.lists.length) return;
         this.retrieveTitleFolder();
         
@@ -180,7 +181,7 @@ export class ChaptersOperation {
 
             const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
             if(!isVerseRetrieved) {
-                const fetchVerse = await fetch(`/verses/${chapter.verse}.json`, { cache: "force-cache"});
+                const fetchVerse = await fetch(`/verses/${chapter.chapter}.json`, { cache: "force-cache"});
                 if(!fetchVerse) return;
                 verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
             }
