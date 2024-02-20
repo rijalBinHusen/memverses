@@ -33,12 +33,12 @@
         </div>
     {/if}
     <div class="navigation">
+        <button on:click={() => read(chapter.chapter, chapter.verse)}>Read</button>
         <button class="move">
             Pindahkan
         </button>
-        <button on:click={() => read(chapter.chapter, chapter.verse)}>Read</button>
         <span>
-            Readed: {chapter.readed}
+            Dibaca: {chapter.readed}x
         </span>
     </div>
 </div>

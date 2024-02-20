@@ -57,7 +57,7 @@
 
 	function readChapter (e: any) {
 		const chapterInfo = e.detail as { chap: number, verse: number }
-		chapterOperation.readVerse(chapterInfo.verse, chapterInfo.chap)
+		chapterOperation.readVerse(chapterInfo.chap, chapterInfo.verse)
 
 		const findIndex = chapters.findIndex((chap) => chap.verse === chapterInfo.verse && chap.chapter === chapterInfo.chap);
 		if(findIndex === -1) return;
@@ -87,9 +87,11 @@
 
 <section>
 	<div class="setting-btn">
-		<button on:click={ () => toggleModal('setting')}>&#9881;</button>
+		<h1>{folderTitle}</h1>
+		<span>
+			<button on:click={ () => toggleModal('setting')}>&#9881;</button>
+		</span>
 	</div>
-	<h1>{folderTitle}</h1>
 
 	<div class="wraper">
 		{#if chapters.length}
