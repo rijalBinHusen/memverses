@@ -13,6 +13,7 @@
     let folderTitle = "";
 	let folderInfo = <FolderInterface>{};
 	let chapters = <VerseToShow[]>[];
+	let messageToShow = "Tidak ayat untuk dibaca, tekan tombol + dibawah :)";
     
     const chapterOperation = new ChaptersOperation();
     folderTitle = chapterOperation.retrieveTitleFolder();
@@ -39,7 +40,14 @@
 	}
 
 	async function retrieveChapterToRead() {
+		chapters = [];
+		messageToShow = `Ayat selanjutnya akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
 		const data = await chapterOperation.getUnReadedVerse();
+		await new Promise((resolve) => {
+			setTimeout(() => {
+				resolve("")
+			}, folderInfo.nextChapterOnSecond * 1000);
+		})
 		if(data) chapters = data;
 	}
 
@@ -108,7 +116,7 @@
 			{/each}
 			
 		{:else}
-		 	<div>Tidak ayat untuk dibaca, tekan tombol + dibawah :)</div>
+		 	<div>{ messageToShow }</div>
 		{/if}
 	</div>
 	<div class="bottom-nav">
