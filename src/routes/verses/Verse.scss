@@ -10,6 +10,7 @@
     gap: .2rem;
     border-bottom: 2px dashed black;
     margin-bottom: 1rem;
+    max-width: 30rem;
 }
 
 .chapter .navigation {
@@ -17,6 +18,7 @@
     gap: .3rem;
     justify-items: center;
     margin: .7rem 0 .7rem 0;
+    justify-content: space-between;
 }
 
 .navigation button {
@@ -40,6 +42,22 @@
     }
 }
 
+.navigation div {
+    display: flex;
+    gap: .2rem
+}
+
 .navigation span {
     margin: auto 0 auto 0;
+}
+
+.translation {
+    word-wrap: break-word;
+}
+
+.tafsir {
+    padding-top: .5rem;
+    margin: .5rem 0 0 0;
+    border-top: 3px solid black;
+    white-space: pre-wrap;
 }

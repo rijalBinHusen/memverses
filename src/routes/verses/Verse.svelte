@@ -29,17 +29,21 @@
     {#if showTafseer }
         
         <div class="tafsir">
+            <p>Tafsir ayat</p>
             {chapter.tafsir}
         </div>
     {/if}
-    <div class="navigation">
-        <button on:click={() => read(chapter.chapter, chapter.verse)}>Read</button>
-        <button class="move">
-            Pindahkan
-        </button>
+    <div class="navigation">        
         <span>
             Dibaca: {chapter.readed}x
         </span>
+
+        <div>
+            <button class="move">
+                Pindahkan
+            </button>
+            <button on:click={() => read(chapter.chapter, chapter.verse)}>Read</button>
+        </div>
     </div>
 </div>
 

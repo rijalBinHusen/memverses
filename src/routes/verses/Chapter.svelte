@@ -41,14 +41,18 @@
 
 	async function retrieveChapterToRead() {
 		chapters = [];
-		messageToShow = `Ayat selanjutnya akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
 		const data = await chapterOperation.getUnReadedVerse();
-		await new Promise((resolve) => {
-			setTimeout(() => {
-				resolve("")
-			}, folderInfo.nextChapterOnSecond * 1000);
-		})
-		if(data) chapters = data;
+
+		if(data) {
+			
+			messageToShow = `Ayat selanjutnya akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
+			await new Promise((resolve) => {
+				setTimeout(() => {
+					resolve("")
+				}, folderInfo.nextChapterOnSecond * 1000);
+			})
+			chapters = data;
+		}
 	}
 
 	function updateFolderSetting(e: any) {
