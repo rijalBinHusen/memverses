@@ -1,5 +1,5 @@
-<Verses />
+<Chapter />
 
 <script lang="ts">
-    import Verses from "./Verses.svelte";
+    import Chapter from "./Chapter.svelte";
 </script>

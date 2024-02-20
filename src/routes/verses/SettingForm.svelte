@@ -2,9 +2,9 @@
         
     <label for="chapter-total">Tampilkan ayat sebanyak</label>
     <div class="increment-decrement" id="chapter-total">
-        <button on:click={() => decrement('chapterToShow')}>-</button>
-        <input bind:value={setting.chapterToShow} type="number" name="" id="">
-        <button on:click={() => increment('chapterToShow')}>+</button>
+        <button on:click={() => decrement('verseToShow')}>-</button>
+        <input bind:value={setting.verseToShow} type="number" name="" id="">
+        <button on:click={() => increment('verseToShow')}>+</button>
         <span>Ayat</span>
     </div>
     
@@ -65,7 +65,7 @@
     import { createEventDispatcher } from "svelte";
     import { type FolderUpdate } from "../Folder";
     export let setting = <FolderUpdate>{
-        chapterToShow: 5,
+        verseToShow: 5,
         nextChapterOnSecond: 3,
         readTarget: 7,
         showFirstLetter: true,
@@ -73,7 +73,7 @@
         arabicSize: 25
     }
 
-    type varNumber = 'chapterToShow'|'nextChapterOnSecond'|'readTarget'|'arabicSize';
+    type varNumber = 'verseToShow'|'nextChapterOnSecond'|'readTarget'|'arabicSize';
     
     function decrement(whatVar: varNumber) {
         //@ts-ignore

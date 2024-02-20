@@ -11,14 +11,14 @@
 import { Folder, type FolderInterface } from "../Folder"
 
 interface ArabicQuran {
-    [chapter: string]: string
+    [verse: string]: string
 }
 
 interface Translate {
     [language: string]: {
         name: string
         text: {
-            [chapter: string]: string
+            [verse: string]: string
         }
     }
 }
@@ -36,7 +36,7 @@ interface Tafsir {
 }
 
 export interface verseAndChapterDetail {
-    [verse: string]: {
+    [chapter: string]: {
         number: string
         name: string
         name_latin: string
@@ -47,37 +47,37 @@ export interface verseAndChapterDetail {
     }
 };
 
-export interface Verse {
+export interface Chapter {
     idFolder: string
-    verse: number
     chapter: number
+    verse: number
     readed: number
 }
 
-export interface ChapterToShow extends Verse {
+export interface VerseToShow extends Chapter {
     arabic: string
     translate: string
     tafsir: string
     showFirstLetter: boolean
 }
 
-export interface VersesFormInterface {
-    verse: number,
-    startChapter: number
-    endChapter: number
+export interface ChapterFormInterface {
+    chapter: number,
+    startVerse: number
+    endVerse: number
 }
 
-export class VersesOperation {
+export class ChaptersOperation {
     #idFolder = "";
     titleFolder: string = "";
-    #storageName = "memorize-quran-verses";
-    lists = <Verse[]>[];
+    #storageName = "memorize-quran-chapter";
+    lists = <Chapter[]>[];
     folderInfo = <FolderInterface>{};
 
     constructor() {
         this.getIdFolder();
         this.retrieveTitleFolder();
-        this.retrieveVerses();
+        this.retrieveChapter();
     }
 
     getIdFolder(): string|undefined {
@@ -109,13 +109,13 @@ export class VersesOperation {
         return this.titleFolder;
     }
 
-    retrieveVerses() {
+    retrieveChapter() {
         if(typeof window === 'undefined') return;
-        const retrieveVerses = window.localStorage.getItem(this.#storageName);
+        const retrieveChapter = window.localStorage.getItem(this.#storageName);
 
-        if(retrieveVerses === null) return
+        if(retrieveChapter === null) return
 
-        const versesParsed: Verse[] = JSON.parse(retrieveVerses)
+        const versesParsed: Chapter[] = JSON.parse(retrieveChapter)
         this.lists = versesParsed;
         return versesParsed;
     }
@@ -125,28 +125,28 @@ export class VersesOperation {
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
-    addVerses(verse: number, chapter: number) {
+    addChapter(chapter: number, verse: number) {
         const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.verse === verse && vers.chapter === chapter);
         if(findIndex > -1) return;
         
         this.lists.push({
             idFolder: this.#idFolder,
-            verse,
             chapter,
+            verse,
             readed: 0
         })
 
         this.saveToLocalStorage();
     }
 
-    async getUnReadedChapter(): Promise<ChapterToShow[]|undefined> {
+    async getUnReadedVerse(): Promise<VerseToShow[]|undefined> {
         if(!this.lists.length) return;
         this.retrieveTitleFolder();
         
         const idFolder = this.folderInfo.id
-        const chapterLimiter = this.folderInfo.chapterToShow;
+        const verseLimiter = this.folderInfo.verseToShow;
 
-        let chapterToShow = <Verse[]>[]
+        let verseToShow = <Chapter[]>[]
         
         const filterList = this.lists.filter((vers) => vers.idFolder == idFolder);
 
@@ -155,7 +155,7 @@ export class VersesOperation {
 
             if(filterUnreaded.length) {
 
-                chapterToShow = filterUnreaded.slice(0, chapterLimiter);
+                verseToShow = filterUnreaded.slice(0, verseLimiter);
             }
 
             else {
@@ -165,20 +165,20 @@ export class VersesOperation {
                     ...vers, readed: 0
                 }))
                 this.saveToLocalStorage();
-                chapterToShow = this.lists.slice(0, chapterLimiter)
+                verseToShow = this.lists.slice(0, verseLimiter)
             }
         } else return;
 
 
-        const result = <ChapterToShow[]>[]
+        const result = <VerseToShow[]>[]
         let verseRetrieved = <verseAndChapterDetail>{};
 
-        for (let chapter of chapterToShow) {
+        for (let chapter of verseToShow) {
 
-            const verseStr = chapter.verse + "";
             const chapterStr = chapter.chapter + ""
+            const verseStr = chapter.verse + "";
 
-            const isVerseRetrieved = verseRetrieved && verseRetrieved[verseStr] && verseRetrieved[verseStr].number === (verseStr)
+            const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
             if(!isVerseRetrieved) {
                 const fetchVerse = await fetch(`/verses/${chapter.verse}.json`, { cache: "force-cache"});
                 if(!fetchVerse) return;
@@ -187,9 +187,9 @@ export class VersesOperation {
             
             result.push({
                 ...chapter,
-                arabic: verseRetrieved[verseStr].text[chapterStr],
-                translate: verseRetrieved[verseStr].translations["id"].text[chapterStr],
-                tafsir: verseRetrieved[verseStr].tafsir["id"]["kemenag"].text[chapterStr],
+                arabic: verseRetrieved[chapterStr].text[verseStr],
+                translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
+                tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
                 showFirstLetter: this.folderInfo.showFirstLetter
             })
         }
@@ -198,7 +198,7 @@ export class VersesOperation {
         return result;
     }
 
-    readChapter(verse: number, chapter: number) {
+    readVerse(chapter: number, verse: number) {
         const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.verse === verse && vers.chapter === chapter);
         // not foound
         if(findIndex === -1) return;

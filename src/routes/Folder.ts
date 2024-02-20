@@ -1,7 +1,7 @@
 export interface FolderInterface {
     id: string
     name: string
-    chapterToShow: number
+    verseToShow: number
     nextChapterOnSecond: number
     readTarget: number
     showFirstLetter: boolean
@@ -34,7 +34,7 @@ export class Folder {
         this.lists.push({ 
             id: idFolder, 
             name,
-            chapterToShow: 5,
+            verseToShow: 5,
             nextChapterOnSecond: 3,
             readTarget: 1,
             showFirstLetter: false,
