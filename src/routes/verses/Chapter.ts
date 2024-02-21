@@ -116,6 +116,15 @@ export class ChaptersOperation {
 
         if(retrieveChapter === null) return
 
+        if(typeof Blob != "undefined") {
+
+            const sizeOfLocalStorage = new Blob(Object.values(localStorage)).size;
+            const isOnLimit = sizeOfLocalStorage >= 4500000;
+            if(isOnLimit) {
+                alert("Website menyimpan terlalu banyak data!")
+            }
+        }
+
         const versesParsed: Chapter[] = JSON.parse(retrieveChapter)
         if(typeof versesParsed[0].id === 'undefined') {
 
