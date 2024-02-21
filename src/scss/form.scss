@@ -7,19 +7,21 @@
     width: 100%;
 }
 
-.form input[type=text], select {
-    display: flex;
-    padding: .5rem 0 .5rem 0;
-    font-size: large;
+.form {
+    input[type=text], select {
+        display: flex;
+        padding: .5rem 0 .5rem .5rem;
+        font-size: large;
+    }
+
+    input[type=number] {
+        width: 3rem;
+        padding: .3rem .5rem .3rem .5rem;
+        font-size: large;
+    }
 }
 
 label {
     margin: .5rem 0 .5rem 0;
     display: flex;
-}
-
-.form input[type=number] {
-    width: 3rem;
-    padding: .3rem .5rem .3rem .5rem;
-    font-size: large;
 }

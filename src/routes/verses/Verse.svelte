@@ -48,15 +48,18 @@
             {verse.readed}x dibaca
         </span>
         <div>
+            {#if folderList.length}
+            
             <div class="dropdown">
                 <button class="dropbtn">Pindah ke</button>
                 <div class="dropdown-content">
-
-                  {#each folderList as folder }
-                  <span on:click={() => moveToFolder(folder.id, verse.id)}>{folder.name}</span>
-                  {/each}
+                    
+                    {#each folderList as folder }
+                    <a href="#" on:click={() => moveToFolder(folder.id, verse.id)}>{folder.name}</a>
+                    {/each}
                 </div>
-              </div>
+            </div>
+            {/if}
             <button on:click={() => read(verse.id)}>Read</button>
         </div>
     </div>

@@ -18,13 +18,32 @@
 
 	// form operation
 	let folderName = "";
-	function createFolder() {
+	let folderId = "";
+
+	function handleSubmit() {
 		if(folderName === "") return;
 
-		folderOperation.createFolder(folderName);
+		if(folderId) {
+			folderOperation.updateFolder(folderId, { name: folderName });
+
+		} else {
+	
+			folderOperation.createFolder(folderName);
+		}
+
 		folderName = "" //empty the form
+		folderId = "" 
 		toggleModal() // close modal
 		listFolder = folderOperation.lists
+	}
+
+	function editFolder(id:string) {
+		const folderInfo = folderOperation.getFolderInfoById(id);
+		if(typeof folderInfo === "undefined") return;
+
+		folderName = folderInfo.name;
+		folderId = folderInfo.id;
+		toggleModal();
 	}
 
 </script>
@@ -48,7 +67,7 @@
 				<a href={'/verses?id-folder='+folder.id}>
 					{folder.name} 
 				</a>
-				<button>Edit</button>
+				<button on:click={() => editFolder(folder.id)}>Edit</button>
 			</div>
 
 			{/each}
@@ -68,7 +87,7 @@
 		<div class="form">
 			<label for="nama-folder">Masukkan nama folder</label>
 			<input bind:value={folderName} type="text" name="nama-folder" id="nama-folder">
-			<button class="primary-button" on:click={createFolder}>Buat folder</button>
+			<button class="primary-button" on:click={handleSubmit}>{folderId ? 'Update' : 'Buat folder'}</button>
 		</div>
 	</Modal>
 </section>
@@ -77,5 +96,5 @@
 	@import "../scss/bottom-nav.scss";
 	@import "./Folder/folder.scss";
 	@import "../scss/primary-button.scss";
-	@import "../scss/form.scss"
+	@import "../scss/form.scss";
 </style>
