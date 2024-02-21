@@ -134,18 +134,23 @@ export class ChaptersOperation {
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
-    addChapter(chapter: number, verse: number) {
-        const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.verse === verse && vers.chapter === chapter);
-        if(findIndex > -1) return;
-        
-        this.lists.push({
-            idFolder: this.#idFolder,
-            id: (chapter * 300) + verse,
-            chapter,
-            verse,
-            readed: 0
-        })
+    addChapter(chapter: number, start: number, end: number) {
 
+        for(let i = start; i <= end; i++) {
+
+            const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
+            if(findIndex > -1) return;
+            
+            this.lists.push({
+                idFolder: this.#idFolder,
+                id: (chapter * 300) + i,
+                chapter,
+                verse: i,
+                readed: 0
+            })
+        }
+
+        this.lists.sort((a, b) => a.id - b.id );
         this.saveToLocalStorage();
     }
 

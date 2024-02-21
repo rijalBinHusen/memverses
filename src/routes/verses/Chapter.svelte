@@ -33,10 +33,7 @@
 	function addVersesToMemorize(e: any) {
 
 		const form = e.detail as ChapterFormInterface;
-		for (let i = form.startVerse; i <= form.endVerse; i++) {
-			
-			chapterOperation.addChapter(form.chapter, i)
-		}
+		chapterOperation.addChapter(form.chapter, form.startVerse, form.endVerse)
 		toggleModal();
 		retrieveChapterToRead();
 	}
