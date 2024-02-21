@@ -7,6 +7,8 @@
     export let folderList = <FolderInterface[]>[];
     export let arabicSize = 25;
     export let showTafseer = false;
+
+    let isShowFirstLetter = JSON.parse(JSON.stringify(verse.showFirstLetter));
     
     const dispatch = createEventDispatcher();
 
@@ -25,7 +27,7 @@
 <div class="verse">
     <div class="arabic" style={'font-size:'+ arabicSize + 'px'}>
 
-        { verse.showFirstLetter
+        { isShowFirstLetter
             ? verse.arabic.slice(0, 10)
             : verse.arabic
         }
@@ -55,12 +57,17 @@
                 <div class="dropdown-content">
                     
                     {#each folderList as folder }
-                    <a href="#" on:click={() => moveToFolder(folder.id, verse.id)}>{folder.name}</a>
+                    <span on:click={() => moveToFolder(folder.id, verse.id)}>{folder.name}</span>
                     {/each}
                 </div>
             </div>
             {/if}
-            <button on:click={() => read(verse.id)}>Read</button>
+
+            {#if isShowFirstLetter}
+                <button on:click={() => isShowFirstLetter = false}>Baca lengkap</button>    
+            {:else}
+                <button on:click={() => read(verse.id)}>Baca</button>
+            {/if}
         </div>
     </div>
 </div>
