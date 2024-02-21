@@ -9,7 +9,7 @@
     font-family: 'Noto Naskh Arabic';
 }
 
-.chapter {
+.verse {
     display: flex;
     flex-direction: column;
     gap: .2rem;
@@ -23,7 +23,7 @@
     width: calc(100% - 2rem);
 }
 
-.chapter .navigation {
+.verse .navigation {
     display: flex;
     gap: .3rem;
     justify-items: center;
@@ -109,6 +109,6 @@
     visibility: visible;
   }
 
-  .chapter-info {
+  .verse-info {
     font-weight: bold;
   }

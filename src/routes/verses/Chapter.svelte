@@ -66,6 +66,14 @@
 		retrieveChapterToRead();
 	}
 
+	function moveToFolder(e: any) {
+		const verseInfo = e.detail as {idFolder: string, idVerse: number};
+		
+		chapterOperation.moveVerseToFolder(verseInfo.idVerse, verseInfo.idFolder);
+
+		retrieveChapterToRead();
+	}
+
 	function readChapter (e: any) {
 		const id = e.detail as number
 		chapterOperation.readVerse(id);
@@ -110,11 +118,12 @@
 			{#each chapters as chapt (chapt)}
 				<div animate:flip>
 					<Chapter
-						chapter={chapt}
+						verse={chapt}
 						arabicSize={folderInfo.arabicSize}
 						showTafseer={folderInfo.showTafseer}
 						on:readed={readChapter}
 						folderList={folderList}
+						on:move={moveToFolder}
 					/>
 				</div>
 			{/each}

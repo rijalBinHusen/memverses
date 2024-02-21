@@ -181,7 +181,8 @@ export class ChaptersOperation {
                     ...vers, readed: 0
                 }))
                 this.saveToLocalStorage();
-                verseToShow = this.lists.slice(0, verseLimiter)
+                const filterFolder = this.lists.filter((vers) => vers.idFolder == idFolder && vers.readed < this.folderInfo.readTarget);
+                verseToShow = filterFolder
             }
         } else return;
 
@@ -221,6 +222,16 @@ export class ChaptersOperation {
 
         const record = { ...this.lists[findIndex] };
         this.lists[findIndex] = { ...record, readed: record.readed+ 1 }
+        this.saveToLocalStorage();
+    }
+
+    moveVerseToFolder(verseId: number, idFolder: string) {
+        const findIndex = this.lists.findIndex((vers) => vers.id === verseId);
+
+        if(findIndex < 0) return;
+
+        const record = { ...this.lists[findIndex] };
+        this.lists[findIndex] = { ...record, idFolder }
         this.saveToLocalStorage();
     }
 

@@ -35,11 +35,11 @@ export class Folder {
             id: idFolder, 
             name,
             verseToShow: 5,
-            nextChapterOnSecond: 3,
+            nextChapterOnSecond: 1,
             readTarget: 1,
             showFirstLetter: false,
             showTafseer: false,
-            arabicSize: 25
+            arabicSize: 30
         });
         this.saveToLocalStorage();
     }

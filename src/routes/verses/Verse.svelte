@@ -3,7 +3,7 @@
     import { type VerseToShow } from "./Chapter";
     import { type FolderInterface } from "../Folder";
     
-    export let chapter = <VerseToShow>{};
+    export let verse = <VerseToShow>{};
     export let folderList = <FolderInterface[]>[];
     export let arabicSize = 25;
     export let showTafseer = false;
@@ -13,34 +13,39 @@
     function read(id: number) {
 
         dispatch("readed", id);
-        chapter.readed++
+        verse.readed++
+    }
+
+    function moveToFolder(idFolder: string, idVerse: number) {
+
+        dispatch("move", { idFolder, idVerse });
     }
 </script>
 
-<div class="chapter">
+<div class="verse">
     <div class="arabic" style={'font-size:'+ arabicSize + 'px'}>
 
-        { chapter.showFirstLetter
-            ? chapter.arabic.slice(0, 10)
-            : chapter.arabic
+        { verse.showFirstLetter
+            ? verse.arabic.slice(0, 10)
+            : verse.arabic
         }
     </div>
-    <div class="chapter-info">
-        {chapter.chapter}:{chapter.verse}
+    <div class="verse-info">
+        {verse.verse}:{verse.verse}
     </div>
     <div class="translation">
-        {chapter.translate}
+        {verse.translate}
     </div>
     {#if showTafseer }
         
         <div class="tafsir">
             <p>Tafsir ayat</p>
-            {chapter.tafsir}
+            {verse.tafsir}
         </div>
     {/if}
     <div class="navigation">        
-        <span class="chapter-info">
-            {chapter.readed}x dibaca
+        <span class="verse-info">
+            {verse.readed}x dibaca
         </span>
         <div>
             <div class="dropdown">
@@ -48,11 +53,11 @@
                 <div class="dropdown-content">
 
                   {#each folderList as folder }
-                  <span>{folder.name}</span>
+                  <span on:click={() => moveToFolder(folder.id, verse.id)}>{folder.name}</span>
                   {/each}
                 </div>
               </div>
-            <button on:click={() => read(chapter.id)}>Read</button>
+            <button on:click={() => read(verse.id)}>Read</button>
         </div>
     </div>
 </div>
