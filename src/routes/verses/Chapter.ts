@@ -49,6 +49,7 @@ export interface verseAndChapterDetail {
 
 export interface Chapter {
     idFolder: string
+    id: number
     chapter: number
     verse: number
     readed: number
@@ -116,7 +117,15 @@ export class ChaptersOperation {
         if(retrieveChapter === null) return
 
         const versesParsed: Chapter[] = JSON.parse(retrieveChapter)
-        this.lists = versesParsed;
+        if(typeof versesParsed[0].id === 'undefined') {
+
+            this.lists = versesParsed.map((vers) => ({
+                ...vers, id: (vers.chapter * 300) + vers.verse
+            }))
+        } else {
+
+            this.lists = versesParsed;
+        }
         return versesParsed;
     }
 
@@ -131,6 +140,7 @@ export class ChaptersOperation {
         
         this.lists.push({
             idFolder: this.#idFolder,
+            id: (chapter * 300) + verse,
             chapter,
             verse,
             readed: 0
@@ -199,8 +209,8 @@ export class ChaptersOperation {
         return result;
     }
 
-    readVerse(chapter: number, verse: number) {
-        const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.verse === verse && vers.chapter === chapter);
+    readVerse(id: number) {
+        const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.id === id);
         // not foound
         if(findIndex === -1) return;
 

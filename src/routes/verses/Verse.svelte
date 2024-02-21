@@ -1,19 +1,18 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { type VerseToShow, ChaptersOperation } from "./Chapter";
+    import { type VerseToShow } from "./Chapter";
+    import { type FolderInterface } from "../Folder";
     
     export let chapter = <VerseToShow>{};
+    export let folderList = <FolderInterface[]>[];
     export let arabicSize = 25;
     export let showTafseer = false;
-
-    const chaptersOps = new ChaptersOperation();
-    const folder = chaptersOps.getFoldersList();
     
     const dispatch = createEventDispatcher();
 
-    function read(chap: number, verse: number) {
+    function read(id: number) {
 
-        dispatch("readed", { chap, verse });
+        dispatch("readed", id);
         chapter.readed++
     }
 </script>
@@ -25,6 +24,9 @@
             ? chapter.arabic.slice(0, 10)
             : chapter.arabic
         }
+    </div>
+    <div class="chapter-info">
+        {chapter.chapter}:{chapter.verse}
     </div>
     <div class="translation">
         {chapter.translate}
@@ -38,22 +40,19 @@
     {/if}
     <div class="navigation">        
         <span>
-            Dibaca: {chapter.readed}x
+            {chapter.readed}x dibaca
         </span>
-
         <div>
             <div class="dropdown">
                 <button class="dropbtn">Pindah ke</button>
                 <div class="dropdown-content">
-                {#if folder && folder.length}
 
-                  {#each folder as fold }
-                  <span>{fold.name}</span>
+                  {#each folderList as folder }
+                  <span>{folder.name}</span>
                   {/each}
-                {/if}
                 </div>
               </div>
-            <button on:click={() => read(chapter.chapter, chapter.verse)}>Read</button>
+            <button on:click={() => read(chapter.id)}>Read</button>
         </div>
     </div>
 </div>

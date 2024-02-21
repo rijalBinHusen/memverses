@@ -12,12 +12,14 @@
 
     let folderTitle = "";
 	let folderInfo = <FolderInterface>{};
+	let folderList = <FolderInterface[]|undefined>[];
 	let chapters = <VerseToShow[]>[];
 	let messageToShow = "Tidak ayat untuk dibaca, tekan tombol + dibawah :)";
     
     const chapterOperation = new ChaptersOperation();
     folderTitle = chapterOperation.retrieveTitleFolder();
 	folderInfo = chapterOperation.getFolderInfo();
+	folderList = chapterOperation.getFoldersList();
 
 	let showModal = false;
 	let currentForm = "";
@@ -45,7 +47,7 @@
 
 		if(data) {
 			
-			messageToShow = `Ayat selanjutnya akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
+			messageToShow = `Ayat akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
 			await new Promise((resolve) => {
 				setTimeout(() => {
 					resolve("")
@@ -68,10 +70,10 @@
 	}
 
 	function readChapter (e: any) {
-		const chapterInfo = e.detail as { chap: number, verse: number }
-		chapterOperation.readVerse(chapterInfo.chap, chapterInfo.verse)
+		const id = e.detail as number
+		chapterOperation.readVerse(id);
 
-		const findIndex = chapters.findIndex((chap) => chap.verse === chapterInfo.verse && chap.chapter === chapterInfo.chap);
+		const findIndex = chapters.findIndex((chap) => chap.id === id);
 		if(findIndex === -1) return;
 		
 		if(chapters.length > 1) {
@@ -115,6 +117,7 @@
 						arabicSize={folderInfo.arabicSize}
 						showTafseer={folderInfo.showTafseer}
 						on:readed={readChapter}
+						folderList={folderList}
 					/>
 				</div>
 			{/each}
