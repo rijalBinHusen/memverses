@@ -9,7 +9,7 @@
     <label for="list-verses">Pilih surah</label>
     <select bind:value={chapterNumber} on:change={selectVerse} name="list-verses" id="list-verses">
         {#each listVersesAndInfo as verses}
-            <option value={verses.nomor}> {verses.nama_latin} </option>
+            <option value={verses.nomor}>{verses.nomor} - {verses.nama_latin} </option>
         {/each}
     </select>
 

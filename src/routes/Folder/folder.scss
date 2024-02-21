@@ -10,12 +10,16 @@
     place-items: center;
     font-weight: normal;
     cursor: pointer;
-    text-decoration: none;
     color: $primary-color;
-
+    
     &:hover {
         background-color: $secondary-color;
         font-weight: bolder;
+    }
+    
+    a {
+        text-decoration: none;
+        width: 100%;
     }
 }
 
