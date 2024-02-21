@@ -13,12 +13,13 @@
     display: flex;
     flex-direction: column;
     gap: .2rem;
-    border-bottom: 2px dashed black;
+    border-bottom: 2px solid black;
     border-left: 2px dashed black;
     border-right: 2px dashed black;
+    border-top: 2px solid black;
     padding: .8rem .8rem 0 .8rem;
     margin-bottom: 1.7rem;
-    max-width: 30rem;
+    max-width: $width-max;
 }
 
 .chapter .navigation {
@@ -65,7 +66,7 @@
 .tafsir {
     padding-top: .5rem;
     margin: .5rem 0 0 0;
-    border-top: 3px solid black;
+    border-top: 3px solid $primary-color;
     white-space: pre-wrap;
 }
 

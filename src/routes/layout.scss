@@ -2,6 +2,6 @@
 
 .container {
     max-width: $width-max;
-    min-width: $width-min;
+    width: calc(100vw - 30px);
     min-height: 30rem;
 }

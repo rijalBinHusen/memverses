@@ -39,7 +39,7 @@
         </div>
     {/if}
     <div class="navigation">        
-        <span>
+        <span class="chapter-info">
             {chapter.readed}x dibaca
         </span>
         <div>
