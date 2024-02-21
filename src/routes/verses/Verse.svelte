@@ -7,6 +7,7 @@
     export let folderList = <FolderInterface[]>[];
     export let arabicSize = 25;
     export let showTafseer = false;
+    console.log(verse)
     
     const dispatch = createEventDispatcher();
 
@@ -31,7 +32,7 @@
         }
     </div>
     <div class="verse-info">
-        {verse.verse}:{verse.verse}
+        {verse.chapter}:{verse.verse}
     </div>
     <div class="translation">
         {verse.translate}
