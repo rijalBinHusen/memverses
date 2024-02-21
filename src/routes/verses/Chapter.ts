@@ -139,15 +139,16 @@ export class ChaptersOperation {
         for(let i = start; i <= end; i++) {
 
             const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
-            if(findIndex > -1) return;
-            
-            this.lists.push({
-                idFolder: this.#idFolder,
-                id: (chapter * 300) + i,
-                chapter,
-                verse: i,
-                readed: 0
-            })
+            if(findIndex === -1) {
+                
+                this.lists.push({
+                    idFolder: this.#idFolder,
+                    id: (chapter * 300) + i,
+                    chapter,
+                    verse: i,
+                    readed: 0
+                })
+            }
         }
 
         this.lists.sort((a, b) => a.id - b.id );
@@ -177,12 +178,8 @@ export class ChaptersOperation {
             else {
     
                 // reset readed
-                this.lists = this.lists.map((vers) => ({
-                    ...vers, readed: 0
-                }))
-                this.saveToLocalStorage();
-                const filterFolder = this.lists.filter((vers) => vers.idFolder == idFolder && vers.readed < this.folderInfo.readTarget);
-                verseToShow = filterFolder
+                this.resetVerseReaded(idFolder);
+                verseToShow = filterList.slice(0, verseLimiter);
             }
         } else return;
 
@@ -232,6 +229,18 @@ export class ChaptersOperation {
 
         const record = { ...this.lists[findIndex] };
         this.lists[findIndex] = { ...record, idFolder }
+        this.saveToLocalStorage();
+    }
+
+    resetVerseReaded(idFolder: string) {
+
+        for(let i = 0; i < this.lists.length; i++) {
+            const record = this.lists[i];
+
+            if(record.idFolder === idFolder) {
+                this.lists[i].readed = 0
+            }
+        }
         this.saveToLocalStorage();
     }
 

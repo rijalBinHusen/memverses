@@ -58,7 +58,7 @@
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    max-width: max-content;
+    max-width: $width-max;
   }
   
   /* The Close Button */

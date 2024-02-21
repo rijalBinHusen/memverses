@@ -7,7 +7,6 @@
     export let folderList = <FolderInterface[]>[];
     export let arabicSize = 25;
     export let showTafseer = false;
-    console.log(verse)
     
     const dispatch = createEventDispatcher();
 
