@@ -268,12 +268,14 @@ export class ChaptersOperation {
                 if(vers.idFolder === idFolder) index = i;
             }
         }
+        // console.log(i)
 
         if(!idsFolder.length) return;
-        if(idsFolder.length > 1) this.lists.splice(index, 1);
-
+        
         const record = { ...this.lists[index] };
         this.lists[index] = { ...record, idFolder };
+        
+        if(idsFolder.length > 1) this.lists.splice(index, 1);
         this.saveToLocalStorage();
     }
 
