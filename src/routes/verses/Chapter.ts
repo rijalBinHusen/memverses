@@ -174,6 +174,14 @@ export class ChaptersOperation {
         const isRandomVerses = this.folderInfo.isShowRandomVerse;
         const readTarget = this.folderInfo.readTarget;
 
+        let arrRandomIndex = [0];
+
+        if(isRandomVerses) {
+            // random array contain number
+            arrRandomIndex = Array.from({ length: verseLimiter }, () => Math.floor(Math.random() * (this.lists.length - 1 + 1)) + 1);
+
+        }
+
         let verseToShow = <Chapter[]>[];
         let allVerseInFolder = <Chapter[]>[];
 
@@ -182,10 +190,20 @@ export class ChaptersOperation {
 
             if(verse.idFolder === idFolder) {
                 allVerseInFolder.push(verse)
-                if(verse.readed < readTarget && verseToShow.length < verseLimiter) {
 
-                    verseToShow.push(verse);
-                }
+                if(verse.readed < readTarget) {
+
+                    if(verseToShow.length < verseLimiter) {
+
+                        if(isRandomVerses) {
+                            const possibiltyTrue = Math.random() * 100 < 5;
+                            if(possibiltyTrue) verseToShow.push(verse)
+                        } else {
+
+                            verseToShow.push(verse)
+                        }
+                    };
+                } 
             }
         }
 
@@ -196,10 +214,7 @@ export class ChaptersOperation {
             verseToShow = allVerseInFolder.slice(0, verseLimiter);
         }
 
-        // if(isRandomVerses) {
-        //     verseToShow.push();
-        // }
-
+        if(!verseToShow.length) return;
 
         const result = <VerseToShow[]>[]
         let verseRetrieved = <verseAndChapterDetail>{};
