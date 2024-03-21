@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { type VerseToShow } from "./Chapter";
-    import { type FolderInterface } from "../Folder";
+    import { type FolderInterface } from "../Folder/Folder";
     
     export let verse = <VerseToShow>{};
     export let folderList = <FolderInterface[]>[];

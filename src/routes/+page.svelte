@@ -2,7 +2,7 @@
 	import Seo from '../components/seo.svelte';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../components/Modal.svelte';
-	import { Folder, type FolderInterface } from "./Folder";
+	import { Folder, type FolderInterface } from "./Folder/Folder";
 
 	let showModal = false;
 
