@@ -172,26 +172,33 @@ export class ChaptersOperation {
         const idFolder = this.folderInfo.id
         const verseLimiter = this.folderInfo.verseToShow;
         const isRandomVerses = this.folderInfo.isShowRandomVerse;
+        const readTarget = this.folderInfo.readTarget;
 
-        let verseToShow = <Chapter[]>[]
-        
-        const filterList = this.lists.filter((vers) => vers.idFolder == idFolder);
+        let verseToShow = <Chapter[]>[];
+        let allVerseInFolder = <Chapter[]>[];
 
-        if(filterList.length) {
-            const filterUnreaded = filterList.filter((vers) => vers.readed < this.folderInfo.readTarget)
+        for(let i = 0; i < this.lists.length; i++) {
+            const verse = this.lists[i];
 
-            if(filterUnreaded.length) {
+            if(verse.idFolder === idFolder) {
+                allVerseInFolder.push(verse)
+                if(verse.readed < readTarget && verseToShow.length < verseLimiter) {
 
-                verseToShow = filterUnreaded.slice(0, verseLimiter);
+                    verseToShow.push(verse);
+                }
             }
+        }
 
-            else {
-    
-                // reset readed
-                this.resetVerseReaded(idFolder);
-                verseToShow = filterList.slice(0, verseLimiter);
-            }
-        } else return;
+        const isAnyVerseToShow = verseToShow.length;
+        if(!isAnyVerseToShow) {
+            
+            this.resetVerseReaded(idFolder);
+            verseToShow = allVerseInFolder.slice(0, verseLimiter);
+        }
+
+        // if(isRandomVerses) {
+        //     verseToShow.push();
+        // }
 
 
         const result = <VerseToShow[]>[]
