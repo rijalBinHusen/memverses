@@ -171,6 +171,7 @@ export class ChaptersOperation {
         
         const idFolder = this.folderInfo.id
         const verseLimiter = this.folderInfo.verseToShow;
+        const isRandomVerses = this.folderInfo.isShowRandomVerse;
 
         let verseToShow = <Chapter[]>[]
         
@@ -196,6 +197,7 @@ export class ChaptersOperation {
         const result = <VerseToShow[]>[]
         let verseRetrieved = <verseAndChapterDetail>{};
 
+        // retrieve detail verses
         for (let chapter of verseToShow) {
 
             const chapterStr = chapter.chapter + ""

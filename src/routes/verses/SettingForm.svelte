@@ -35,6 +35,19 @@
     <div class="checkbox">
         
         <input 
+            checked={setting.isShowRandomVerse}
+            type="checkbox" 
+            name="show-random-verse" 
+            id="show-random-verse"
+            on:change={() => setting.isShowRandomVerse = !setting.isShowRandomVerse}
+        >
+        <label for="show-random-verse">Tampilkan ayat secara acak</label>
+    
+    </div>
+
+    <div class="checkbox">
+        
+        <input 
             checked={setting.showFirstLetter}
             type="checkbox" 
             id="show-only-first-letter"
