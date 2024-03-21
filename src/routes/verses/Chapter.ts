@@ -232,12 +232,24 @@ export class ChaptersOperation {
     }
 
     moveVerseToFolder(verseId: number, idFolder: string) {
-        const findIndex = this.lists.findIndex((vers) => vers.id === verseId);
+        
+        const idsFolder = <string[]>[];
+        let index = -1;
+        
+        for(let i = 0; i < this.lists.length; i++) {
+            const vers = this.lists[i];
 
-        if(findIndex < 0) return;
+            if(vers.id === verseId) {
+                idsFolder.push(vers.idFolder);
+                if(vers.idFolder === idFolder) index = i;
+            }
+        }
 
-        const record = { ...this.lists[findIndex] };
-        this.lists[findIndex] = { ...record, idFolder }
+        if(!idsFolder.length) return;
+        if(idsFolder.length > 1) this.lists.splice(index, 1);
+
+        const record = { ...this.lists[index] };
+        this.lists[index] = { ...record, idFolder };
         this.saveToLocalStorage();
     }
 
