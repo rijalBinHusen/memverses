@@ -208,7 +208,7 @@ export class ChaptersOperation {
         }
 
         const isAnyVerseToShow = verseToShow.length;
-        if(!isAnyVerseToShow) {
+        if(!isAnyVerseToShow && allVerseInFolder.length) {
             
             this.resetVerseReaded(idFolder);
             verseToShow = allVerseInFolder.slice(0, verseLimiter);
@@ -259,16 +259,16 @@ export class ChaptersOperation {
         
         const idsFolder = <string[]>[];
         let index = -1;
+        let currentIdFolder = this.folderInfo.id;
         
         for(let i = 0; i < this.lists.length; i++) {
             const vers = this.lists[i];
 
             if(vers.id === verseId) {
                 idsFolder.push(vers.idFolder);
-                if(vers.idFolder === idFolder) index = i;
+                if(vers.idFolder === currentIdFolder) index = i;
             }
         }
-        // console.log(i)
 
         if(!idsFolder.length) return;
         
