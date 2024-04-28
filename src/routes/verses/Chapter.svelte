@@ -6,7 +6,7 @@
     import VersesForm from './ChapterForm.svelte';
     import { onMount } from 'svelte';
     import SettingForm from './SettingForm.svelte';
-	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
+	import { type FolderUpdate, type FolderInterface, Folder } from "../index/Folder";
 	import Chapter from './Verse.svelte';
     import { flip } from 'svelte/animate';
 

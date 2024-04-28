@@ -63,7 +63,7 @@
 
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { type FolderUpdate } from "../Folder";
+    import { type FolderUpdate } from "../index/Folder";
     export let setting = <FolderUpdate>{
         verseToShow: 5,
         nextChapterOnSecond: 3,

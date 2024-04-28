@@ -2,7 +2,8 @@
 	import Seo from '../components/seo.svelte';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../components/Modal.svelte';
-	import { Folder, type FolderInterface } from "./Folder";
+	import { Folder, type FolderInterface } from "./index/Folder";
+	import Account from './index/Account.svelte';
 
 	let showModal = false;
 
@@ -56,8 +57,12 @@
 />
 
 <section>
-	<h1>Hafal al-Quran</h1>
-
+	<div class="header-title-page">
+		<h1>Hafal al-Quran</h1>
+		<span>
+			<button>&#9881;</button>
+		</span>
+	</div>
 	<div>
 		{#if listFolder.length}
 		
@@ -94,7 +99,25 @@
 
 <style lang="scss">
 	@import "../scss/bottom-nav.scss";
-	@import "./Folder/folder.scss";
+	@import "./index/folder.scss";
 	@import "../scss/primary-button.scss";
 	@import "../scss/form.scss";
+
+
+	.header-title-page {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.header-title-page button {
+		background-color: $secondary-color;
+		// padding: .2rem .4rem .2rem .4rem;
+		border: 1px solid $primary-color;
+		color: $primary-color;
+		font-weight: bolder;
+		cursor: pointer;
+		font-size: x-large;
+		border-radius: 50%;
+	}
 </style>

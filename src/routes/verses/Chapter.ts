@@ -8,7 +8,7 @@
 // reate static chpater all verses
 // retrieve every chapter every show
 
-import { Folder, type FolderInterface } from "../Folder"
+import { Folder, type FolderInterface } from "../index/Folder"
 
 interface ArabicQuran {
     [verse: string]: string
