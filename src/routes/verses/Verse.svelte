@@ -25,7 +25,7 @@
 </script>
 
 <div class="verse">
-    <div class="arabic" style={'font-size:'+ arabicSize + 'px'}>
+    <div class="arabic notranslate" style={'font-size:'+ arabicSize + 'px'}>
 
         { isShowFirstLetter
             ? verse.arabic.slice(0, 10)

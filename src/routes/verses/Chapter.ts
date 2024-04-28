@@ -171,31 +171,55 @@ export class ChaptersOperation {
         
         const idFolder = this.folderInfo.id
         const verseLimiter = this.folderInfo.verseToShow;
+        const isRandomVerses = this.folderInfo.isShowRandomVerse;
+        const readTarget = this.folderInfo.readTarget;
 
-        let verseToShow = <Chapter[]>[]
-        
-        const filterList = this.lists.filter((vers) => vers.idFolder == idFolder);
+        let arrRandomIndex = [0];
 
-        if(filterList.length) {
-            const filterUnreaded = filterList.filter((vers) => vers.readed < this.folderInfo.readTarget)
+        if(isRandomVerses) {
+            // random array contain number
+            arrRandomIndex = Array.from({ length: verseLimiter }, () => Math.floor(Math.random() * (this.lists.length - 1 + 1)) + 1);
 
-            if(filterUnreaded.length) {
+        }
 
-                verseToShow = filterUnreaded.slice(0, verseLimiter);
+        let verseToShow = <Chapter[]>[];
+        let allVerseInFolder = <Chapter[]>[];
+
+        for(let i = 0; i < this.lists.length; i++) {
+            const verse = this.lists[i];
+
+            if(verse.idFolder === idFolder) {
+                allVerseInFolder.push(verse)
+
+                if(verse.readed < readTarget) {
+
+                    if(verseToShow.length < verseLimiter) {
+
+                        if(isRandomVerses) {
+                            const possibiltyTrue = Math.random() * 100 < 5;
+                            if(possibiltyTrue) verseToShow.push(verse)
+                        } else {
+
+                            verseToShow.push(verse)
+                        }
+                    };
+                } 
             }
+        }
 
-            else {
-    
-                // reset readed
-                this.resetVerseReaded(idFolder);
-                verseToShow = filterList.slice(0, verseLimiter);
-            }
-        } else return;
+        const isAnyVerseToShow = verseToShow.length;
+        if(!isAnyVerseToShow && allVerseInFolder.length) {
+            
+            this.resetVerseReaded(idFolder);
+            verseToShow = allVerseInFolder.slice(0, verseLimiter);
+        }
 
+        if(!verseToShow.length) return;
 
         const result = <VerseToShow[]>[]
         let verseRetrieved = <verseAndChapterDetail>{};
 
+        // retrieve detail verses
         for (let chapter of verseToShow) {
 
             const chapterStr = chapter.chapter + ""
@@ -232,12 +256,26 @@ export class ChaptersOperation {
     }
 
     moveVerseToFolder(verseId: number, idFolder: string) {
-        const findIndex = this.lists.findIndex((vers) => vers.id === verseId);
+        
+        const idsFolder = <string[]>[];
+        let index = -1;
+        let currentIdFolder = this.folderInfo.id;
+        
+        for(let i = 0; i < this.lists.length; i++) {
+            const vers = this.lists[i];
 
-        if(findIndex < 0) return;
+            if(vers.id === verseId) {
+                idsFolder.push(vers.idFolder);
+                if(vers.idFolder === currentIdFolder) index = i;
+            }
+        }
 
-        const record = { ...this.lists[findIndex] };
-        this.lists[findIndex] = { ...record, idFolder }
+        if(!idsFolder.length) return;
+        
+        const record = { ...this.lists[index] };
+        this.lists[index] = { ...record, idFolder };
+        
+        if(idsFolder.length > 1) this.lists.splice(index, 1);
         this.saveToLocalStorage();
     }
 
