@@ -3,49 +3,73 @@
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../components/Modal.svelte';
 	import { Folder, type FolderInterface } from "./index/Folder";
+	import FolderForm from './index/FolderForm.svelte';
 	import Account from './index/Account.svelte';
 
-	let showModal = false;
+	let modalInfo = {
+		isModalShow: false,
+		isFolderForm: false,
+		modalTitle: "",
+	}
 
 	function toggleModal() {
-		showModal = !showModal;
+		modalInfo.isModalShow = !modalInfo.isModalShow;
+	}
+
+	function showModalFolderForm () {
+		modalInfo = {
+			isModalShow: true,
+			isFolderForm: true,
+			modalTitle: `${currentFolderInfo.folderId ? 'Update' : 'Buat'} Folder` 
+		}
+	}
+
+	function showModalAccount () {
+		modalInfo = {
+			isModalShow: true,
+			isFolderForm: false,
+			modalTitle: "Akun anda" 
+		}
+	}
+
+	interface FolderInfo { folderId: string, folderName: string }
+	let currentFolderInfo = <FolderInfo>{
+		folderName: "",
+		folderId: ""
 	}
 
 	let listFolder:FolderInterface[] = [];
 	
 	const folderOperation = new Folder();
-	const retrieveFolder = folderOperation.getFolder();
-	if(retrieveFolder) listFolder = retrieveFolder;
 
-	// form operation
-	let folderName = "";
-	let folderId = "";
+	function renewFolderList () {
 
-	function handleSubmit() {
-		if(folderName === "") return;
-
-		if(folderId) {
-			folderOperation.updateFolder(folderId, { name: folderName });
-
-		} else {
-	
-			folderOperation.createFolder(folderName);
-		}
-
-		folderName = "" //empty the form
-		folderId = "" 
-		toggleModal() // close modal
-		listFolder = folderOperation.lists
+		const retrieveFolder = folderOperation.getFolder();
+		if(retrieveFolder) listFolder = retrieveFolder;
 	}
 
-	function editFolder(id:string) {
+	function handleEditFolder(id:string) {
 		const folderInfo = folderOperation.getFolderInfoById(id);
 		if(typeof folderInfo === "undefined") return;
 
-		folderName = folderInfo.name;
-		folderId = folderInfo.id;
-		toggleModal();
+		currentFolderInfo.folderName = folderInfo.name;
+		currentFolderInfo.folderId = folderInfo.id;
+		showModalFolderForm();
 	}
+
+	function handleSubmitFolder(e: any) {
+	
+		const folderInfo = e.detail as FolderInfo;
+		if(folderInfo.folderId) folderOperation.updateFolder(folderInfo.folderId, { name: folderInfo.folderName })
+		else folderOperation.createFolder(folderInfo.folderName);
+
+		currentFolderInfo.folderName = "";
+		currentFolderInfo.folderId = "";
+		toggleModal();
+		renewFolderList()
+	}
+
+	renewFolderList()
 
 </script>
 
@@ -60,7 +84,7 @@
 	<div class="header-title-page">
 		<h1>Hafal al-Quran</h1>
 		<span>
-			<button>&#9881;</button>
+			<button on:click={showModalAccount}>&#9881;</button>
 		</span>
 	</div>
 	<div>
@@ -72,7 +96,7 @@
 				<a href={'/verses?id-folder='+folder.id}>
 					{folder.name} 
 				</a>
-				<button on:click={() => editFolder(folder.id)}>Edit</button>
+				<button on:click={() => handleEditFolder(folder.id)}>Edit</button>
 			</div>
 
 			{/each}
@@ -82,18 +106,21 @@
 		{/if}
 	</div>
 	<div class="bottom-nav">
-		<button class="primary-button" on:click={toggleModal}>+</button>
+		<button class="primary-button" on:click={showModalFolderForm}>+</button>
 	</div>
 	<Modal
 		on:closeModal={toggleModal} 
-		isOpen={showModal} 
-		title="Buat folder baru"
+		isOpen={modalInfo.isModalShow} 
+		title={modalInfo.modalTitle}
 	>
-		<div class="form">
-			<label for="nama-folder">Masukkan nama folder</label>
-			<input bind:value={folderName} type="text" name="nama-folder" id="nama-folder">
-			<button class="primary-button" on:click={handleSubmit}>{folderId ? 'Update' : 'Buat folder'}</button>
-		</div>
+		{#if modalInfo.isFolderForm}
+			<FolderForm 
+				folderInfo={currentFolderInfo}
+				on:submitFolderForm={handleSubmitFolder}
+			/>
+		{:else}
+			<Account />
+		{/if}
 	</Modal>
 </section>
 
@@ -101,7 +128,6 @@
 	@import "../scss/bottom-nav.scss";
 	@import "./index/folder.scss";
 	@import "../scss/primary-button.scss";
-	@import "../scss/form.scss";
 
 
 	.header-title-page {
