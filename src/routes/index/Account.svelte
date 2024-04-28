@@ -15,8 +15,8 @@
 </script>
 
 <section>
-    <div class="login">
-        <h1>Login</h1>
+    <div class="form">
+        <h1>{isRegister ? "Daftar" : "Login"}</h1>
         <label for="email">Masukkan email</label>
         <input bind:value={email} type="text" name="email" id="email">
         {#if isRegister}
@@ -24,10 +24,10 @@
             <input bind:value={username} type="text" name="username" id="username">
         {/if}
         <label for="password">Masukkan password</label>
-        <input bind:value={password} type="text" name="password" id="password">
+        <input bind:value={password} type="password" name="password" id="password">
         {#if isRegister}
             <label for="password_confirm">Konfirmasi password</label>
-            <input bind:value={password_confirm} type="text" name="password_confirm" id="password_confirm">
+            <input bind:value={password_confirm} type="password" name="password_confirm" id="password_confirm">
         {/if}
         
         {#if isRegister}
@@ -39,3 +39,27 @@
         {/if}
     </div>
 </section>
+
+<style lang="scss">
+    @import "../../scss/primary-button.scss";
+
+.form {
+    display: grid;
+    margin: .5rem 0 0 0;
+    gap: .2rem;
+    width: 100%;
+}
+
+.form {
+    input {
+        display: flex;
+        padding: .2rem 0 .2rem .2rem;
+        font-size: large;
+    }
+}
+
+label {
+    margin: .2rem 0 .2rem 0;
+    display: flex;
+}
+</style>
