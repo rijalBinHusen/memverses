@@ -15,7 +15,7 @@
 </script>
 
 <section>
-    <div class="form">
+    <div id="form" class="form">
         <h1>{isRegister ? "Daftar" : "Login"}</h1>
         <label for="email">Masukkan email</label>
         <input bind:value={email} type="text" name="email" id="email">
@@ -32,10 +32,10 @@
         
         {#if isRegister}
             <button class="primary-button" on:click={register}>Daftar</button>
-            <a href="#register" on:click={ () => isRegister = false}>Login</a>
+            <a href="#form" on:click={ () => isRegister = false}>Login</a>
         {:else}
             <button class="primary-button" on:click={login}>Login</button>
-            <a href="#login" on:click={ () => isRegister = true}>Daftar</a>
+            <a href="#form" on:click={ () => isRegister = true}>Daftar</a>
         {/if}
     </div>
 </section>
