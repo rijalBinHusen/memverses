@@ -9,6 +9,7 @@
 // retrieve every chapter every show
 
 import { Folder, type FolderInterface } from "../index/Folder"
+import { fetchData } from "../../scipts/fetch";
 
 interface ArabicQuran {
     [verse: string]: string
@@ -227,7 +228,7 @@ export class ChaptersOperation {
 
             const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
             if(!isVerseRetrieved) {
-                const fetchVerse = await fetch(`/verses/${chapter.chapter}.json`, { cache: "force-cache"});
+                const fetchVerse = await fetchData(`/verses/${chapter.chapter}.json`);
                 if(!fetchVerse) return;
                 verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
             }
