@@ -83,9 +83,9 @@
 <section>
 	<div class="header-title-page">
 		<h1>Hafal al-Quran</h1>
-		<span>
+		<!-- <span>
 			<button on:click={showModalAccount}>&#9881;</button>
-		</span>
+		</span> -->
 	</div>
 	<div>
 		{#if listFolder.length}
