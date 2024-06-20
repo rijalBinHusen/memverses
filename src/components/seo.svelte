@@ -1,8 +1,9 @@
 <script lang="ts">
+    
     export let title:string = "";
     export let description:string = "";
-    export let link: string = "";
-    export let thumbnail: string = "";
+    let link: string = "https://memverses.ibinhusen.my.id";
+    let thumbnail = link + "/thumbnail-main.png"
 </script>
 
 <svelte:head>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Seo from '../components/seo.svelte';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	import Modal from '../components/Modal.svelte';
 	import { Folder, type FolderInterface } from "./index/Folder";
 	import FolderForm from './index/FolderForm.svelte';
@@ -75,9 +74,7 @@
 
 <Seo 
 	title="Halaman utama" 
-	description="Halaman utama kita" 
-	link="localhost:3000" 
-	thumbnail={welcome_fallback}
+	description="Halaman utama aplikasi menghafal alquran"
 />
 
 <section>
