@@ -3,35 +3,61 @@ export async function fetchData(url: string) {
     const cache = await caches.open('my-cache'); // Replace 'my-cache' with your desired cache name
     const cachedResponse = await cache.match(url);
   
-    if (cachedResponse) {
-      console.log('Using data from cache');
-      return cachedResponse.clone(); // Return a clone to avoid modifying the cached copy
-    }
+    // Return a clone to avoid modifying the cached copy
+    if (cachedResponse) return cachedResponse.clone();
   
     // If not cached, attempt to fetch from the network (will fail offline)
     try {
       const response = await fetch(url);
-      console.log('Fetched data from network');
   
       // Cache the response for future use
       await cache.put(url, response.clone()); // Cache a clone to avoid modifying the original
-  
       return response;
     } catch (error) {
       console.error('Error fetching data:', error);
       throw error; // Re-throw the error for handling in the calling code
     }
   }
-  
-//   // Example usage
-//   fetchData('https://api.example.com/data')
-//     .then(response => response.json()) // Parse the JSON response
-//     .then(data => {
-//       console.log(data);
-//       // Process the fetched data here
-//     })
-//     .catch(error => {
-//       console.error('Error:', error);
-//       // Handle errors, potentially display cached data or an offline message
-//     });
-  
+
+export function requestToServer(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', body: string | FormData): Promise<Response | Error> | undefined {
+  console.log(body)
+  let headersList = {
+    "Accept": "*/*",
+    "Code-Authorization": ""
+  }
+
+  if (typeof body === 'string') {
+    //@ts-ignore
+    headersList["Content-Type"] = "application/json";
+  }
+
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  return new Promise( async (resolve, reject) => {
+    
+    let timer: any;
+    const requestInit: RequestInit = {
+      signal,
+      method,
+      body,
+      headers: headersList
+    }
+
+    if (method === 'GET') { delete requestInit['body'] }
+
+    fetch(url, requestInit)
+      .then(response => resolve(response))
+      .catch(error => { reject(error) })
+      .finally(() => { clearTimeout(timer) })
+
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(`Request timed out after ${8000}ms`));
+    }, 8000);
+  });
+}
+
+export function isResponseFromFetch(value: any): value is Response {
+  return value instanceof Response;
+}

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
     let email = "";
     let username = "";
     let password = "";
@@ -6,11 +8,40 @@
 
     let isRegister = false;
 
-    function login() {
-        alert("Function not implemented yet")
+    const dispatch = createEventDispatcher();
+
+    async function login() {
+        
+        // check email
+        if(!validateEmail(email)) {
+            alert("Email tidak sesuai")
+            return;
+        }
+        dispatch("login", { email, password });
     }
-    function register() {
-        alert("Function not implemented yet")
+
+    function validateEmail(email: string) {
+        const parts = email.split('@');
+        if (parts.length !== 2) return false;
+
+        const [username, domain] = parts;
+        if (!username || !domain) return false;
+        
+        const domainParts = domain.split('.');
+        if (domainParts.length < 2) return false;
+        
+        return true;
+    }
+
+    async function register() {
+        // check email
+        const isFormValid = validateEmail(email) && username.length > 5 && password === password_confirm;
+        if(!isFormValid) {
+            alert("Username atau email atau password tidak sesuai")
+            return;
+        }
+        dispatch("register", { username, email, password });
+
     }
 </script>
 

@@ -4,6 +4,10 @@
 	import { Folder, type FolderInterface } from "./index/Folder";
 	import FolderForm from './index/FolderForm.svelte';
 	import Account from './index/Account.svelte';
+	import { env } from '$env/dynamic/public';
+    import { isResponseFromFetch, requestToServer } from '../scipts/fetch';
+
+	const hostURL = "http://" + env.PUBLIC_HOST_URL + "/" ;
 
 	let modalInfo = {
 		isModalShow: false,
@@ -68,6 +72,74 @@
 		renewFolderList()
 	}
 
+	async function handleUserRegister(e: any) {
+	
+		const userInfo = e.detail as { username: string, password: string, email: string };
+		const isUserInfoInvalid = userInfo.username == "" || userInfo.password == "" || userInfo.email == "";
+		if(isUserInfoInvalid) {
+			alert("Form tidak boleh ada kosong")
+			return;
+		}
+
+		const dataToPost = JSON.stringify(userInfo)
+        try {
+            
+            const register = await requestToServer( hostURL + "memverses/user/register", "POST", dataToPost)
+            if(isResponseFromFetch(register)) {
+                if(register.status === 200) {
+					modalInfo = {
+						isModalShow: false,
+						isFolderForm: false,
+						modalTitle: ""
+					};			
+				}
+
+                else {
+                    const response = await register.json();
+                    throw (response?.message)
+                }
+            }
+
+            throw ("Terjadi kesalahan saat terhubung dengan server")
+        } catch (error) {
+            alert(error)
+        }
+	}
+	
+	async function handleUserLogin(e: any) {
+		 console.log(e)
+		const userInfo = e.detail as { password: string, email: string };
+		const isUserInfoInvalid =  userInfo.password == "" || userInfo.email == "";
+		if(isUserInfoInvalid) {
+			alert("Form tidak boleh ada kosong")
+			return;
+		}
+
+		const dataToPost = JSON.stringify(userInfo)
+        try {
+            
+            const register = await requestToServer( hostURL + "memverses/user/login", "POST", dataToPost)
+            if(isResponseFromFetch(register)) {
+                if(register.status === 200) {
+					modalInfo = {
+						isModalShow: false,
+						isFolderForm: false,
+						modalTitle: ""
+					};			
+				}
+
+                else {
+                    const response = await register.json();
+                    throw (response?.message)
+                }
+            }
+
+            throw ("Terjadi kesalahan saat terhubung dengan server")
+        } catch (error) {
+            alert(error)
+        }
+	}
+
 	renewFolderList()
 
 </script>
@@ -80,9 +152,9 @@
 <section>
 	<div class="header-title-page">
 		<h1>Hafal al-Quran</h1>
-		<!-- <span>
+		<span>
 			<button on:click={showModalAccount}>&#9881;</button>
-		</span> -->
+		</span>
 	</div>
 	<div>
 		{#if listFolder.length}
@@ -116,7 +188,10 @@
 				on:submitFolderForm={handleSubmitFolder}
 			/>
 		{:else}
-			<Account />
+			<Account 
+				on:register={handleUserRegister}
+				on:login={handleUserLogin}
+			/>
 		{/if}
 	</Modal>
 </section>
