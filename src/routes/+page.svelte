@@ -5,6 +5,7 @@
 	import FolderForm from './index/FolderForm.svelte';
 	import Account from './index/Account.svelte';
 	import { env } from '$env/dynamic/public';
+	
     import { isResponseFromFetch, requestToServer } from '../scipts/fetch';
 
 	const hostURL = "http://" + env.PUBLIC_HOST_URL + "/" ;
@@ -92,6 +93,7 @@
 						isFolderForm: false,
 						modalTitle: ""
 					};			
+					return;
 				}
 
                 else {
@@ -126,6 +128,7 @@
 						isFolderForm: false,
 						modalTitle: ""
 					};			
+					return
 				}
 
                 else {
