@@ -1,96 +1,50 @@
-<script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
-    let email = "";
-    let username = "";
-    let password = "";
-    let password_confirm = "";
-
-    let isRegister = false;
-
-    const dispatch = createEventDispatcher();
-
-    async function login() {
-        
-        // check email
-        if(!validateEmail(email)) {
-            alert("Email tidak sesuai")
-            return;
-        }
-        dispatch("login", { email, password });
-    }
-
-    function validateEmail(email: string) {
-        const parts = email.split('@');
-        if (parts.length !== 2) return false;
-
-        const [username, domain] = parts;
-        if (!username || !domain) return false;
-        
-        const domainParts = domain.split('.');
-        if (domainParts.length < 2) return false;
-        
-        return true;
-    }
-
-    async function register() {
-        // check email
-        const isFormValid = validateEmail(email) && username.length > 5 && password === password_confirm;
-        if(!isFormValid) {
-            alert("Username atau email atau password tidak sesuai")
-            return;
-        }
-        dispatch("register", { username, email, password });
-
-    }
-</script>
-
 <section>
-    <div id="form" class="form">
-        <h1>{isRegister ? "Daftar" : "Login"}</h1>
-        <label for="email">Masukkan email</label>
-        <input bind:value={email} type="text" name="email" id="email">
-        {#if isRegister}
-            <label for="username">Masukkan username</label>
-            <input bind:value={username} type="text" name="username" id="username">
-        {/if}
-        <label for="password">Masukkan password</label>
-        <input bind:value={password} type="password" name="password" id="password">
-        {#if isRegister}
-            <label for="password_confirm">Konfirmasi password</label>
-            <input bind:value={password_confirm} type="password" name="password_confirm" id="password_confirm">
-        {/if}
-        
-        {#if isRegister}
-            <button class="primary-button" on:click={register}>Daftar</button>
-            <a href="#form" on:click={ () => isRegister = false}>Login</a>
-        {:else}
-            <button class="primary-button" on:click={login}>Login</button>
-            <a href="#form" on:click={ () => isRegister = true}>Daftar</a>
-        {/if}
-    </div>
+    <div class="form">
+  
+        <img src="http://www.androidpolice.com/wp-content/themes/ap2/ap_resize/ap_resize.php?src=http%3A%2F%2Fwww.androidpolice.com%2Fwp-content%2Fuploads%2F2015%2F10%2Fnexus2cee_Search-Thumb-150x150.png&w=150&h=150&zc=3" alt="google-icon"> 
+        <a href="http://localhost:8000/google/auth_url?url_app=http://localhost:3000">
+            <button>Masuk dengan google</button>
+        </a>
+      
+      </div>
 </section>
 
 <style lang="scss">
-    @import "../../scss/primary-button.scss";
+    * {
+  box-sizing: border-box;
+}
 
-.form {
-    display: grid;
-    margin: .5rem 0 0 0;
-    gap: .2rem;
-    width: 100%;
+img {
+  display: block;
+  width: 80px;
+  margin: 30px auto;
+  box-shadow: 0 5px 10px -7px #333333;
+  border-radius: 50%;
 }
 
 .form {
-    input {
-        display: flex;
-        padding: .2rem 0 .2rem .2rem;
-        font-size: large;
-    }
+  background-color: #ffffff;
+  width: 500px;
+  margin: 50px auto 10px auto;
+  padding: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px -3px #333;
+  text-align: center;
 }
 
-label {
-    margin: .2rem 0 .2rem 0;
-    display: flex;
+button {
+  border-radius: 100px;
+  border: none;
+  background: #719BE6;
+  width: 50%;
+  padding: 10px;
+  color: #FFFFFF;
+  margin-top: 25px;
+  box-shadow: 0 2px 10px -3px #719BE6;
+  display: block;
+  margin: 55px auto 10px auto;
+  cursor: pointer;
 }
+
 </style>

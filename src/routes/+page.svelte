@@ -7,6 +7,7 @@
 	import { env } from '$env/dynamic/public';
 	
     import { isResponseFromFetch, requestToServer } from '../scipts/fetch';
+    import { onMount } from 'svelte';
 
 	const hostURL = "http://" + env.PUBLIC_HOST_URL + "/" ;
 
@@ -32,7 +33,7 @@
 		modalInfo = {
 			isModalShow: true,
 			isFolderForm: false,
-			modalTitle: "Akun anda" 
+			modalTitle: "Login" 
 		}
 	}
 
@@ -72,76 +73,32 @@
 		toggleModal();
 		renewFolderList()
 	}
-
-	async function handleUserRegister(e: any) {
 	
-		const userInfo = e.detail as { username: string, password: string, email: string };
-		const isUserInfoInvalid = userInfo.username == "" || userInfo.password == "" || userInfo.email == "";
-		if(isUserInfoInvalid) {
-			alert("Form tidak boleh ada kosong")
-			return;
-		}
+	async function catchGoogleCodeAccess() {
+		const query = window.location.search
+		if(!query) return;
+		const split = query.split("=")
+		
+		if(split.length < 2) return;
+		if(split[0]  != "?code") return;
+		// set token
+		await requestToServer("http://localhost:8000/google/get_access_token?code="+split[1], "GET", "");
+		localStorage.setItem("isLogin", "1");
+		window.location.replace(window.location.origin);
+	}
 
-		const dataToPost = JSON.stringify(userInfo)
-        try {
-            
-            const register = await requestToServer( hostURL + "memverses/user/register", "POST", dataToPost)
-            if(isResponseFromFetch(register)) {
-                if(register.status === 200) {
-					modalInfo = {
-						isModalShow: false,
-						isFolderForm: false,
-						modalTitle: ""
-					};			
-					return;
-				}
-
-                else {
-                    const response = await register.json();
-                    throw (response?.message)
-                }
-            }
-
-            throw ("Terjadi kesalahan saat terhubung dengan server")
-        } catch (error) {
-            alert(error)
-        }
+	async function getUserInfo() {
+		const isLogin = localStorage.getItem("isLogin");
+		console.log(isLogin)
+		if(isLogin != "1") return;
+		const userInfo = await requestToServer("http://localhost:8000/google/get_user_info", "GET", "");
+		console.log(userInfo)
 	}
 	
-	async function handleUserLogin(e: any) {
-		 console.log(e)
-		const userInfo = e.detail as { password: string, email: string };
-		const isUserInfoInvalid =  userInfo.password == "" || userInfo.email == "";
-		if(isUserInfoInvalid) {
-			alert("Form tidak boleh ada kosong")
-			return;
-		}
-
-		const dataToPost = JSON.stringify(userInfo)
-        try {
-            
-            const register = await requestToServer( hostURL + "memverses/user/login", "POST", dataToPost)
-            if(isResponseFromFetch(register)) {
-                if(register.status === 200) {
-					modalInfo = {
-						isModalShow: false,
-						isFolderForm: false,
-						modalTitle: ""
-					};			
-					return
-				}
-
-                else {
-                    const response = await register.json();
-                    throw (response?.message)
-                }
-            }
-
-            throw ("Terjadi kesalahan saat terhubung dengan server")
-        } catch (error) {
-            alert(error)
-        }
-	}
+	onMount(() => {
+		catchGoogleCodeAccess()
+		getUserInfo();
+	})
 
 	renewFolderList()
 
@@ -191,10 +148,7 @@
 				on:submitFolderForm={handleSubmitFolder}
 			/>
 		{:else}
-			<Account 
-				on:register={handleUserRegister}
-				on:login={handleUserLogin}
-			/>
+			<Account />
 		{/if}
 	</Modal>
 </section>

@@ -41,7 +41,8 @@ export function requestToServer(url: string, method: 'GET' | 'POST' | 'PUT' | 'D
       signal,
       method,
       body,
-      headers: headersList
+      headers: headersList,
+      credentials: "include"
     }
 
     if (method === 'GET') { delete requestInit['body'] }
