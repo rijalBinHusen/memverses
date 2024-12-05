@@ -87,12 +87,32 @@
 		window.location.replace(window.location.origin);
 	}
 
+	interface googleUserInfo {
+		success: boolean,
+		data: {
+			email: string,
+			name: string,
+			profile_picture: string
+		}
+	}
+
+	let googleUserInfoLoggedIn = {
+			email: "",
+			name: "",
+			profile_picture: ""
+		};
+
 	async function getUserInfo() {
 		const isLogin = localStorage.getItem("isLogin");
-		console.log(isLogin)
 		if(isLogin != "1") return;
 		const userInfo = await requestToServer("http://localhost:8000/google/get_user_info", "GET", "");
-		console.log(userInfo)
+		if(isResponseFromFetch(userInfo)) {
+			if(userInfo.status === 200) {
+				const userInfoData = await userInfo.json() as googleUserInfo;
+				if(!userInfoData.success) return;
+				googleUserInfoLoggedIn = userInfoData.data;
+			}
+		}
 	}
 	
 	onMount(() => {
@@ -112,9 +132,14 @@
 <section>
 	<div class="header-title-page">
 		<h1>Hafal al-Quran</h1>
-		<span>
+		<div class="account-info">
+			{#if googleUserInfoLoggedIn.email !== ""}
+			<span>{googleUserInfoLoggedIn.name}</span>	
+			<img src={googleUserInfoLoggedIn.profile_picture} alt="pict" srcset="">
+			{:else}
 			<button on:click={showModalAccount}>&#9881;</button>
-		</span>
+			{/if}
+		</div>
 	</div>
 	<div>
 		{#if listFolder.length}
@@ -174,5 +199,16 @@
 		cursor: pointer;
 		font-size: x-large;
 		border-radius: 50%;
+	}
+
+	.account-info {
+		display: flex;
+		align-items: center;
+
+		img	{
+			height: 35px;
+			border-radius: 50%;
+			margin-left: 5px;
+		}
 	}
 </style>
