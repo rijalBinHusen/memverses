@@ -209,6 +209,7 @@
 			height: 35px;
 			border-radius: 50%;
 			margin-left: 5px;
+			box-shadow: 0 2px 10px -3px #333;
 		}
 	}
 </style>

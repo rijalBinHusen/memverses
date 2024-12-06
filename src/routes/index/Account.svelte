@@ -17,19 +17,19 @@
 img {
   display: block;
   width: 80px;
-  margin: 30px auto;
+  margin: 5px auto;
   box-shadow: 0 5px 10px -7px #333333;
   border-radius: 50%;
 }
 
 .form {
   background-color: #ffffff;
-  width: 500px;
-  margin: 50px auto 10px auto;
-  padding: 30px;
+  // width: 500px;
+  // margin: 50px auto 10px auto;
+  // padding: 30px;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 10px -3px #333;
+  // box-shadow: 0 2px 10px -3px #333;
   text-align: center;
 }
 
@@ -40,11 +40,15 @@ button {
   width: 50%;
   padding: 10px;
   color: #FFFFFF;
-  margin-top: 25px;
+  // margin-top: 25px;
   box-shadow: 0 2px 10px -3px #719BE6;
   display: block;
-  margin: 55px auto 10px auto;
+  margin: 15px auto 10px auto;
   cursor: pointer;
+}
+
+a {
+  text-decoration: none;
 }
 
 </style>
