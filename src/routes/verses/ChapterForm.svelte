@@ -67,6 +67,16 @@
     const dispatch = createEventDispatcher();
 
     function submitVerseChapter() {
+        // check is start less than 0
+        if(startVerse < 1) {
+            alert("Awal surat tidak boleh kurang dari 1")
+            return;
+        }
+        // check is end more than max
+        if(endVerse > currentChapter.jumlah_ayat) {
+            alert(`Akhir surat tidak boleh lebih dari ${currentChapter.jumlah_ayat}`)
+            return;
+        }
         dispatch("verseAndChapterSubmitted", <ChapterFormInterface>{
             chapter: currentChapter.nomor,
             startVerse,
