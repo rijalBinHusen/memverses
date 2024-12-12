@@ -112,6 +112,9 @@
 				if(!userInfoData.success) return;
 				googleUserInfoLoggedIn = userInfoData.data;
 			}
+			else {
+				localStorage.setItem("isLogin", "0");
+			}
 		}
 	}
 	

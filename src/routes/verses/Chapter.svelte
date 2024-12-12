@@ -13,7 +13,7 @@
 	let folderInfo = <FolderInterface>{};
 	let folderList = <FolderInterface[]|undefined>[];
 	let chapters = <VerseToShow[]>[];
-	let messageToShow = "Tidak ayat untuk dibaca, tekan tombol + dibawah :)";
+	let messageToShow = "";
     
     const chapterOperation = new ChaptersOperation();
     folderTitle = chapterOperation.retrieveTitleFolder();
@@ -38,19 +38,23 @@
 	}
 
 	async function retrieveChapterToRead() {
+		// empty the chpaters
 		chapters = [];
 		const data = await chapterOperation.getUnReadedVerse();
-
-		if(data) {
-			
-			messageToShow = `Ayat akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
-			await new Promise((resolve) => {
-				setTimeout(() => {
-					resolve("")
-				}, folderInfo.nextChapterOnSecond * 1000);
-			})
-			chapters = data;
+		
+		if(data == undefined) {
+			messageToShow = "Tidak ayat untuk dibaca, tekan tombol + dibawah :)";
+			return;
 		}
+			
+		messageToShow = `Ayat akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
+		await new Promise((resolve) => {
+			setTimeout(() => {
+				resolve("")
+			}, folderInfo.nextChapterOnSecond * 1000);
+		})
+		// fill the chapters
+		chapters = data;
 	}
 
 	function updateFolderSetting(e: any) {

@@ -77,4 +77,8 @@ export class Folder {
         if(filters.length) return filters;
     }
 
+    sendLocalFolderToServer() {
+        
+    }
+
 }
