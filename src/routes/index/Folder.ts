@@ -1,3 +1,6 @@
+import { isResponseFromFetch, requestToServer } from "../../scipts/fetch"
+import { ChaptersOperation } from "../verses/Chapter"
+
 export interface FolderInterface {
     id: string
     name: string
@@ -77,8 +80,62 @@ export class Folder {
         if(filters.length) return filters;
     }
 
-    sendLocalFolderToServer() {
-        
+    async sendLocalFolderToServer() {
+        let isOkeToSend = confirm("Kirimkan data lokal ke database?")
+        if(!isOkeToSend) return;
+        if(!this.lists.length) return;
+
+        const Chapter = new ChaptersOperation();
+        const chapters = Chapter.retrieveChapter();
+
+        for(let folder of this.lists) {
+            
+            if( folder.id.length > 3) continue;
+            const dataToSend = { 
+                name: folder.name,
+                total_verse_to_show: folder.verseToShow,
+                show_next_chapter_on_second: folder.nextChapterOnSecond,
+                read_target: folder.readTarget,
+                is_show_first_letter: folder.showFirstLetter,
+                is_show_tafseer: folder.showTafseer,
+                arabic_size: folder.arabicSize
+            }
+            
+            const createFolder = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSend));
+            let idFolder = "";
+            if(isResponseFromFetch(createFolder)) {
+                const responseJSON = await createFolder.json() as {
+                    "success": true,
+                    "id": "WAR22500001"
+                  };
+                if(createFolder.status === 201) idFolder = responseJSON.id;
+    
+                else {
+                    alert(createFolder)
+                    return;
+                }
+            }
+
+            if(idFolder === "") return;
+
+            this.updateFolder(folder.id, { id: idFolder });
+
+            const getChapters = chapters?.filter((chapter) => chapter.idFolder === folder.id);
+            if(!getChapters?.length) continue;
+
+            for(let chapter of getChapters){
+                const dataChapterToSend = {
+                    "id_chapter_client": chapter.id,
+                    "id_folder": idFolder,
+                    "chapter": chapter.chapter,
+                    "verse": chapter.verse,
+                    "readed_times": chapter.readed
+                  }
+                await requestToServer("memverses/chapter", "POST", JSON.stringify(dataChapterToSend));
+                Chapter.moveVerseToFolder(chapter.id, idFolder);
+            }
+
+        }
     }
 
 }

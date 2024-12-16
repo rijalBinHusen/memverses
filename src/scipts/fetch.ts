@@ -1,3 +1,5 @@
+import { PUBLIC_HOST_URL } from "$env/static/public";
+
 export async function fetchData(url: string) {
     // Try to fetch from cache first
     const cache = await caches.open('my-cache'); // Replace 'my-cache' with your desired cache name
@@ -19,8 +21,8 @@ export async function fetchData(url: string) {
     }
   }
 
-export function requestToServer(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', body: string | FormData): Promise<Response | Error> | undefined {
-  console.log(body)
+export function requestToServer(endPoint: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', body: string | FormData): Promise<Response | Error> | undefined {
+  
   let headersList = {
     "Accept": "*/*",
     "Code-Authorization": ""
@@ -47,7 +49,7 @@ export function requestToServer(url: string, method: 'GET' | 'POST' | 'PUT' | 'D
 
     if (method === 'GET') { delete requestInit['body'] }
 
-    fetch(url, requestInit)
+    fetch(PUBLIC_HOST_URL + endPoint, requestInit)
       .then(response => resolve(response))
       .catch(error => { reject(error) })
       .finally(() => { clearTimeout(timer) })

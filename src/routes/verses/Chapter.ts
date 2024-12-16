@@ -258,6 +258,8 @@ export class ChaptersOperation {
 
     moveVerseToFolder(verseId: number, idFolder: string) {
         
+        // move verse to another folder
+        // prohibited to move to folder where the verse.id exists
         const idsFolder = <string[]>[];
         let index = -1;
         let currentIdFolder = this.folderInfo.id;
@@ -276,6 +278,7 @@ export class ChaptersOperation {
         const record = { ...this.lists[index] };
         this.lists[index] = { ...record, idFolder };
         
+        // remove verse from current folder
         if(idsFolder.length > 1) this.lists.splice(index, 1);
         this.saveToLocalStorage();
     }

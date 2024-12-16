@@ -4,12 +4,9 @@
 	import { Folder, type FolderInterface } from "./index/Folder";
 	import FolderForm from './index/FolderForm.svelte';
 	import Account from './index/Account.svelte';
-	import { env } from '$env/dynamic/public';
 	
     import { isResponseFromFetch, requestToServer } from '../scipts/fetch';
     import { onMount } from 'svelte';
-
-	const hostURL = "http://" + env.PUBLIC_HOST_URL + "/" ;
 
 	let modalInfo = {
 		isModalShow: false,
@@ -82,7 +79,7 @@
 		if(split.length < 2) return;
 		if(split[0]  != "?code") return;
 		// set token
-		await requestToServer("http://localhost:8000/google/get_access_token?code="+split[1], "GET", "");
+		await requestToServer(`google/get_access_token?code=`+ encodeURIComponent(split[1]), "GET", "");
 		localStorage.setItem("isLogin", "1");
 		window.location.replace(window.location.origin);
 	}
@@ -105,12 +102,13 @@
 	async function getUserInfo() {
 		const isLogin = localStorage.getItem("isLogin");
 		if(isLogin != "1") return;
-		const userInfo = await requestToServer("http://localhost:8000/google/get_user_info", "GET", "");
+		const userInfo = await requestToServer(`google/get_user_info`, "GET", "");
 		if(isResponseFromFetch(userInfo)) {
 			if(userInfo.status === 200) {
 				const userInfoData = await userInfo.json() as googleUserInfo;
 				if(!userInfoData.success) return;
 				googleUserInfoLoggedIn = userInfoData.data;
+				await folderOperation.sendLocalFolderToServer();
 			}
 			else {
 				localStorage.setItem("isLogin", "0");
@@ -118,7 +116,7 @@
 		}
 	}
 	
-	onMount(() => {
+	onMount(async () => {
 		catchGoogleCodeAccess()
 		getUserInfo();
 	})
@@ -138,7 +136,7 @@
 		<div class="account-info">
 			{#if googleUserInfoLoggedIn.email !== ""}
 			<span>{googleUserInfoLoggedIn.name}</span>	
-			<img src={googleUserInfoLoggedIn.profile_picture} alt="pict" srcset="">
+			<!-- <img src={googleUserInfoLoggedIn.profile_picture} alt="pict" srcset=""> -->
 			{:else}
 			<button on:click={showModalAccount}>&#9881;</button>
 			{/if}
