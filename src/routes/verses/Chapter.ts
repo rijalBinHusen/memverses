@@ -9,7 +9,7 @@
 // retrieve every chapter every show
 
 import { Folder, type FolderInterface } from "../index/Folder"
-import { fetchData } from "../../scipts/fetch";
+import { fetchData, isResponseFromFetch, requestToServer } from "../../scipts/fetch";
 
 interface ArabicQuran {
     [verse: string]: string
@@ -35,6 +35,20 @@ interface Tafsir {
         }
     }
 }
+
+interface ChapterResponseServer {
+    success: boolean,
+    data: [
+      {
+        id: string,
+        id_chapter_client: string,
+        id_folder: string,
+        chapter: number,
+        verse: number,
+        readed_times: number
+      }
+    ]
+  }
 
 export interface verseAndChapterDetail {
     [chapter: string]: {
@@ -76,7 +90,8 @@ export class ChaptersOperation {
     lists = <Chapter[]>[];
     folderInfo = <FolderInterface>{};
 
-    constructor() {
+    constructor(idFolder: string = "") {
+        this.#idFolder = idFolder;
         this.getIdFolder();
         this.retrieveTitleFolder();
         this.retrieveChapter();
@@ -84,6 +99,7 @@ export class ChaptersOperation {
 
     getIdFolder(): string|undefined {
         if(typeof window === "undefined") return;
+        if(this.#idFolder !== "") return;
 
         const fullQueryParam = window.location.search;
         if(!fullQueryParam.length) return;
@@ -169,6 +185,8 @@ export class ChaptersOperation {
         
         if(!this.lists.length) return;
         this.retrieveTitleFolder();
+        
+        await this.setLocalStorageBasedOnServer();
         
         const idFolder = this.folderInfo.id
         const verseLimiter = this.folderInfo.verseToShow;
@@ -306,5 +324,34 @@ export class ChaptersOperation {
 
         return folderClass.getListFolderExcept(this.#idFolder);
     }
+
+    async setLocalStorageBasedOnServer() {
+        if(this.#idFolder.length < 4) return;
+
+        this.lists = [];
+        const getChapter = await requestToServer("memverses/chapters/" + this.#idFolder, "GET", "");
+            
+        if(isResponseFromFetch(getChapter)) {
+            const responseJSON = await getChapter.json() as ChapterResponseServer;
+            if(getChapter.status === 200) {
+                for(let chapt of responseJSON.data) {
+                    this.lists.push({
+                        chapter: chapt.chapter,
+                        id: Number(chapt.id_chapter_client),
+                        idFolder: chapt.id_folder,
+                        readed: chapt.readed_times,
+                        verse: chapt.verse
+                    })
+                }
+                this.saveToLocalStorage();
+            }
+
+            else {
+                alert(getChapter)
+                return;
+            }
+        }
+    }
+
 }
 

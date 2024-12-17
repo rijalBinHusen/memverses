@@ -13,6 +13,24 @@ export interface FolderInterface {
     isShowRandomVerse: boolean
 }
 
+interface FolderServerResponse {
+    success: boolean,
+    data: [
+      {
+        id: string,
+        id_user: string,
+        name: string,
+        total_verse_to_show: number,
+        show_next_chapter_on_second: number,
+        read_target: number,
+        is_show_first_letter: true,
+        is_show_tafseer: true,
+        arabic_size: number,
+        changed_by: string
+      }
+    ]
+  }
+
 export type FolderUpdate = {
     [K in keyof FolderInterface]?:  FolderInterface[K];
   }
@@ -85,9 +103,6 @@ export class Folder {
         if(!isOkeToSend) return;
         if(!this.lists.length) return;
 
-        const Chapter = new ChaptersOperation();
-        const chapters = Chapter.retrieveChapter();
-
         for(let folder of this.lists) {
             
             if( folder.id.length > 3) continue;
@@ -117,9 +132,9 @@ export class Folder {
             }
 
             if(idFolder === "") return;
+            const Chapter = new ChaptersOperation(folder.id);
 
-            this.updateFolder(folder.id, { id: idFolder });
-
+            const chapters = Chapter.retrieveChapter();
             const getChapters = chapters?.filter((chapter) => chapter.idFolder === folder.id);
             if(!getChapters?.length) continue;
 
@@ -132,9 +147,41 @@ export class Folder {
                     "readed_times": chapter.readed
                   }
                 await requestToServer("memverses/chapter", "POST", JSON.stringify(dataChapterToSend));
-                Chapter.moveVerseToFolder(chapter.id, idFolder);
+            }
+            await Chapter.setLocalStorageBasedOnServer();
+
+        }
+
+        this.setLocalStorageBasedOnServer();
+    }
+
+    async setLocalStorageBasedOnServer() {
+        this.lists = [];
+        const getFolder = await requestToServer("memverses/folders", "GET", "");
+            
+        if(isResponseFromFetch(getFolder)) {
+            const responseJSON = await getFolder.json() as FolderServerResponse;
+            if(getFolder.status === 200) {
+                for(let folder of responseJSON.data) {
+                    this.lists.push({
+                        arabicSize: folder.arabic_size,
+                        id: folder.id,
+                        isShowRandomVerse: false,
+                        name: folder.name,
+                        nextChapterOnSecond: folder.show_next_chapter_on_second,
+                        readTarget: folder.read_target,
+                        showFirstLetter: folder.is_show_first_letter,
+                        showTafseer: folder.is_show_tafseer,
+                        verseToShow: folder.total_verse_to_show
+                    })
+                }
+                this.saveToLocalStorage();
             }
 
+            else {
+                alert(getFolder)
+                return;
+            }
         }
     }
 
