@@ -41,13 +41,13 @@
 		// empty the chpaters
 		chapters = [];
 		const data = await chapterOperation.getUnReadedVerse();
+		messageToShow = `Ayat akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
 		
 		if(data == undefined) {
 			messageToShow = "Tidak ayat untuk dibaca, tekan tombol + dibawah :)";
 			return;
 		}
 			
-		messageToShow = `Ayat akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
 		await new Promise((resolve) => {
 			setTimeout(() => {
 				resolve("")

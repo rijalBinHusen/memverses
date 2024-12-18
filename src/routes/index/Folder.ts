@@ -99,6 +99,8 @@ export class Folder {
     }
 
     async sendLocalFolderToServer() {
+        const isSynced = localStorage.getItem("isSynced");
+        if(isSynced) return;
         let isOkeToSend = confirm("Kirimkan data lokal ke database?")
         if(!isOkeToSend) return;
         if(!this.lists.length) return;
@@ -152,6 +154,7 @@ export class Folder {
 
         }
 
+        localStorage.setItem("isSynced", '1')
         this.setLocalStorageBasedOnServer();
     }
 
@@ -176,6 +179,7 @@ export class Folder {
                     })
                 }
                 this.saveToLocalStorage();
+                window.location.reload()
             }
 
             else {

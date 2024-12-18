@@ -346,6 +346,10 @@ export class ChaptersOperation {
                 this.saveToLocalStorage();
             }
 
+            else if(getChapter.status == 404) {
+                return;
+            }
+
             else {
                 alert(getChapter)
                 return;
