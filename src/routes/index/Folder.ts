@@ -11,6 +11,7 @@ export interface FolderInterface {
     showTafseer: boolean
     arabicSize: number
     isShowRandomVerse: boolean
+    currentVersesTotal?: number
 }
 
 interface FolderServerResponse {
