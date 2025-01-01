@@ -116,12 +116,10 @@ export class ChaptersOperation {
         return folderId
     }
 
-    retrieveTitleFolder (): string {
+    async retrieveTitleFolder (): Promise<string> {
 
         const folderClass = new Folder();
-
-        folderClass.getFolder();
-        const folderInfo = folderClass.getFolderInfoById(this.#idFolder);
+        const folderInfo = await folderClass.getFolderInfoById(this.#idFolder);
         if(!folderInfo) return "Folder tidak ditemukan";
 
         this.titleFolder = folderInfo.name;
@@ -192,7 +190,7 @@ export class ChaptersOperation {
         // check is there any internet or not, if exists fetch data to server
         // if user online get unreaded verses from backend
         if(this.isUserOnline()) {
-            const fetchToServer = await requestToServer("memverses/unread_verses", "GET", "");
+            const fetchToServer = await requestToServer("memverses/unread_verses/" + this.#idFolder, "GET", "");
             if(isResponseFromFetch(fetchToServer)) {
                 if(fetchToServer.status === 200) {
                     const data = await fetchToServer.json() as ChapterResponseServer;

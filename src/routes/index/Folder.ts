@@ -41,15 +41,49 @@ export class Folder {
     #storageName = "memorize-quran";
     lists = <FolderInterface[]>[];
 
-    getFolder(): FolderInterface[]|void {
+    async getFolder(): Promise<FolderInterface[]|void> {
         if(typeof window === 'undefined') return;
-        const retrieveFolder = window.localStorage.getItem(this.#storageName);
 
-        if(retrieveFolder === null) return
+        let folders = <FolderInterface[]>[];
+        // if user online, get data from backend
+        if(this.isUserOnline()) {
+            const getFolder = await requestToServer("memverses/folders", "GET", "");
+            
+            if(isResponseFromFetch(getFolder)) {
+                const responseJSON = await getFolder.json() as FolderServerResponse;
+                if(getFolder.status === 200) {
+                    for(let folder of responseJSON.data) {
+                        folders.push({
+                            arabicSize: folder.arabic_size,
+                            id: folder.id,
+                            isShowRandomVerse: false,
+                            name: folder.name,
+                            nextChapterOnSecond: folder.show_next_chapter_on_second,
+                            readTarget: folder.read_target,
+                            showFirstLetter: folder.is_show_first_letter,
+                            showTafseer: folder.is_show_tafseer,
+                            verseToShow: folder.total_verse_to_show
+                        })
+                    }
+                    this.saveToLocalStorage();
+                }
 
-        const folderParsed: FolderInterface[] = JSON.parse(retrieveFolder)
-        this.lists = folderParsed;
-        return folderParsed;
+                else {
+                    alert(getFolder)
+                    return;
+                }
+            }
+        }
+        // else return data on localstorage
+        else {
+            
+            const retrieveFolder = window.localStorage.getItem(this.#storageName);
+            if(retrieveFolder === null) return
+            folders = JSON.parse(retrieveFolder)
+        }
+
+        this.lists = folders;
+        return folders;
     }
 
     createFolder(name: string){
@@ -82,9 +116,9 @@ export class Folder {
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
-    getFolderInfoById(id: string): FolderInterface|undefined {
+    async getFolderInfoById(id: string): Promise<FolderInterface|undefined> {
 
-        const folders = this.getFolder();
+        const folders = await this.getFolder();
         if(!folders) return;
 
         const findIndex = folders.findIndex((folder) => folder.id === id)
@@ -99,7 +133,7 @@ export class Folder {
         if(filters.length) return filters;
     }
 
-    async sendLocalFolderToServer() {
+    async sendLocalFolderAndVersesToServer() {
         const isSynced = localStorage.getItem("isSynced");
         if(isSynced) return;
         let isOkeToSend = confirm("Kirimkan data lokal ke database?")
@@ -158,6 +192,12 @@ export class Folder {
         localStorage.setItem("isSynced", '1')
     }
 
+    isUserOnline(): boolean {
+        // is user logged in
+        const isLoggedIn = window.localStorage.getItem("isLogin");
+        return isLoggedIn == "1"  && window.navigator.onLine === true
+    }
+
     // async setLocalStorageBasedOnServer() {
     //     this.lists = [];
     //     const getFolder = await requestToServer("memverses/folders", "GET", "");
@@ -187,6 +227,6 @@ export class Folder {
     //             return;
     //         }
     //     }
-    }
+    // }
 
 }
