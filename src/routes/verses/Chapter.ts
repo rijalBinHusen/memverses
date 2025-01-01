@@ -187,62 +187,51 @@ export class ChaptersOperation {
         
         if(!this.lists.length) return;
         this.retrieveTitleFolder();
-
-        // check is there any internet or not, if exists fetch data to server
-        if(this.isUserOnline()) await this.setLocalStorageBasedOnServer();
         
-        const idFolder = this.folderInfo.id
-        const verseLimiter = this.folderInfo.verseToShow;
-        const isRandomVerses = this.folderInfo.isShowRandomVerse;
-        const readTarget = this.folderInfo.readTarget;
-
-        let arrRandomIndex = [0];
-
-        if(isRandomVerses) {
-            // random array contain number
-            arrRandomIndex = Array.from({ length: verseLimiter }, () => Math.floor(Math.random() * (this.lists.length - 1 + 1)) + 1);
-
-        }
-
         let verseToShow = <Chapter[]>[];
-        let allVerseInFolder = <Chapter[]>[];
-
-        for(let i = 0; i < this.lists.length; i++) {
-            const verse = this.lists[i];
-
-            if(verse.idFolder === idFolder) {
-                allVerseInFolder.push(verse)
-
-                if(verse.readed < readTarget) {
-
-                    if(verseToShow.length < verseLimiter) {
-
-                        if(isRandomVerses) {
-                            const possibiltyTrue = Math.random() * 100 < 5;
-                            if(possibiltyTrue) verseToShow.push(verse)
-                        } else {
-
-                            verseToShow.push(verse)
+        // check is there any internet or not, if exists fetch data to server
+        // if user online get unreaded verses from backend
+        if(this.isUserOnline()) {
+            const fetchToServer = await requestToServer("memverses/unread_verses", "GET", "");
+            if(isResponseFromFetch(fetchToServer)) {
+                if(fetchToServer.status === 200) {
+                    const data = await fetchToServer.json() as ChapterResponseServer;
+                    // remove exists verses on idfolder
+                    this.lists = this.lists.filter((verse) => verse.idFolder != this.#idFolder);
+                    for(let chapt of data.data) {
+                        const dataToPush = {
+                            chapter: chapt.chapter,
+                            id: Number(chapt.id_chapter_client),
+                            idFolder: chapt.id_folder,
+                            readed: chapt.readed_times,
+                            verse: chapt.verse
                         }
-                    };
-                } 
+                        this.lists.push(dataToPush);
+                        verseToShow.push(dataToPush);
+                    }
+                    this.saveToLocalStorage();
+                }
             }
         }
-
-        const isAnyVerseToShow = verseToShow.length;
-        if(!isAnyVerseToShow && allVerseInFolder.length) {
-            
-            this.resetVerseReaded(idFolder);
-            verseToShow = allVerseInFolder.slice(0, verseLimiter);
+        // else get unreaded verses from localstorage
+        else {
+            verseToShow = this.lists.filter(vers => vers.idFolder == this.#idFolder);
         }
+
 
         if(!verseToShow.length) return;
 
-        const result = <VerseToShow[]>[]
-        let verseRetrieved = <verseAndChapterDetail>{};
+        const result = await this.convertVerseToMoreDetails(verseToShow);
+        // return the completed verses and chapter
+        return result;
+    }
 
+    async convertVerseToMoreDetails(verses: Chapter[]): Promise<VerseToShow[]|undefined> {
+        
+        let verseRetrieved = <verseAndChapterDetail>{};
+        let result = <VerseToShow[]>[];
         // retrieve detail verses
-        for (let chapter of verseToShow) {
+        for (let chapter of verses) {
 
             const chapterStr = chapter.chapter + ""
             const verseStr = chapter.verse + "";
@@ -262,8 +251,6 @@ export class ChaptersOperation {
                 showFirstLetter: this.folderInfo.showFirstLetter
             })
         }
-
-        // return the completed verses and chapter
         return result;
     }
 

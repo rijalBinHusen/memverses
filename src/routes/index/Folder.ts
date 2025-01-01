@@ -156,38 +156,37 @@ export class Folder {
         }
 
         localStorage.setItem("isSynced", '1')
-        this.setLocalStorageBasedOnServer();
     }
 
-    async setLocalStorageBasedOnServer() {
-        this.lists = [];
-        const getFolder = await requestToServer("memverses/folders", "GET", "");
+    // async setLocalStorageBasedOnServer() {
+    //     this.lists = [];
+    //     const getFolder = await requestToServer("memverses/folders", "GET", "");
             
-        if(isResponseFromFetch(getFolder)) {
-            const responseJSON = await getFolder.json() as FolderServerResponse;
-            if(getFolder.status === 200) {
-                for(let folder of responseJSON.data) {
-                    this.lists.push({
-                        arabicSize: folder.arabic_size,
-                        id: folder.id,
-                        isShowRandomVerse: false,
-                        name: folder.name,
-                        nextChapterOnSecond: folder.show_next_chapter_on_second,
-                        readTarget: folder.read_target,
-                        showFirstLetter: folder.is_show_first_letter,
-                        showTafseer: folder.is_show_tafseer,
-                        verseToShow: folder.total_verse_to_show
-                    })
-                }
-                this.saveToLocalStorage();
-                window.location.reload()
-            }
+    //     if(isResponseFromFetch(getFolder)) {
+    //         const responseJSON = await getFolder.json() as FolderServerResponse;
+    //         if(getFolder.status === 200) {
+    //             for(let folder of responseJSON.data) {
+    //                 this.lists.push({
+    //                     arabicSize: folder.arabic_size,
+    //                     id: folder.id,
+    //                     isShowRandomVerse: false,
+    //                     name: folder.name,
+    //                     nextChapterOnSecond: folder.show_next_chapter_on_second,
+    //                     readTarget: folder.read_target,
+    //                     showFirstLetter: folder.is_show_first_letter,
+    //                     showTafseer: folder.is_show_tafseer,
+    //                     verseToShow: folder.total_verse_to_show
+    //                 })
+    //             }
+    //             this.saveToLocalStorage();
+    //             window.location.reload()
+    //         }
 
-            else {
-                alert(getFolder)
-                return;
-            }
-        }
+    //         else {
+    //             alert(getFolder)
+    //             return;
+    //         }
+    //     }
     }
 
 }
