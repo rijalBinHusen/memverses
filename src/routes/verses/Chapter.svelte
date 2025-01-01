@@ -16,11 +16,13 @@
 	let messageToShow = "";
     
     const chapterOperation = new ChaptersOperation();
-	folderInfo = chapterOperation.getFolderInfo();
-	folderList = chapterOperation.getFoldersList();
 	
     folderTitle = "";
-	chapterOperation.retrieveTitleFolder().then((res) => folderTitle = res);
+	chapterOperation.retrieveTitleFolder().then((res) => {
+		folderTitle = res
+		folderInfo = chapterOperation.getFolderInfo();
+		folderList = chapterOperation.getFoldersList();
+	});
 
 	let showModal = false;
 	let currentForm = "";
