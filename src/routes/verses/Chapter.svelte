@@ -81,11 +81,11 @@
 		retrieveChapterToRead();
 	}
 
-	function readChapter (e: any) {
-		const id = e.detail as number
-		chapterOperation.readVerse(id);
+	async function readChapter (e: any) {
+		const id = e.detail as string
+		await chapterOperation.readVerse(id);
 
-		const findIndex = chapters.findIndex((chap) => chap.id === id);
+		const findIndex = chapters.findIndex((chap) => chap.id_chapter === id);
 		if(findIndex === -1) return;
 		
 		if(chapters.length > 1) {

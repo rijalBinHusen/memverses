@@ -86,9 +86,9 @@ export class Folder {
         return folders;
     }
 
-    createFolder(name: string){
+    async createFolder(name: string){
         const idFolder = this.lists.length + "";
-        this.lists.push({ 
+        const dataToPush = { 
             id: idFolder, 
             name,
             verseToShow: 5,
@@ -98,7 +98,32 @@ export class Folder {
             showTafseer: false,
             arabicSize: 30,
             isShowRandomVerse: false
-        });
+        }
+        
+        const dataToSendToBackend = {
+            name,
+            total_verse_to_show: dataToPush.verseToShow,
+            show_next_chapter_on_second: dataToPush.nextChapterOnSecond,
+            read_target: dataToPush.readTarget,
+            is_show_first_letter: dataToPush.showFirstLetter,
+            is_show_tafseer: dataToPush.showTafseer,
+            arabic_size: dataToPush.arabicSize
+        }
+        
+        if(this.isUserOnline()) {
+            const createFolder = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSendToBackend));
+            if(isResponseFromFetch(createFolder)) {
+                const responseJSON = await createFolder.json() as {
+                    "success": true,
+                    "id": "WAR22500001"
+                };
+                
+                if(createFolder.status === 201) {
+                    dataToPush.id = responseJSON.id
+                    this.lists.push(dataToPush);
+                }
+            }
+        }
         this.saveToLocalStorage();
     }
 
@@ -108,6 +133,20 @@ export class Folder {
         if(findIndex < 0) return;
 
         this.lists[findIndex] = { ...this.lists[findIndex], ...keyValue };
+        const record = this.lists[findIndex]
+        
+        const dataToSendToBackend = {
+            name: record.name,
+            total_verse_to_show: record.verseToShow,
+            show_next_chapter_on_second: record.nextChapterOnSecond,
+            read_target: record.readTarget,
+            is_show_first_letter: record.showFirstLetter,
+            is_show_tafseer: record.showTafseer,
+            arabic_size: record.arabicSize
+        }
+
+        
+        requestToServer("memverses/folder/" + id , "PUT", JSON.stringify(dataToSendToBackend));
         this.saveToLocalStorage();
     }
 
@@ -197,36 +236,5 @@ export class Folder {
         const isLoggedIn = window.localStorage.getItem("isLogin");
         return isLoggedIn == "1"  && window.navigator.onLine === true
     }
-
-    // async setLocalStorageBasedOnServer() {
-    //     this.lists = [];
-    //     const getFolder = await requestToServer("memverses/folders", "GET", "");
-            
-    //     if(isResponseFromFetch(getFolder)) {
-    //         const responseJSON = await getFolder.json() as FolderServerResponse;
-    //         if(getFolder.status === 200) {
-    //             for(let folder of responseJSON.data) {
-    //                 this.lists.push({
-    //                     arabicSize: folder.arabic_size,
-    //                     id: folder.id,
-    //                     isShowRandomVerse: false,
-    //                     name: folder.name,
-    //                     nextChapterOnSecond: folder.show_next_chapter_on_second,
-    //                     readTarget: folder.read_target,
-    //                     showFirstLetter: folder.is_show_first_letter,
-    //                     showTafseer: folder.is_show_tafseer,
-    //                     verseToShow: folder.total_verse_to_show
-    //                 })
-    //             }
-    //             this.saveToLocalStorage();
-    //             window.location.reload()
-    //         }
-
-    //         else {
-    //             alert(getFolder)
-    //             return;
-    //         }
-    //     }
-    // }
 
 }

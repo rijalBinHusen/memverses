@@ -12,7 +12,7 @@
     
     const dispatch = createEventDispatcher();
 
-    function read(id: number) {
+    function read(id: string) {
 
         dispatch("readed", id);
         verse.readed++
@@ -66,7 +66,7 @@
             {#if isShowFirstLetter}
                 <button on:click={() => isShowFirstLetter = false}>Baca lengkap</button>    
             {:else}
-                <button on:click={() => read(verse.id)}>Baca</button>
+                <button on:click={() => read(verse.id_chapter)}>Baca</button>
             {/if}
         </div>
     </div>
