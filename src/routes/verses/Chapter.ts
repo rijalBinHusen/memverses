@@ -68,6 +68,7 @@ export interface Chapter {
     chapter: number
     verse: number
     readed: number
+    id_chapter: string
 }
 
 export interface VerseToShow extends Chapter {
@@ -172,7 +173,8 @@ export class ChaptersOperation {
                     id: (chapter * 300) + i,
                     chapter,
                     verse: i,
-                    readed: 0
+                    readed: 0,
+                    id_chapter: ""
                 })
             }
         }
@@ -183,13 +185,15 @@ export class ChaptersOperation {
 
     async getUnReadedVerse(): Promise<VerseToShow[]|undefined> {
         
-        if(!this.lists.length) return;
         this.retrieveTitleFolder();
         
-        let verseToShow = <Chapter[]>[];
-        // check is there any internet or not, if exists fetch data to server
+        let allVerseInFolder = <Chapter[]>[];
+        let verseToShow = <Chapter[]>this.lists.filter(vers => vers.idFolder == this.#idFolder && vers.readed < this.folderInfo.readTarget);
+
+        if(!verseToShow.length) allVerseInFolder = this.lists.filter(vers => vers.idFolder == this.#idFolder);
         // if user online get unreaded verses from backend
-        if(this.isUserOnline()) {
+        const isNeededToGetDataFromBackend = this.isUserOnline() && !verseToShow.length;
+        if(isNeededToGetDataFromBackend) {
             const fetchToServer = await requestToServer("memverses/unread_verses/" + this.#idFolder, "GET", "");
             if(isResponseFromFetch(fetchToServer)) {
                 if(fetchToServer.status === 200) {
@@ -202,7 +206,8 @@ export class ChaptersOperation {
                             id: Number(chapt.id_chapter_client),
                             idFolder: chapt.id_folder,
                             readed: chapt.readed_times,
-                            verse: chapt.verse
+                            verse: chapt.verse,
+                            id_chapter: chapt.id
                         }
                         this.lists.push(dataToPush);
                         verseToShow.push(dataToPush);
@@ -211,11 +216,11 @@ export class ChaptersOperation {
                 }
             }
         }
-        // else get unreaded verses from localstorage
-        else {
-            verseToShow = this.lists.filter(vers => vers.idFolder == this.#idFolder);
-        }
 
+        if (allVerseInFolder.length && !verseToShow.length) {
+            this.resetVerseReaded(this.#idFolder);
+            verseToShow = allVerseInFolder.slice(0, this.folderInfo.verseToShow);
+        }
 
         if(!verseToShow.length) return;
 
@@ -252,35 +257,20 @@ export class ChaptersOperation {
         return result;
     }
 
-    async readVerse(id: number) {
+    readVerse(id: number) {
         const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.id === id);
         // not foound
         if(findIndex === -1) return;
-
         const record = { ...this.lists[findIndex] };
         this.lists[findIndex] = { ...record, readed: record.readed+ 1 }
         
         // if total read < folder.target_read || user offline = mark as read
         const isEqualToTargetRead = this.lists[findIndex].readed >= this.folderInfo.readTarget
-
+        
         // else && useronline mark read useronline
-        if(!isEqualToTargetRead || !this.isUserOnline()) {
+        if(isEqualToTargetRead || this.isUserOnline()) {
 
-            // hit end point
-            const dataToSend = { readed_times: record.readed + 1 }
-            const markAsRead = await requestToServer("memverses/chapter/" + this.#idFolder, "POST", JSON.stringify(dataToSend));
-
-            if(isResponseFromFetch(markAsRead)) {
-                if(markAsRead.status === 200) {
-                    // reduce folder.currentVersesTotal
-                    const reduceCurrentVersesTotal = Number(this.folderInfo.currentVersesTotal) - 1;
-                    this.FolderOperation.updateFolder(this.#idFolder, { currentVersesTotal: reduceCurrentVersesTotal });
-                    
-                    // remove verses
-                    this.lists.splice(findIndex, 1);
-                }
-            }
-
+            requestToServer("memverses/read/chapter/" + record.id_chapter, "PUT", "");
         }
         this.saveToLocalStorage();
 
@@ -323,6 +313,8 @@ export class ChaptersOperation {
             }
         }
         this.saveToLocalStorage();
+        // reset readed on server
+        requestToServer("memverses/reset_readed_times/folder/" + idFolder, "PUT", "");
     }
 
     getFolderInfo (): FolderInterface {
@@ -355,7 +347,8 @@ export class ChaptersOperation {
                         id: Number(chapt.id_chapter_client),
                         idFolder: chapt.id_folder,
                         readed: chapt.readed_times,
-                        verse: chapt.verse
+                        verse: chapt.verse,
+                        id_chapter: chapt.id
                     })
                 }
                 this.saveToLocalStorage();

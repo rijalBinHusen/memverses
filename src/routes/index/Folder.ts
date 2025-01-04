@@ -65,7 +65,6 @@ export class Folder {
                             verseToShow: folder.total_verse_to_show
                         })
                     }
-                    this.saveToLocalStorage();
                 }
 
                 else {
@@ -83,6 +82,7 @@ export class Folder {
         }
 
         this.lists = folders;
+        this.saveToLocalStorage();
         return folders;
     }
 
