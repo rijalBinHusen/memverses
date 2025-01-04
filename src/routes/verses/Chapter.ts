@@ -196,7 +196,7 @@ export class ChaptersOperation {
                             dataToPush.id_chapter = data.id
                         }
                     }
-                    
+
                     this.lists.push(dataToPush)
                 }
                 
@@ -235,7 +235,10 @@ export class ChaptersOperation {
                             id_chapter: chapt.id
                         }
                         this.lists.push(dataToPush);
-                        verseToShow.push(dataToPush);
+                        if(verseToShow.length < this.folderInfo.verseToShow) {
+
+                            verseToShow.push(dataToPush);
+                        }
                     }
                     this.saveToLocalStorage();
                 }
