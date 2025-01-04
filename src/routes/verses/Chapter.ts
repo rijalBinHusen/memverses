@@ -161,21 +161,46 @@ export class ChaptersOperation {
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
-    addChapter(chapter: number, start: number, end: number) {
+    async addChapter(chapter: number, start: number, end: number) {
 
         for(let i = start; i <= end; i++) {
 
             const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
             if(findIndex === -1) {
                 
-                this.lists.push({
+                const dataToPush = {
                     idFolder: this.#idFolder,
                     id: (chapter * 300) + i,
                     chapter,
                     verse: i,
                     readed: 0,
                     id_chapter: ""
-                })
+                }
+
+                
+                const dataToSendToBackend = {
+                    ...dataToPush,
+                    id_chapter_client: dataToPush.id,
+                    id_folder: dataToPush.idFolder
+                };
+                
+                if(this.isUserOnline()) {
+
+                    const postData = await requestToServer("memverses/chapter/", "POST", JSON.stringify(dataToSendToBackend));
+                    if(isResponseFromFetch(postData)) {
+                        if(postData.status === 200) {
+                            const data = await postData.json() as {
+                                "success": true,
+                                "id": "WAR22500001"
+                              };
+                            dataToPush.id_chapter = data.id
+                        }
+                    }
+                    
+                    this.lists.push(dataToPush)
+                }
+                
+
             }
         }
 
@@ -364,95 +389,6 @@ export class ChaptersOperation {
             }
         }
     }
-
-    // async userOnlineGetUnReadedVerses(): Promise<VerseToShow[]|undefined> {
-    
-    //     // TODO:
-    //     //  check is verses about to run out
-    //     // if verses run out, get unreaded verses from backend
-    //     // =================
-
-    //     // if(!this.lists.length) return;
-    //     // this.retrieveTitleFolder();
-
-    //     // // check is there any internet or not, if exists fetch data to server
-    //     // if(window.navigator.onLine === true) await this.setLocalStorageBasedOnServer();
-        
-    //     // const idFolder = this.folderInfo.id
-    //     // const verseLimiter = this.folderInfo.verseToShow;
-    //     // const isRandomVerses = this.folderInfo.isShowRandomVerse;
-    //     // const readTarget = this.folderInfo.readTarget;
-
-    //     // let arrRandomIndex = [0];
-
-    //     // if(isRandomVerses) {
-    //     //     // random array contain number
-    //     //     arrRandomIndex = Array.from({ length: verseLimiter }, () => Math.floor(Math.random() * (this.lists.length - 1 + 1)) + 1);
-
-    //     // }
-
-    //     // let verseToShow = <Chapter[]>[];
-    //     // let allVerseInFolder = <Chapter[]>[];
-
-    //     // for(let i = 0; i < this.lists.length; i++) {
-    //     //     const verse = this.lists[i];
-
-    //     //     if(verse.idFolder === idFolder) {
-    //     //         allVerseInFolder.push(verse)
-
-    //     //         if(verse.readed < readTarget) {
-
-    //     //             if(verseToShow.length < verseLimiter) {
-
-    //     //                 if(isRandomVerses) {
-    //     //                     const possibiltyTrue = Math.random() * 100 < 5;
-    //     //                     if(possibiltyTrue) verseToShow.push(verse)
-    //     //                 } else {
-
-    //     //                     verseToShow.push(verse)
-    //     //                 }
-    //     //             };
-    //     //         } 
-    //     //     }
-    //     // }
-
-    //     // const isAnyVerseToShow = verseToShow.length;
-    //     // if(!isAnyVerseToShow && allVerseInFolder.length) {
-            
-    //     //     this.resetVerseReaded(idFolder);
-    //     //     verseToShow = allVerseInFolder.slice(0, verseLimiter);
-    //     // }
-
-    //     // if(!verseToShow.length) return;
-
-    //     // const result = <VerseToShow[]>[]
-    //     // let verseRetrieved = <verseAndChapterDetail>{};
-
-    //     // // retrieve detail verses
-    //     // for (let chapter of verseToShow) {
-
-    //     //     const chapterStr = chapter.chapter + ""
-    //     //     const verseStr = chapter.verse + "";
-
-    //     //     const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
-    //     //     if(!isVerseRetrieved) {
-    //     //         const fetchVerse = await fetchData(`/verses/${chapter.chapter}.json`);
-    //     //         if(!fetchVerse) return;
-    //     //         verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
-    //     //     }
-            
-    //     //     result.push({
-    //     //         ...chapter,
-    //     //         arabic: verseRetrieved[chapterStr].text[verseStr],
-    //     //         translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
-    //     //         tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
-    //     //         showFirstLetter: this.folderInfo.showFirstLetter
-    //     //     })
-    //     // }
-
-    //     // // return the completed verses and chapter
-    //     // return result;
-    // }
 
     isUserOnline(): boolean {
         // is user logged in
