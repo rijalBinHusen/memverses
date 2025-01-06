@@ -38,17 +38,8 @@ interface Tafsir {
 
 interface ChapterResponseServer {
     success: boolean,
-    data: [
-      {
-        id: string,
-        id_chapter_client: string,
-        id_folder: string,
-        chapter: number,
-        verse: number,
-        readed_times: number
-      }
-    ]
-  }
+    data: Chapter[]
+}
 
 export interface verseAndChapterDetail {
     [chapter: string]: {
@@ -63,11 +54,12 @@ export interface verseAndChapterDetail {
 };
 
 export interface Chapter {
-    idFolder: string
-    id: number
-    chapter: number
-    verse: number
-    readed: number
+    id: string,
+    id_chapter_client: string,
+    id_folder: string,
+    chapter: number,
+    verse: number,
+    readed_times: number
 }
 
 export interface VerseToShow extends Chapter {
@@ -97,143 +89,146 @@ export class ChaptersOperation {
         this.retrieveChapter();
     }
 
-    getIdFolder(): string|undefined {
-        if(typeof window === "undefined") return;
-        if(this.#idFolder !== "") return;
+    getIdFolder(): string | undefined {
+        if (typeof window === "undefined") return;
+        if (this.#idFolder !== "") return;
 
         const fullQueryParam = window.location.search;
-        if(!fullQueryParam.length) return;
+        if (!fullQueryParam.length) return;
 
         const queryParamSplitted = fullQueryParam.split("=");
-        if(queryParamSplitted.length !== 2) return;
+        if (queryParamSplitted.length !== 2) return;
 
         const folderId = queryParamSplitted[1];
-        if(!folderId || !folderId.length) return;
+        if (!folderId || !folderId.length) return;
 
         this.#idFolder = folderId;
         return folderId
     }
 
-    retrieveTitleFolder (): string {
+    async retrieveTitleFolder(): Promise<string> {
 
-        const folderClass = new Folder();
+        let folderInfo = this.folderInfo
+        if(folderInfo?.id && folderInfo.name) return this.titleFolder;
+        
+        
+        else {
 
-        folderClass.getFolder();
-        const folderInfo = folderClass.getFolderInfoById(this.#idFolder);
-        if(!folderInfo) return "Folder tidak ditemukan";
+            const folderClass = new Folder();
+            const getFolderInfo = await folderClass.getFolderInfoById(this.#idFolder);
+            if (!getFolderInfo) return "Folder tidak ditemukan";
+            this.titleFolder = getFolderInfo.name;
+            this.folderInfo = getFolderInfo
+            return this.titleFolder;
+        } 
 
-        this.titleFolder = folderInfo.name;
-        this.folderInfo = folderInfo
-        return this.titleFolder;
     }
 
     retrieveChapter() {
-        if(typeof window === 'undefined') return;
+        if (typeof window === 'undefined') return;
         const retrieveChapter = window.localStorage.getItem(this.#storageName);
 
-        if(retrieveChapter === null) return
+        if (retrieveChapter === null) return
 
-        if(typeof Blob != "undefined") {
+        if (typeof Blob != "undefined") {
 
             const sizeOfLocalStorage = new Blob(Object.values(localStorage)).size;
             const isOnLimit = sizeOfLocalStorage >= 4500000;
-            if(isOnLimit) {
+            if (isOnLimit) {
                 alert("Website menyimpan terlalu banyak data!")
             }
         }
 
         const versesParsed: Chapter[] = JSON.parse(retrieveChapter)
-        if(typeof versesParsed[0].id === 'undefined') {
+        // if (typeof versesParsed[0].id === 'undefined') {
 
-            this.lists = versesParsed.map((vers) => ({
-                ...vers, id: (vers.chapter * 300) + vers.verse
-            }))
-        } else {
+        //     this.lists = versesParsed.map((vers) => ({
+        //         ...vers, id: (vers.chapter * 300) + vers.verse
+        //     }))
+        // } else {
 
-            this.lists = versesParsed;
-        }
+        this.lists = versesParsed;
+        // }
         return versesParsed;
     }
 
-    saveToLocalStorage () {
-        if(typeof window === 'undefined') return;
+    saveToLocalStorage() {
+        if (typeof window === 'undefined') return;
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
-    addChapter(chapter: number, start: number, end: number) {
+    async addChapter(chapter: number, start: number, end: number) {
 
-        for(let i = start; i <= end; i++) {
+        for (let i = start; i <= end; i++) {
 
-            const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
-            if(findIndex === -1) {
-                
-                this.lists.push({
-                    idFolder: this.#idFolder,
-                    id: (chapter * 300) + i,
+            const findIndex = this.lists.findIndex((vers) => vers.id_folder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
+            if (findIndex === -1) {
+                // post data to backend
+                const dataToSend: Chapter = {
                     chapter,
-                    verse: i,
-                    readed: 0
-                })
+                    id: "",
+                    id_chapter_client: (chapter * 300) + i + '',
+                    id_folder: this.#idFolder,
+                    readed_times: 0,
+                    verse: i
+                }
+                const postData = await requestToServer("memverses/chapter/", "POST", JSON.stringify(dataToSend));
+                if (isResponseFromFetch(postData)) continue;
+
             }
         }
-
-        this.lists.sort((a, b) => a.id - b.id );
-        this.saveToLocalStorage();
     }
 
-    async getUnReadedVerse(): Promise<VerseToShow[]|undefined> {
-        
-        if(!this.lists.length) return;
-        this.retrieveTitleFolder();
-        
-        await this.setLocalStorageBasedOnServer();
-        
+    async getUnReadedVerse(): Promise<VerseToShow[] | undefined> {
+
+        await this.retrieveTitleFolder();
+
         const idFolder = this.folderInfo.id
-        const verseLimiter = this.folderInfo.verseToShow;
-        const isRandomVerses = this.folderInfo.isShowRandomVerse;
-        const readTarget = this.folderInfo.readTarget;
+        const verseLimiter = this.folderInfo.total_verse_to_show;
+        const readTarget = this.folderInfo.read_target;
+        const isNeedToFetchBackEnd = this.folderInfo.is_changed_by_other_devices;
 
-        let arrRandomIndex = [0];
-
-        if(isRandomVerses) {
-            // random array contain number
-            arrRandomIndex = Array.from({ length: verseLimiter }, () => Math.floor(Math.random() * (this.lists.length - 1 + 1)) + 1);
-
+        if (isNeedToFetchBackEnd || !this.lists.length) {
+            await this.getVersesFromBackEnd();
         }
+        // let arrRandomIndex = [0];
+
+        // if(isRandomVerses) {
+        //     // random array contain number
+        //     arrRandomIndex = Array.from({ length: verseLimiter }, () => Math.floor(Math.random() * (this.lists.length - 1 + 1)) + 1);
+
+        // }
 
         let verseToShow = <Chapter[]>[];
         let allVerseInFolder = <Chapter[]>[];
 
-        for(let i = 0; i < this.lists.length; i++) {
+        for (let i = 0; i < this.lists.length; i++) {
             const verse = this.lists[i];
-
-            if(verse.idFolder === idFolder) {
+            if (verse.id_folder === idFolder) {
                 allVerseInFolder.push(verse)
 
-                if(verse.readed < readTarget) {
+                if (verse.readed_times < readTarget) {
+                    if (verseToShow.length < verseLimiter) {
+                        // if (isRandomVerses) {
+                        //     const possibiltyTrue = Math.random() * 100 < 5;
+                        //     if (possibiltyTrue) verseToShow.push(verse)
+                        // } else {
 
-                    if(verseToShow.length < verseLimiter) {
-
-                        if(isRandomVerses) {
-                            const possibiltyTrue = Math.random() * 100 < 5;
-                            if(possibiltyTrue) verseToShow.push(verse)
-                        } else {
-
-                            verseToShow.push(verse)
-                        }
+                        verseToShow.push(verse)
+                        // }
                     };
-                } 
+                }
             }
         }
 
         const isAnyVerseToShow = verseToShow.length;
-        if(!isAnyVerseToShow && allVerseInFolder.length) {
-            
+        if (!isAnyVerseToShow && allVerseInFolder.length) {
+
             this.resetVerseReaded(idFolder);
             verseToShow = allVerseInFolder.slice(0, verseLimiter);
         }
 
-        if(!verseToShow.length) return;
+        if (!verseToShow.length) return;
 
         const result = <VerseToShow[]>[]
         let verseRetrieved = <verseAndChapterDetail>{};
@@ -245,79 +240,82 @@ export class ChaptersOperation {
             const verseStr = chapter.verse + "";
 
             const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
-            if(!isVerseRetrieved) {
+            if (!isVerseRetrieved) {
                 const fetchVerse = await fetchData(`/verses/${chapter.chapter}.json`);
-                if(!fetchVerse) return;
+                if (!fetchVerse) return;
                 verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
             }
-            
+
             result.push({
                 ...chapter,
                 arabic: verseRetrieved[chapterStr].text[verseStr],
                 translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
                 tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
-                showFirstLetter: this.folderInfo.showFirstLetter
+                showFirstLetter: this.folderInfo.is_show_first_letter
             })
         }
-
         // return the completed verses and chapter
         return result;
     }
 
-    readVerse(id: number) {
-        const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.id === id);
+    readVerse(id: string) {
+        const findIndex = this.lists.findIndex((vers) => vers.id_folder === this.#idFolder && vers.id === id);
         // not foound
-        if(findIndex === -1) return;
+        if (findIndex === -1) return;
 
         const record = { ...this.lists[findIndex] };
-        this.lists[findIndex] = { ...record, readed: record.readed+ 1 }
+        this.lists[findIndex] = { ...record, readed_times: record.readed_times + 1 }
         this.saveToLocalStorage();
+        requestToServer("memverses/read/chapter/" + id, "PUT", "");
     }
 
-    moveVerseToFolder(verseId: number, idFolder: string) {
-        
+    moveVerseToFolder(verseId: string, idFolder: string) {
+
         // move verse to another folder
         // prohibited to move to folder where the verse.id exists
         const idsFolder = <string[]>[];
         let index = -1;
         let currentIdFolder = this.folderInfo.id;
-        
-        for(let i = 0; i < this.lists.length; i++) {
+
+        for (let i = 0; i < this.lists.length; i++) {
             const vers = this.lists[i];
 
-            if(vers.id === verseId) {
-                idsFolder.push(vers.idFolder);
-                if(vers.idFolder === currentIdFolder) index = i;
+            if (vers.id === verseId) {
+                idsFolder.push(vers.id_folder);
+                if (vers.id_folder === currentIdFolder) index = i;
             }
         }
 
-        if(!idsFolder.length) return;
-        
+        if (!idsFolder.length) return;
+
         const record = { ...this.lists[index] };
-        this.lists[index] = { ...record, idFolder };
-        
+        this.lists[index] = { ...record, id_folder: idFolder };
+
         // remove verse from current folder
-        if(idsFolder.length > 1) this.lists.splice(index, 1);
+        if (idsFolder.length > 1) this.lists.splice(index, 1);
         this.saveToLocalStorage();
+        const dataToSend = { id_folder: idFolder };
+        requestToServer("memverses/move_to_folder/chapter/" + verseId, "PUT", JSON.stringify(dataToSend));
     }
 
     resetVerseReaded(idFolder: string) {
 
-        for(let i = 0; i < this.lists.length; i++) {
+        for (let i = 0; i < this.lists.length; i++) {
             const record = this.lists[i];
 
-            if(record.idFolder === idFolder) {
-                this.lists[i].readed = 0
+            if (record.id_folder === idFolder) {
+                this.lists[i].readed_times = 0
             }
         }
         this.saveToLocalStorage();
+        requestToServer("memverses/reset_readed_times/folder/" + idFolder, "PUT", "");
     }
 
-    getFolderInfo (): FolderInterface {
+    getFolderInfo(): FolderInterface {
         return this.folderInfo;
     }
 
-    getFoldersList(){
+    getFoldersList() {
         const folderClass = new Folder();
 
         folderClass.getFolder();
@@ -325,24 +323,17 @@ export class ChaptersOperation {
         return folderClass.getListFolderExcept(this.#idFolder);
     }
 
-    async setLocalStorageBasedOnServer() {
-        if(this.#idFolder.length < 4) return;
+    async getVersesFromBackEnd() {
+        if (this.#idFolder.length < 4) return;
 
         this.lists = [];
         const getChapter = await requestToServer("memverses/chapters/" + this.#idFolder, "GET", "");
-            
-        if(isResponseFromFetch(getChapter)) {
+
+        if (isResponseFromFetch(getChapter)) {
             const responseJSON = await getChapter.json() as ChapterResponseServer;
-            if(getChapter.status === 200) {
-                for(let chapt of responseJSON.data) {
-                    this.lists.push({
-                        chapter: chapt.chapter,
-                        id: Number(chapt.id_chapter_client),
-                        idFolder: chapt.id_folder,
-                        readed: chapt.readed_times,
-                        verse: chapt.verse
-                    })
-                }
+            if (getChapter.status === 200) {
+                this.lists = this.lists.filter((chapt) => chapt.id_folder != this.#idFolder);
+                this.lists = this.lists.concat(responseJSON.data);
                 this.saveToLocalStorage();
             }
 

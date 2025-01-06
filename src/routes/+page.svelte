@@ -44,14 +44,14 @@
 	
 	const folderOperation = new Folder();
 
-	function renewFolderList () {
+	async function renewFolderList () {
 
-		const retrieveFolder = folderOperation.getFolder();
+		const retrieveFolder = await folderOperation.getFolder();
 		if(retrieveFolder) listFolder = retrieveFolder;
 	}
 
-	function handleEditFolder(id:string) {
-		const folderInfo = folderOperation.getFolderInfoById(id);
+	async function handleEditFolder(id:string) {
+		const folderInfo = await folderOperation.getFolderInfoById(id);
 		if(typeof folderInfo === "undefined") return;
 
 		currentFolderInfo.folderName = folderInfo.name;
@@ -59,11 +59,11 @@
 		showModalFolderForm();
 	}
 
-	function handleSubmitFolder(e: any) {
+	async function handleSubmitFolder(e: any) {
 	
 		const folderInfo = e.detail as FolderInfo;
-		if(folderInfo.folderId) folderOperation.updateFolder(folderInfo.folderId, { name: folderInfo.folderName })
-		else folderOperation.createFolder(folderInfo.folderName);
+		if(folderInfo.folderId) await folderOperation.updateFolder(folderInfo.folderId, { name: folderInfo.folderName })
+		else await folderOperation.createFolderAndFetchData(folderInfo.folderName);
 
 		currentFolderInfo.folderName = "";
 		currentFolderInfo.folderId = "";
@@ -108,7 +108,6 @@
 				const userInfoData = await userInfo.json() as googleUserInfo;
 				if(!userInfoData.success) return;
 				googleUserInfoLoggedIn = userInfoData.data;
-				await folderOperation.sendLocalFolderToServer();
 			}
 			else {
 				localStorage.setItem("isLogin", "0");

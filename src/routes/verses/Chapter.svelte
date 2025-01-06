@@ -6,7 +6,7 @@
     import { onMount } from 'svelte';
     import SettingForm from './SettingForm.svelte';
 	import { type FolderUpdate, type FolderInterface, Folder } from "../index/Folder";
-	import Chapter from './Verse.svelte';
+	import Verse from './Verse.svelte';
     import { flip } from 'svelte/animate';
 
     let folderTitle = "";
@@ -16,9 +16,6 @@
 	let messageToShow = "";
     
     const chapterOperation = new ChaptersOperation();
-    folderTitle = chapterOperation.retrieveTitleFolder();
-	folderInfo = chapterOperation.getFolderInfo();
-	folderList = chapterOperation.getFoldersList();
 
 	let showModal = false;
 	let currentForm = "";
@@ -47,11 +44,11 @@
 			return;
 		}
 			
-		messageToShow = `Ayat akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
+		messageToShow = `Ayat akan muncul dalam ${folderInfo.show_next_chapter_on_second} detik...`;
 		await new Promise((resolve) => {
 			setTimeout(() => {
 				resolve("")
-			}, folderInfo.nextChapterOnSecond * 1000);
+			}, folderInfo.show_next_chapter_on_second * 1000);
 		})
 		// fill the chapters
 		chapters = data;
@@ -70,7 +67,7 @@
 	}
 
 	function moveToFolder(e: any) {
-		const verseInfo = e.detail as {idFolder: string, idVerse: number};
+		const verseInfo = e.detail as {idFolder: string, idVerse: string};
 		
 		chapterOperation.moveVerseToFolder(verseInfo.idVerse, verseInfo.idFolder);
 
@@ -78,7 +75,7 @@
 	}
 
 	function readChapter (e: any) {
-		const id = e.detail as number
+		const id = e.detail as string
 		chapterOperation.readVerse(id);
 
 		const findIndex = chapters.findIndex((chap) => chap.id === id);
@@ -95,7 +92,13 @@
 		}
 	}
 
-	onMount(() => retrieveChapterToRead())
+	onMount(async () => {
+		retrieveChapterToRead()
+
+		folderTitle = await chapterOperation.retrieveTitleFolder();
+		folderInfo = chapterOperation.getFolderInfo();
+		folderList = chapterOperation.getFoldersList();
+	})
 
 
 </script>
@@ -118,10 +121,10 @@
 		
 			{#each chapters as chapt (chapt)}
 				<div animate:flip>
-					<Chapter
+					<Verse
 						verse={chapt}
-						arabicSize={folderInfo.arabicSize}
-						showTafseer={folderInfo.showTafseer}
+						arabicSize={folderInfo.arabic_size}
+						showTafseer={folderInfo.is_show_tafseer}
 						on:readed={readChapter}
 						folderList={folderList}
 						on:move={moveToFolder}

@@ -2,187 +2,155 @@ import { isResponseFromFetch, requestToServer } from "../../scipts/fetch"
 import { ChaptersOperation } from "../verses/Chapter"
 
 export interface FolderInterface {
-    id: string
-    name: string
-    verseToShow: number
-    nextChapterOnSecond: number
-    readTarget: number
-    showFirstLetter: boolean
-    showTafseer: boolean
-    arabicSize: number
-    isShowRandomVerse: boolean
+    id: string,
+    id_user: string,
+    name: string,
+    total_verse_to_show: number,
+    show_next_chapter_on_second: number,
+    read_target: number,
+    is_show_first_letter: boolean,
+    is_show_tafseer: boolean,
+    arabic_size: number,
+    changed_by: string
+    is_changed_by_other_devices: boolean
 }
 
 interface FolderServerResponse {
     success: boolean,
-    data: [
-      {
-        id: string,
-        id_user: string,
-        name: string,
-        total_verse_to_show: number,
-        show_next_chapter_on_second: number,
-        read_target: number,
-        is_show_first_letter: true,
-        is_show_tafseer: true,
-        arabic_size: number,
-        changed_by: string
-      }
-    ]
-  }
+    data: FolderInterface[]
+}
 
 export type FolderUpdate = {
-    [K in keyof FolderInterface]?:  FolderInterface[K];
-  }
+    [K in keyof FolderInterface]?: FolderInterface[K];
+}
 
 export class Folder {
 
     #storageName = "memorize-quran";
     lists = <FolderInterface[]>[];
 
-    getFolder(): FolderInterface[]|void {
-        if(typeof window === 'undefined') return;
-        const retrieveFolder = window.localStorage.getItem(this.#storageName);
+    async getFolder(): Promise<FolderInterface[] | void> {
+        if (typeof window === 'undefined') return;
 
-        if(retrieveFolder === null) return
+        if (this.lists.length) return this.lists;
 
-        const folderParsed: FolderInterface[] = JSON.parse(retrieveFolder)
-        this.lists = folderParsed;
-        return folderParsed;
+        if (this.isUserOnline()) {
+            await this.getFolderFromBackEnd();
+            return this.lists;
+        }
+
+        else {
+
+            const retrieveFolder = window.localStorage.getItem(this.#storageName);
+
+            if (retrieveFolder === null) return
+
+            const folderParsed: FolderInterface[] = JSON.parse(retrieveFolder)
+            this.lists = folderParsed;
+            return folderParsed;
+        }
     }
 
-    createFolder(name: string){
-        const idFolder = this.lists.length + "";
-        this.lists.push({ 
-            id: idFolder, 
+    async createFolderAndFetchData(name: string) {
+        const dataToSend = {
             name,
-            verseToShow: 5,
-            nextChapterOnSecond: 1,
-            readTarget: 1,
-            showFirstLetter: false,
-            showTafseer: false,
-            arabicSize: 30,
-            isShowRandomVerse: false
-        });
-        this.saveToLocalStorage();
+            total_verse_to_show: 5,
+            show_next_chapter_on_second: 1,
+            read_target: 1,
+            is_show_first_letter: false,
+            is_show_tafseer: false,
+            arabic_size: 30,
+        };
+
+        try {
+            const postData = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSend));
+            if (isResponseFromFetch(postData)) {
+                const data = await postData.json();
+                if (postData.status != 201) {
+                    throw "Error while create data on backend " + data
+                } else {
+                    await this.getFolderFromBackEnd();
+                }
+            }
+        } catch (error) {
+            alert(error);
+            return false
+        }
+
     }
 
-    updateFolder(id: string, keyValue: FolderUpdate) {
-        if(!this.lists.length) this.getFolder();
+    async updateFolder(id: string, keyValue: FolderUpdate) {
+        if (!this.lists.length) this.getFolder();
         const findIndex = this.lists.findIndex((folder) => folder.id === id);
-        if(findIndex < 0) return;
+        if (findIndex < 0) return;
 
         this.lists[findIndex] = { ...this.lists[findIndex], ...keyValue };
         this.saveToLocalStorage();
+
+        try {
+            const postData = await requestToServer("memverses/folder/" + id, "PUT", JSON.stringify(keyValue));
+            if (isResponseFromFetch(postData)) {
+                const data = await postData.json();
+                if (postData.status > 201) {
+                    throw "Error while update data on backend " + data
+                }
+            }
+        } catch (error) {
+            alert(error);
+            return false
+        }
     }
 
-    saveToLocalStorage () {
-        if(typeof window === 'undefined') return;
+    saveToLocalStorage() {
+        if (typeof window === 'undefined') return;
         window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
-    getFolderInfoById(id: string): FolderInterface|undefined {
+    async getFolderInfoById(id: string): Promise<FolderInterface | undefined> {
 
-        const folders = this.getFolder();
-        if(!folders) return;
+        let folders = this.lists;
+        if(!this.lists.length) {
+
+            const getFolders = await this.getFolder();
+            if (!getFolders) return;
+            folders = getFolders
+        }
 
         const findIndex = folders.findIndex((folder) => folder.id === id)
-        if(findIndex < 0) return;
+        if (findIndex < 0) return;
 
         return folders[findIndex];
     }
 
-    getListFolderExcept(idFolder: string): FolderInterface[]|undefined {
+    getListFolderExcept(idFolder: string): FolderInterface[] | undefined {
         const filters = this.lists.filter((fold) => fold.id !== idFolder);
 
-        if(filters.length) return filters;
+        if (filters.length) return filters;
     }
 
-    async sendLocalFolderToServer() {
-        let isOkeToSend = confirm("Kirimkan data lokal ke database?")
-        if(!isOkeToSend) return;
-        if(!this.lists.length) return;
-
-        for(let folder of this.lists) {
-            
-            if( folder.id.length > 3) continue;
-            const dataToSend = { 
-                name: folder.name,
-                total_verse_to_show: folder.verseToShow,
-                show_next_chapter_on_second: folder.nextChapterOnSecond,
-                read_target: folder.readTarget,
-                is_show_first_letter: folder.showFirstLetter,
-                is_show_tafseer: folder.showTafseer,
-                arabic_size: folder.arabicSize
-            }
-            
-            const createFolder = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSend));
-            let idFolder = "";
-            if(isResponseFromFetch(createFolder)) {
-                const responseJSON = await createFolder.json() as {
-                    "success": true,
-                    "id": "WAR22500001"
-                  };
-                if(createFolder.status === 201) idFolder = responseJSON.id;
-    
-                else {
-                    alert(createFolder)
-                    return;
-                }
-            }
-
-            if(idFolder === "") return;
-            const Chapter = new ChaptersOperation(folder.id);
-
-            const chapters = Chapter.retrieveChapter();
-            const getChapters = chapters?.filter((chapter) => chapter.idFolder === folder.id);
-            if(!getChapters?.length) continue;
-
-            for(let chapter of getChapters){
-                const dataChapterToSend = {
-                    "id_chapter_client": chapter.id,
-                    "id_folder": idFolder,
-                    "chapter": chapter.chapter,
-                    "verse": chapter.verse,
-                    "readed_times": chapter.readed
-                  }
-                await requestToServer("memverses/chapter", "POST", JSON.stringify(dataChapterToSend));
-            }
-            await Chapter.setLocalStorageBasedOnServer();
-
-        }
-
-        this.setLocalStorageBasedOnServer();
-    }
-
-    async setLocalStorageBasedOnServer() {
+    async getFolderFromBackEnd(): Promise<false | void> {
         this.lists = [];
-        const getFolder = await requestToServer("memverses/folders", "GET", "");
-            
-        if(isResponseFromFetch(getFolder)) {
-            const responseJSON = await getFolder.json() as FolderServerResponse;
-            if(getFolder.status === 200) {
-                for(let folder of responseJSON.data) {
-                    this.lists.push({
-                        arabicSize: folder.arabic_size,
-                        id: folder.id,
-                        isShowRandomVerse: false,
-                        name: folder.name,
-                        nextChapterOnSecond: folder.show_next_chapter_on_second,
-                        readTarget: folder.read_target,
-                        showFirstLetter: folder.is_show_first_letter,
-                        showTafseer: folder.is_show_tafseer,
-                        verseToShow: folder.total_verse_to_show
-                    })
-                }
-                this.saveToLocalStorage();
-            }
 
-            else {
-                alert(getFolder)
-                return;
+        try {
+            const getFolder = await requestToServer("memverses/folders", "GET", "");
+
+            if (isResponseFromFetch(getFolder)) {
+                const responseJSON = await getFolder.json() as FolderServerResponse;
+                if (getFolder.status === 200) {
+                    this.lists = responseJSON.data;
+                    this.saveToLocalStorage();
+                } else {
+                    throw "Error while fetching data to backend" + responseJSON
+                }
             }
+        } catch (error) {
+
+            alert(error)
+            return;
         }
     }
 
+    private isUserOnline(): boolean {
+        return window.navigator.onLine;
+    }
 }
