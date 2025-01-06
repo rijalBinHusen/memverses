@@ -38,16 +38,7 @@ interface Tafsir {
 
 interface ChapterResponseServer {
     success: boolean,
-    data: [
-      {
-        id: string,
-        id_chapter_client: string,
-        id_folder: string,
-        chapter: number,
-        verse: number,
-        readed_times: number
-      }
-    ]
+    data: Chapter[]
   }
 
 export interface verseAndChapterDetail {
@@ -63,12 +54,12 @@ export interface verseAndChapterDetail {
 };
 
 export interface Chapter {
-    idFolder: string
-    id: number
-    chapter: number
-    verse: number
-    readed: number
-    id_chapter: string
+    id: string,
+    id_chapter_client: string,
+    id_folder: string,
+    chapter: number,
+    verse: number,
+    readed_times: number
 }
 
 export interface VerseToShow extends Chapter {
@@ -87,16 +78,11 @@ export interface ChapterFormInterface {
 export class ChaptersOperation {
     #idFolder = "";
     titleFolder: string = "";
-    #storageName = "memorize-quran-chapter";
     lists = <Chapter[]>[];
     folderInfo = <FolderInterface>{};
-    FolderOperation;
 
-    constructor(idFolder: string = "") {
-        this.#idFolder = idFolder;
+    constructor() {
         this.getIdFolder();
-        this.retrieveTitleFolder();
-        this.FolderOperation = new Folder();
     }
 
     getIdFolder(): string|undefined {
@@ -153,24 +139,52 @@ export class ChaptersOperation {
         }
     }
 
-    async getUnReadedVerse(): Promise<VerseToShow[]|undefined> {
+    async getVersesFromBackEnd(): Promise<VerseToShow[]|undefined> {
+        await this.retrieveTitleFolder();
+        const folderInfo = this.folderInfo;
         
-        this.retrieveTitleFolder();
         let verseToShow = <Chapter[]>[];
         const fetchToServer = await requestToServer("memverses/unread_verses/" + this.#idFolder, "GET", "");
         if(isResponseFromFetch(fetchToServer)) {
             if(fetchToServer.status === 200) {
                 const data = await fetchToServer.json() as ChapterResponseServer;
                 // remove exists verses on idfolder
-                this.lists = this.lists.filter((verse) => verse.idFolder != this.#idFolder);
+                this.lists = this.lists.filter((verse) => verse.id_folder != this.#idFolder);
+                // filter where readed times < target read
+                const filterVerses = data.data.filter((chapt) => chapt.readed_times < folderInfo.read_target);
+                // pick only total verse to show
+                verseToShow = filterVerses.splice(0, folderInfo.total_verse_to_show);
+                // put all to the state
+                this.lists = this.lists.concat(data.data);
+            }
+        }
+
+        const result = await this.convertVerseToMoreDetails(verseToShow);
+        // return the completed verses and chapter
+        return result;
+    }
+
+    async getUnReadedVerse(): Promise<VerseToShow[]|undefined> {
+        
+        await this.retrieveTitleFolder();
+        const folderInfo = this.folderInfo;
+        
+        let verseToShow = <Chapter[]>[];
+        const fetchToServer = await requestToServer("memverses/unread_verses/" + this.#idFolder, "GET", "");
+        if(isResponseFromFetch(fetchToServer)) {
+            if(fetchToServer.status === 200) {
+                const data = await fetchToServer.json() as ChapterResponseServer;
+                // remove exists verses on idfolder
+                this.lists = this.lists.filter((verse) => verse.id_folder != this.#idFolder);
                 for(let chapt of data.data) {
+                    if(verseToShow.length >= folderInfo.total_verse_to_show) continue;
                     verseToShow.push({
                         chapter: chapt.chapter,
-                        id: Number(chapt.id_chapter_client),
-                        idFolder: chapt.id_folder,
-                        readed: chapt.readed_times,
+                        id_chapter_client: chapt.id_chapter_client,
+                        id_folder: chapt.id_folder,
+                        readed_times: chapt.readed_times,
                         verse: chapt.verse,
-                        id_chapter: chapt.id
+                        id: chapt.id
                     })
                 }
             }
@@ -203,7 +217,7 @@ export class ChaptersOperation {
                 arabic: verseRetrieved[chapterStr].text[verseStr],
                 translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
                 tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
-                showFirstLetter: this.folderInfo.showFirstLetter
+                showFirstLetter: this.folderInfo.is_show_first_letter
             })
         }
         return result;

@@ -18,12 +18,6 @@
     const chapterOperation = new ChaptersOperation();
 	
     folderTitle = "";
-	chapterOperation.retrieveTitleFolder().then((res) => {
-		folderTitle = res
-		folderInfo = chapterOperation.getFolderInfo();
-		folderList = chapterOperation.getFoldersList();
-	});
-
 	let showModal = false;
 	let currentForm = "";
 
@@ -45,7 +39,7 @@
 		// empty the chpaters
 		chapters = [];
 		const data = await chapterOperation.getUnReadedVerse();
-		messageToShow = `Ayat akan muncul dalam ${folderInfo.nextChapterOnSecond} detik...`;
+		messageToShow = `Ayat akan muncul dalam ${folderInfo.show_next_chapter_on_second} detik...`;
 		
 		if(data == undefined) {
 			messageToShow = "Tidak ayat untuk dibaca, tekan tombol + dibawah :)";
@@ -55,7 +49,7 @@
 		await new Promise((resolve) => {
 			setTimeout(() => {
 				resolve("")
-			}, folderInfo.nextChapterOnSecond * 1000);
+			}, folderInfo.show_next_chapter_on_second * 1000);
 		})
 		// fill the chapters
 		chapters = data;
@@ -85,7 +79,7 @@
 		const id = e.detail as string
 		await chapterOperation.readVerse(id);
 
-		const findIndex = chapters.findIndex((chap) => chap.id_chapter === id);
+		const findIndex = chapters.findIndex((chap) => chap.id === id);
 		if(findIndex === -1) return;
 		
 		if(chapters.length > 1) {
@@ -99,7 +93,15 @@
 		}
 	}
 
-	onMount(() => retrieveChapterToRead())
+	onMount(() => {
+		retrieveChapterToRead();
+		chapterOperation.retrieveTitleFolder().then((res) => {
+			console.log(res)
+			folderTitle = res
+			folderInfo = chapterOperation.getFolderInfo();
+			folderList = chapterOperation.getFoldersList();
+		});
+	})
 
 
 </script>
@@ -124,8 +126,8 @@
 				<div animate:flip>
 					<Chapter
 						verse={chapt}
-						arabicSize={folderInfo.arabicSize}
-						showTafseer={folderInfo.showTafseer}
+						arabicSize={folderInfo.arabic_size}
+						showTafseer={folderInfo.is_show_tafseer}
 						on:readed={readChapter}
 						folderList={folderList}
 						on:move={moveToFolder}

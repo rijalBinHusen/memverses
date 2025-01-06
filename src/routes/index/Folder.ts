@@ -1,35 +1,20 @@
 import { isResponseFromFetch, requestToServer } from "../../scipts/fetch"
-import { ChaptersOperation } from "../verses/Chapter"
 
 export interface FolderInterface {
-    id: string
-    name: string
-    verseToShow: number
-    nextChapterOnSecond: number
-    readTarget: number
-    showFirstLetter: boolean
-    showTafseer: boolean
-    arabicSize: number
-    isShowRandomVerse: boolean
-    currentVersesTotal?: number
+    id: string,
+    name: string,
+    total_verse_to_show: number,
+    show_next_chapter_on_second: number,
+    read_target: number,
+    is_show_first_letter: true,
+    is_show_tafseer: true,
+    arabic_size: number,
+    changed_by: string
 }
 
 interface FolderServerResponse {
     success: boolean,
-    data: [
-      {
-        id: string,
-        id_user: string,
-        name: string,
-        total_verse_to_show: number,
-        show_next_chapter_on_second: number,
-        read_target: number,
-        is_show_first_letter: true,
-        is_show_tafseer: true,
-        arabic_size: number,
-        changed_by: string
-      }
-    ]
+    data: FolderInterface[]
   }
 
 export type FolderUpdate = {
@@ -38,127 +23,85 @@ export type FolderUpdate = {
 
 export class Folder {
 
-    #storageName = "memorize-quran";
     lists = <FolderInterface[]>[];
 
     async getFolder(): Promise<FolderInterface[]|void> {
-        if(typeof window === 'undefined') return;
-
+        if(typeof window == undefined) return;
         let folders = <FolderInterface[]>[];
-        // if user online, get data from backend
-        if(this.isUserOnline()) {
-            const getFolder = await requestToServer("memverses/folders", "GET", "");
-            
-            if(isResponseFromFetch(getFolder)) {
-                const responseJSON = await getFolder.json() as FolderServerResponse;
-                if(getFolder.status === 200) {
-                    for(let folder of responseJSON.data) {
-                        folders.push({
-                            arabicSize: folder.arabic_size,
-                            id: folder.id,
-                            isShowRandomVerse: false,
-                            name: folder.name,
-                            nextChapterOnSecond: folder.show_next_chapter_on_second,
-                            readTarget: folder.read_target,
-                            showFirstLetter: folder.is_show_first_letter,
-                            showTafseer: folder.is_show_tafseer,
-                            verseToShow: folder.total_verse_to_show
-                        })
-                    }
-                }
-
-                else {
-                    alert(getFolder)
-                    return;
+        const getFolder = await requestToServer("memverses/folders", "GET", "");
+        
+        if(isResponseFromFetch(getFolder)) {
+            const responseJSON = await getFolder.json() as FolderServerResponse;
+            if(getFolder.status === 200) {
+                for(let folder of responseJSON.data) {
+                    folders.push({
+                        arabic_size: folder.arabic_size,
+                        id: folder.id,
+                        name: folder.name,
+                        show_next_chapter_on_second: folder.show_next_chapter_on_second,
+                        read_target: folder.read_target,
+                        is_show_first_letter: folder.is_show_first_letter,
+                        is_show_tafseer: folder.is_show_tafseer,
+                        total_verse_to_show: folder.total_verse_to_show,
+                        changed_by: ""
+                    })
                 }
             }
-        }
-        // else return data on localstorage
-        else {
-            
-            const retrieveFolder = window.localStorage.getItem(this.#storageName);
-            if(retrieveFolder === null) return
-            folders = JSON.parse(retrieveFolder)
+
+            else {
+                alert(getFolder)
+                return;
+            }
         }
 
         this.lists = folders;
-        this.saveToLocalStorage();
         return folders;
     }
 
     async createFolder(name: string){
-        const idFolder = this.lists.length + "";
-        const dataToPush = { 
-            id: idFolder, 
-            name,
-            verseToShow: 5,
-            nextChapterOnSecond: 1,
-            readTarget: 1,
-            showFirstLetter: false,
-            showTafseer: false,
-            arabicSize: 30,
-            isShowRandomVerse: false
-        }
         
         const dataToSendToBackend = {
             name,
-            total_verse_to_show: dataToPush.verseToShow,
-            show_next_chapter_on_second: dataToPush.nextChapterOnSecond,
-            read_target: dataToPush.readTarget,
-            is_show_first_letter: dataToPush.showFirstLetter,
-            is_show_tafseer: dataToPush.showTafseer,
-            arabic_size: dataToPush.arabicSize
+            total_verse_to_show: 5,
+            show_next_chapter_on_second: 1,
+            read_target: 1,
+            is_show_first_letter: false,
+            is_show_tafseer: false,
+            arabic_size: 30
         }
         
-        if(this.isUserOnline()) {
-            const createFolder = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSendToBackend));
-            if(isResponseFromFetch(createFolder)) {
-                const responseJSON = await createFolder.json() as {
-                    "success": true,
-                    "id": "WAR22500001"
-                };
-                
-                if(createFolder.status === 201) {
-                    dataToPush.id = responseJSON.id
-                    this.lists.push(dataToPush);
-                }
-            }
+        const createFolder = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSendToBackend));
+        if(isResponseFromFetch(createFolder)) {
+            if(createFolder.status != 201) alert(createFolder);
         }
-        this.saveToLocalStorage();
     }
 
     updateFolder(id: string, keyValue: FolderUpdate) {
-        if(!this.lists.length) this.getFolder();
-        const findIndex = this.lists.findIndex((folder) => folder.id === id);
-        if(findIndex < 0) return;
-
-        this.lists[findIndex] = { ...this.lists[findIndex], ...keyValue };
-        const record = this.lists[findIndex]
         
-        const dataToSendToBackend = {
-            name: record.name,
-            total_verse_to_show: record.verseToShow,
-            show_next_chapter_on_second: record.nextChapterOnSecond,
-            read_target: record.readTarget,
-            is_show_first_letter: record.showFirstLetter,
-            is_show_tafseer: record.showTafseer,
-            arabic_size: record.arabicSize
-        }
+        const dataToSendToBackend:any = {};
 
+        if(keyValue.name) dataToSendToBackend.name = keyValue.name;
+        if(keyValue.total_verse_to_show) dataToSendToBackend.total_verse_to_show = keyValue.total_verse_to_show;
+        if(keyValue.show_next_chapter_on_second) dataToSendToBackend.show_next_chapter_on_second = keyValue.show_next_chapter_on_second;
+        if(keyValue.read_target) dataToSendToBackend.read_target = keyValue.read_target;
+        if(keyValue.is_show_first_letter) dataToSendToBackend.is_show_first_letter = keyValue.is_show_first_letter;
+        if(keyValue.is_show_tafseer) dataToSendToBackend.is_show_tafseer = keyValue.is_show_tafseer;
+        if(keyValue.arabic_size) dataToSendToBackend.arabic_size = keyValue.arabic_size;
+        
         
         requestToServer("memverses/folder/" + id , "PUT", JSON.stringify(dataToSendToBackend));
-        this.saveToLocalStorage();
-    }
-
-    saveToLocalStorage () {
-        if(typeof window === 'undefined') return;
-        window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
     async getFolderInfoById(id: string): Promise<FolderInterface|undefined> {
+        
+        
+        let folders = <FolderInterface[]>[];
+        if(!this.lists.length) {
 
-        const folders = await this.getFolder();
-        if(!folders) return;
+            const getFolders = await this.getFolder();
+            if(!getFolders) return;
+            folders = getFolders;
+        }
 
         const findIndex = folders.findIndex((folder) => folder.id === id)
         if(findIndex < 0) return;
@@ -171,70 +114,4 @@ export class Folder {
 
         if(filters.length) return filters;
     }
-
-    async sendLocalFolderAndVersesToServer() {
-        const isSynced = localStorage.getItem("isSynced");
-        if(isSynced) return;
-        let isOkeToSend = confirm("Kirimkan data lokal ke database?")
-        if(!isOkeToSend) return;
-        if(!this.lists.length) return;
-
-        for(let folder of this.lists) {
-            
-            if( folder.id.length > 3) continue;
-            const dataToSend = { 
-                name: folder.name,
-                total_verse_to_show: folder.verseToShow,
-                show_next_chapter_on_second: folder.nextChapterOnSecond,
-                read_target: folder.readTarget,
-                is_show_first_letter: folder.showFirstLetter,
-                is_show_tafseer: folder.showTafseer,
-                arabic_size: folder.arabicSize
-            }
-            
-            const createFolder = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSend));
-            let idFolder = "";
-            if(isResponseFromFetch(createFolder)) {
-                const responseJSON = await createFolder.json() as {
-                    "success": true,
-                    "id": "WAR22500001"
-                  };
-                if(createFolder.status === 201) idFolder = responseJSON.id;
-    
-                else {
-                    alert(createFolder)
-                    return;
-                }
-            }
-
-            if(idFolder === "") return;
-            const Chapter = new ChaptersOperation(folder.id);
-
-            const chapters = Chapter.retrieveChapter();
-            const getChapters = chapters?.filter((chapter) => chapter.idFolder === folder.id);
-            if(!getChapters?.length) continue;
-
-            for(let chapter of getChapters){
-                const dataChapterToSend = {
-                    "id_chapter_client": chapter.id,
-                    "id_folder": idFolder,
-                    "chapter": chapter.chapter,
-                    "verse": chapter.verse,
-                    "readed_times": chapter.readed
-                  }
-                await requestToServer("memverses/chapter", "POST", JSON.stringify(dataChapterToSend));
-            }
-            await Chapter.setLocalStorageBasedOnServer();
-
-        }
-
-        localStorage.setItem("isSynced", '1')
-    }
-
-    isUserOnline(): boolean {
-        // is user logged in
-        const isLoggedIn = window.localStorage.getItem("isLogin");
-        return isLoggedIn == "1"  && window.navigator.onLine === true
-    }
-
 }

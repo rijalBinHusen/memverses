@@ -15,10 +15,10 @@
     function read(id: string) {
 
         dispatch("readed", id);
-        verse.readed++
+        verse.readed_times++
     }
 
-    function moveToFolder(idFolder: string, idVerse: number) {
+    function moveToFolder(idFolder: string, idVerse: string) {
 
         dispatch("move", { idFolder, idVerse });
     }
@@ -47,7 +47,7 @@
     {/if}
     <div class="navigation">        
         <span class="verse-info">
-            {verse.readed}x dibaca
+            {verse.readed_times}x dibaca
         </span>
         <div>
             {#if folderList.length}
@@ -66,7 +66,7 @@
             {#if isShowFirstLetter}
                 <button on:click={() => isShowFirstLetter = false}>Baca lengkap</button>    
             {:else}
-                <button on:click={() => read(verse.id_chapter)}>Baca</button>
+                <button on:click={() => read(verse.id)}>Baca</button>
             {/if}
         </div>
     </div>

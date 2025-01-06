@@ -108,7 +108,6 @@
 				const userInfoData = await userInfo.json() as googleUserInfo;
 				if(!userInfoData.success) return;
 				googleUserInfoLoggedIn = userInfoData.data;
-				await folderOperation.sendLocalFolderAndVersesToServer();
 			}
 			else {
 				localStorage.setItem("isLogin", "0");
@@ -119,9 +118,9 @@
 	onMount(async () => {
 		catchGoogleCodeAccess()
 		getUserInfo();
+		renewFolderList()
 	})
 
-	renewFolderList()
 
 </script>
 
