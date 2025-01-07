@@ -116,9 +116,9 @@
 	}
 	
 	onMount(async () => {
-		catchGoogleCodeAccess()
-		getUserInfo();
-		renewFolderList()
+		await catchGoogleCodeAccess()
+		await getUserInfo();
+		await renewFolderList()
 	})
 
 
