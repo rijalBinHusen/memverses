@@ -135,7 +135,7 @@
 		<div class="account-info">
 			{#if googleUserInfoLoggedIn.email !== ""}
 			<span>{googleUserInfoLoggedIn.name}</span>	
-			<!-- <img src={googleUserInfoLoggedIn.profile_picture} alt="pict" srcset=""> -->
+			<img src={googleUserInfoLoggedIn.profile_picture} alt="pict" srcset="">
 			{:else}
 			<button on:click={showModalAccount}>&#9881;</button>
 			{/if}
