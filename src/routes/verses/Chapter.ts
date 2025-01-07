@@ -81,6 +81,7 @@ export class ChaptersOperation {
     #storageName = "memorize-quran-chapter";
     lists = <Chapter[]>[];
     folderInfo = <FolderInterface>{};
+    readed_verses = 0;
 
     constructor(idFolder: string = "") {
         this.#idFolder = idFolder;
@@ -108,9 +109,9 @@ export class ChaptersOperation {
 
     async retrieveTitleFolder(): Promise<string> {
 
+        // is need to get folder from backend?
         let folderInfo = this.folderInfo
-        if(folderInfo?.id && folderInfo.name) return this.titleFolder;
-        
+        if(folderInfo?.id && folderInfo.name && this.readed_verses < 10) return this.titleFolder;
         
         else {
 
@@ -265,6 +266,7 @@ export class ChaptersOperation {
 
         const record = { ...this.lists[findIndex] };
         this.lists[findIndex] = { ...record, readed_times: record.readed_times + 1 }
+        this.readed_verses++;
         this.saveToLocalStorage();
         requestToServer("memverses/read/chapter/" + id, "PUT", "");
     }
@@ -335,6 +337,10 @@ export class ChaptersOperation {
                 this.lists = this.lists.filter((chapt) => chapt.id_folder != this.#idFolder);
                 this.lists = this.lists.concat(responseJSON.data);
                 this.saveToLocalStorage();
+            }
+
+            else if(getChapter.status < 500) {
+                // do nothing
             }
 
             else {
