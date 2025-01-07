@@ -2,116 +2,154 @@ import { isResponseFromFetch, requestToServer } from "../../scipts/fetch"
 
 export interface FolderInterface {
     id: string,
+    id_user: string,
     name: string,
     total_verse_to_show: number,
     show_next_chapter_on_second: number,
     read_target: number,
-    is_show_first_letter: true,
-    is_show_tafseer: true,
+    is_show_first_letter: boolean,
+    is_show_tafseer: boolean,
     arabic_size: number,
     changed_by: string
+    is_changed_by_other_devices: boolean
 }
 
 interface FolderServerResponse {
     success: boolean,
     data: FolderInterface[]
-  }
+}
 
 export type FolderUpdate = {
-    [K in keyof FolderInterface]?:  FolderInterface[K];
-  }
+    [K in keyof FolderInterface]?: FolderInterface[K];
+}
 
 export class Folder {
 
     lists = <FolderInterface[]>[];
+    #storageName = "memverses_folder"
 
-    async getFolder(): Promise<FolderInterface[]|void> {
-        if(typeof window == undefined) return;
-        let folders = <FolderInterface[]>[];
-        const getFolder = await requestToServer("memverses/folders", "GET", "");
-        
-        if(isResponseFromFetch(getFolder)) {
-            const responseJSON = await getFolder.json() as FolderServerResponse;
-            if(getFolder.status === 200) {
-                for(let folder of responseJSON.data) {
-                    folders.push({
-                        arabic_size: folder.arabic_size,
-                        id: folder.id,
-                        name: folder.name,
-                        show_next_chapter_on_second: folder.show_next_chapter_on_second,
-                        read_target: folder.read_target,
-                        is_show_first_letter: folder.is_show_first_letter,
-                        is_show_tafseer: folder.is_show_tafseer,
-                        total_verse_to_show: folder.total_verse_to_show,
-                        changed_by: ""
-                    })
-                }
-            }
+    async getFolder(): Promise<FolderInterface[] | void> {
+        if (typeof window === 'undefined') return;
 
-            else {
-                alert(getFolder)
-                return;
-            }
+        if (this.lists.length) return this.lists;
+
+        if (this.isUserOnline()) {
+            await this.getFolderFromBackEnd();
+            return this.lists;
         }
 
-        this.lists = folders;
-        return folders;
+        else {
+
+            const retrieveFolder = window.localStorage.getItem(this.#storageName);
+
+            if (retrieveFolder === null) return
+
+            const folderParsed: FolderInterface[] = JSON.parse(retrieveFolder)
+            this.lists = folderParsed;
+            return folderParsed;
+        }
     }
 
-    async createFolder(name: string){
-        
-        const dataToSendToBackend = {
+    async createFolderAndFetchData(name: string) {
+        const dataToSend = {
             name,
             total_verse_to_show: 5,
             show_next_chapter_on_second: 1,
             read_target: 1,
             is_show_first_letter: false,
             is_show_tafseer: false,
-            arabic_size: 30
+            arabic_size: 30,
+        };
+
+        try {
+            const postData = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSend));
+            if (isResponseFromFetch(postData)) {
+                const data = await postData.json();
+                if (postData.status != 201) {
+                    throw "Error while create data on backend " + data
+                } else {
+                    await this.getFolderFromBackEnd();
+                }
+            }
+        } catch (error) {
+            alert(error);
+            return false
         }
-        
-        const createFolder = await requestToServer("memverses/folder", "POST", JSON.stringify(dataToSendToBackend));
-        if(isResponseFromFetch(createFolder)) {
-            if(createFolder.status != 201) alert(createFolder);
+
+    }
+
+    async updateFolder(id: string, keyValue: FolderUpdate) {
+        if (!this.lists.length) this.getFolder();
+        const findIndex = this.lists.findIndex((folder) => folder.id === id);
+        if (findIndex < 0) return;
+
+        this.lists[findIndex] = { ...this.lists[findIndex], ...keyValue };
+        this.saveToLocalStorage();
+
+        try {
+            const postData = await requestToServer("memverses/folder/" + id, "PUT", JSON.stringify(keyValue));
+            if (isResponseFromFetch(postData)) {
+                const data = await postData.json();
+                if (postData.status > 201) {
+                    throw "Error while update data on backend " + data
+                }
+            }
+        } catch (error) {
+            alert(error);
+            return false
         }
     }
 
-    updateFolder(id: string, keyValue: FolderUpdate) {
-        
-        const dataToSendToBackend:any = {};
-
-        if(keyValue.name) dataToSendToBackend.name = keyValue.name;
-        if(keyValue.total_verse_to_show) dataToSendToBackend.total_verse_to_show = keyValue.total_verse_to_show;
-        if(keyValue.show_next_chapter_on_second) dataToSendToBackend.show_next_chapter_on_second = keyValue.show_next_chapter_on_second;
-        if(keyValue.read_target) dataToSendToBackend.read_target = keyValue.read_target;
-        if(keyValue.is_show_first_letter) dataToSendToBackend.is_show_first_letter = keyValue.is_show_first_letter;
-        if(keyValue.is_show_tafseer) dataToSendToBackend.is_show_tafseer = keyValue.is_show_tafseer;
-        if(keyValue.arabic_size) dataToSendToBackend.arabic_size = keyValue.arabic_size;
-        
-        
-        requestToServer("memverses/folder/" + id , "PUT", JSON.stringify(dataToSendToBackend));
+    saveToLocalStorage() {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
     }
 
-    async getFolderInfoById(id: string): Promise<FolderInterface|undefined> {
-        
-        
-        let folders = <FolderInterface[]>[];
+    async getFolderInfoById(id: string): Promise<FolderInterface | undefined> {
+
+        let folders = this.lists;
         if(!this.lists.length) {
 
             const getFolders = await this.getFolder();
-            if(!getFolders) return;
-            folders = getFolders;
+            if (!getFolders) return;
+            folders = getFolders
         }
 
         const findIndex = folders.findIndex((folder) => folder.id === id)
-        if(findIndex < 0) return;
+        if (findIndex < 0) return;
 
         return folders[findIndex];
     }
 
-    getListFolderExcept(idFolder: string): FolderInterface[]|undefined {
+    getListFolderExcept(idFolder: string): FolderInterface[] | undefined {
         const filters = this.lists.filter((fold) => fold.id !== idFolder);
 
-        if(filters.length) return filters;
+        if (filters.length) return filters;
+    }
+
+    async getFolderFromBackEnd(): Promise<false | void> {
+        this.lists = [];
+
+        try {
+            const getFolder = await requestToServer("memverses/folders", "GET", "");
+
+            if (isResponseFromFetch(getFolder)) {
+                const responseJSON = await getFolder.json() as FolderServerResponse;
+                if (getFolder.status === 200) {
+                    this.lists = responseJSON.data;
+                    this.saveToLocalStorage();
+                } else {
+                    throw "Error while fetching data to backend" + responseJSON
+                }
+            }
+        } catch (error) {
+
+            alert(error)
+            return;
+        }
+    }
+
+    private isUserOnline(): boolean {
+        return window.navigator.onLine;
     }
 }

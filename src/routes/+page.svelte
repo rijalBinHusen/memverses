@@ -59,11 +59,11 @@
 		showModalFolderForm();
 	}
 
-	function handleSubmitFolder(e: any) {
+	async function handleSubmitFolder(e: any) {
 	
 		const folderInfo = e.detail as FolderInfo;
-		if(folderInfo.folderId) folderOperation.updateFolder(folderInfo.folderId, { name: folderInfo.folderName })
-		else folderOperation.createFolder(folderInfo.folderName);
+		if(folderInfo.folderId) await folderOperation.updateFolder(folderInfo.folderId, { name: folderInfo.folderName })
+		else await folderOperation.createFolderAndFetchData(folderInfo.folderName);
 
 		currentFolderInfo.folderName = "";
 		currentFolderInfo.folderId = "";

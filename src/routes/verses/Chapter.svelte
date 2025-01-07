@@ -6,7 +6,7 @@
     import { onMount } from 'svelte';
     import SettingForm from './SettingForm.svelte';
 	import { type FolderUpdate, type FolderInterface, Folder } from "../index/Folder";
-	import Chapter from './Verse.svelte';
+	import Verse from './Verse.svelte';
     import { flip } from 'svelte/animate';
 
     let folderTitle = "";
@@ -16,8 +16,6 @@
 	let messageToShow = "";
     
     const chapterOperation = new ChaptersOperation();
-	
-    folderTitle = "";
 	let showModal = false;
 	let currentForm = "";
 
@@ -46,6 +44,7 @@
 			return;
 		}
 			
+		messageToShow = `Ayat akan muncul dalam ${folderInfo.show_next_chapter_on_second} detik...`;
 		await new Promise((resolve) => {
 			setTimeout(() => {
 				resolve("")
@@ -68,16 +67,16 @@
 	}
 
 	function moveToFolder(e: any) {
-		const verseInfo = e.detail as {idFolder: string, idVerse: number};
+		const verseInfo = e.detail as {idFolder: string, idVerse: string};
 		
 		chapterOperation.moveVerseToFolder(verseInfo.idVerse, verseInfo.idFolder);
 
 		retrieveChapterToRead();
 	}
 
-	async function readChapter (e: any) {
+	function readChapter (e: any) {
 		const id = e.detail as string
-		await chapterOperation.readVerse(id);
+		chapterOperation.readVerse(id);
 
 		const findIndex = chapters.findIndex((chap) => chap.id === id);
 		if(findIndex === -1) return;
@@ -93,14 +92,12 @@
 		}
 	}
 
-	onMount(() => {
-		retrieveChapterToRead();
-		chapterOperation.retrieveTitleFolder().then((res) => {
-			console.log(res)
-			folderTitle = res
-			folderInfo = chapterOperation.getFolderInfo();
-			folderList = chapterOperation.getFoldersList();
-		});
+	onMount(async () => {
+		retrieveChapterToRead()
+
+		folderTitle = await chapterOperation.retrieveTitleFolder();
+		folderInfo = chapterOperation.getFolderInfo();
+		folderList = chapterOperation.getFoldersList();
 	})
 
 
@@ -124,7 +121,7 @@
 		
 			{#each chapters as chapt (chapt)}
 				<div animate:flip>
-					<Chapter
+					<Verse
 						verse={chapt}
 						arabicSize={folderInfo.arabic_size}
 						showTafseer={folderInfo.is_show_tafseer}
