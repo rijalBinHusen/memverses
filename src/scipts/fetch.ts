@@ -1,4 +1,4 @@
-import { PUBLIC_HOST_URL } from "$env/dynamic/public";
+import { PUBLIC_HOST_URL } from "$env/static/public";
 
 export async function fetchData(url: string) {
     // Try to fetch from cache first
