@@ -35,6 +35,10 @@ export function requestToServer(endPoint: string, method: 'GET' | 'POST' | 'PUT'
 
   const controller = new AbortController();
   const signal = controller.signal;
+  
+  window.addEventListener("beforeunload", () => {
+    controller.abort();
+  })
 
   return new Promise( async (resolve, reject) => {
     
@@ -44,7 +48,8 @@ export function requestToServer(endPoint: string, method: 'GET' | 'POST' | 'PUT'
       method,
       body,
       headers: headersList,
-      credentials: "include"
+      credentials: "include",
+      mode: 'no-cors'
     }
 
     if (method === 'GET') { delete requestInit['body'] }
