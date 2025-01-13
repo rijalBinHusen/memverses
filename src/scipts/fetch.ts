@@ -48,8 +48,7 @@ export function requestToServer(endPoint: string, method: 'GET' | 'POST' | 'PUT'
       method,
       body,
       headers: headersList,
-      credentials: "include",
-      mode: 'no-cors'
+      credentials: "include"
     }
 
     if (method === 'GET') { delete requestInit['body'] }
