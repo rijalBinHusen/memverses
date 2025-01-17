@@ -157,24 +157,14 @@ export class ChaptersOperation {
 
     async addChapter(chapter: number, start: number, end: number) {
 
-        for (let i = start; i <= end; i++) {
-
-            const findIndex = this.lists.findIndex((vers) => vers.id_folder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
-            if (findIndex === -1) {
-                // post data to backend
-                const dataToSend: Chapter = {
-                    chapter,
-                    id: "",
-                    id_chapter_client: (chapter * 300) + i + '',
-                    id_folder: this.#idFolder,
-                    readed_times: 0,
-                    verse: i
-                }
-                const postData = await requestToServer("memverses/chapter/", "POST", JSON.stringify(dataToSend));
-                if (isResponseFromFetch(postData)) continue;
-
-            }
-        }
+        await requestToServer("memverses/chapter_and_verses", "POST", JSON.stringify({
+            id_folder: this.#idFolder,
+            chapter,
+            verse_start: start,
+            verse_end: end
+        }));            
+        // manipulate folder so we would get new verses from the backend
+        this.folderInfo.is_changed_by_other_devices = true;
     }
 
     async getUnReadedVerse(): Promise<VerseToShow[] | undefined> {
