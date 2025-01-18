@@ -303,10 +303,10 @@ export class ChaptersOperation {
         return this.folderInfo;
     }
 
-    getFoldersList() {
+    async getFoldersList() {
         const folderClass = new Folder();
 
-        folderClass.getFolder();
+        await folderClass.getFolder();
 
         return folderClass.getListFolderExcept(this.#idFolder);
     }
