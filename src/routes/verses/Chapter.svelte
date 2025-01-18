@@ -97,7 +97,7 @@
 
 		folderTitle = await chapterOperation.retrieveTitleFolder();
 		folderInfo = chapterOperation.getFolderInfo();
-		folderList = chapterOperation.getFoldersList();
+		folderList = await chapterOperation.getFoldersList();
 	})
 
 
