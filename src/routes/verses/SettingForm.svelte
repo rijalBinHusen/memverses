@@ -89,7 +89,7 @@
     type varNumber = 'total_verse_to_show'|'show_next_chapter_on_second'|'read_target'|'arabic_size';
     
     function decrement(whatVar: varNumber) {
-        const isVariableOkay = typeof whatVar === "undefined" || setting[whatVar] == 1;
+        const isVariableOkay = typeof whatVar === "undefined" || typeof setting[whatVar] == 'number' || setting[whatVar] != 1;
         if(!isVariableOkay) return;
         //@ts-ignore
         setting[whatVar] = setting[whatVar] -1
