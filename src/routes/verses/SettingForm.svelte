@@ -2,33 +2,33 @@
         
     <label for="chapter-total">Tampilkan ayat sebanyak</label>
     <div class="increment-decrement" id="chapter-total">
-        <button on:click={() => decrement('verseToShow')}>-</button>
+        <button on:click={() => decrement('total_verse_to_show')}>-</button>
         <input bind:value={setting.total_verse_to_show} type="number" name="" id="">
-        <button on:click={() => increment('verseToShow')}>+</button>
+        <button on:click={() => increment('total_verse_to_show')}>+</button>
         <span>Ayat</span>
     </div>
     
     <label for="next-chapter-on-second">Tampilkan ayat selanjutnya dalam</label>
     <div class="increment-decrement" id="next-chapter-on-second">
-        <button on:click={() => decrement('nextChapterOnSecond')}>-</button>
+        <button on:click={() => decrement('show_next_chapter_on_second')}>-</button>
         <input bind:value={setting.show_next_chapter_on_second} type="number" name="" id="">
-        <button on:click={() => increment('nextChapterOnSecond')}>+</button>
+        <button on:click={() => increment('show_next_chapter_on_second')}>+</button>
         <span>Detik</span>
     </div>
     
     <label for="target-per-day">Target membaca per hari</label>
     <div class="increment-decrement" id="target-per-day">
-        <button on:click={() => decrement('readTarget')}>-</button>
+        <button on:click={() => decrement('read_target')}>-</button>
         <input bind:value={setting.read_target} type="number" name="" id="">
-        <button on:click={() => increment('readTarget')}>+</button>
+        <button on:click={() => increment('read_target')}>+</button>
         <span>Kali</span>
     </div>
 
     <label for="arabic-size">Ukuran text arab</label>
     <div class="increment-decrement" id="arabic-size">
-        <button on:click={() => decrement('arabicSize')}>-</button>
+        <button on:click={() => decrement('arabic_size')}>-</button>
         <input bind:value={setting.arabic_size} type="number" name="" id="">
-        <button on:click={() => increment('arabicSize')}>+</button>
+        <button on:click={() => increment('arabic_size')}>+</button>
         <span>Pixel</span>
     </div>
 
@@ -78,26 +78,26 @@
     import { createEventDispatcher } from "svelte";
     import { type FolderUpdate } from "../index/Folder";
     export let setting = <FolderUpdate>{
-        verseToShow: 5,
-        nextChapterOnSecond: 3,
-        readTarget: 7,
+        total_verse_to_show: 5,
+        show_next_chapter_on_second: 3,
+        read_target: 7,
         is_show_first_letter: true,
         showTafseer: true,
-        arabicSize: 25
+        arabic_size: 25
     }
 
-    type varNumber = 'verseToShow'|'nextChapterOnSecond'|'readTarget'|'arabicSize';
+    type varNumber = 'total_verse_to_show'|'show_next_chapter_on_second'|'read_target'|'arabic_size';
     
     function decrement(whatVar: varNumber) {
-        //@ts-ignore
-        if(typeof whatVar === "undefined" || setting[whatVar] == 1) return;
+        const isVariableOkay = typeof whatVar === "undefined" || setting[whatVar] == 1;
+        if(!isVariableOkay) return;
         //@ts-ignore
         setting[whatVar] = setting[whatVar] -1
     }
     
     function increment(whatVar: varNumber) {
-        if(typeof whatVar === "undefined") return;
-
+        const isVariableOkay = typeof whatVar === "undefined" || typeof setting[whatVar] == 'number';
+        if(!isVariableOkay) return;
         //@ts-ignore
         setting[whatVar] = setting[whatVar] +1
     }
