@@ -79,7 +79,7 @@ export class Folder {
     }
 
     async updateFolder(id: string, keyValue: FolderUpdate) {
-        if (!this.lists.length) this.getFolder();
+        if (!this.lists.length) await this.getFolder();
         const findIndex = this.lists.findIndex((folder) => folder.id === id);
         if (findIndex < 0) return;
 
