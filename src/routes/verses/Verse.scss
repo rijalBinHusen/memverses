@@ -2,10 +2,13 @@
 
 .arabic {
     direction: rtl;
+
     @font-face {
         font-family: "Noto Naskh Arabic";
         src: url("/src/lib/NotoNaskhArabic-Medium.ttf") format("truetype");
-    };
+    }
+
+    ;
     font-family: 'Noto Naskh Arabic';
 }
 
@@ -40,12 +43,15 @@
 
     &:first-child {
         border-color: $primary-color;
+
         &:hover {
             color: $primary-color;
         }
     }
+
     &:nth-child(2) {
         border-color: green;
+
         &:hover {
             color: green;
         }
@@ -76,39 +82,39 @@
     font-size: 16px;
     border: none;
     cursor: pointer;
-  }
-  
-  .dropdown {
+}
+
+.dropdown {
     position: relative;
     display: inline-block;
-  }
-  
-  .dropdown-content {
+}
+
+.dropdown-content {
     visibility: hidden;
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border: 2px solid $primary-color;
-  }
-  
-  .dropdown-content span {
+}
+
+.dropdown-content a {
     color: black;
     padding: 8px 16px;
     text-decoration: none;
     display: block;
     cursor: pointer;
-  }
-  
-  .dropdown-content span:hover {
-    background-color: $primary-color
-  }
-  
-  .dropdown:hover .dropdown-content {
-    visibility: visible;
-  }
+}
 
-  .verse-info {
+.dropdown-content a:hover {
+    background-color: $primary-color
+}
+
+.dropdown:hover .dropdown-content {
+    visibility: visible;
+}
+
+.verse-info {
     font-weight: bold;
-  }
+}
