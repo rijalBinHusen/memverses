@@ -53,27 +53,43 @@
 />
 
 <section>
-	<h1>Hafal al-Quran</h1>
 
 	<div>
-		{#if listFolder.length}
-			{#each listFolder as folder}
-				<div class="folder">
-					<a href={"/verses?id-folder=" + folder.id}>
-						{folder.name}
-					</a>
-					<button on:click={() => editFolder(folder.id)}
-						>Rename</button
-					>
-				</div>
-			{/each}
-		{:else}
-			<div>Buat folder baru, tekan tombol + dibawah :)</div>
-		{/if}
+	<!-- read quran by chapter -->
+		<h1>Baca al-Quran</h1>
+	<!-- end read quran by chapter -->
 	</div>
-	<div class="bottom-nav">
-		<button class="primary-button" on:click={toggleModal}>+</button>
+	<!-- custom list -->
+	<div>
+		<h1>Hafal al-Quran</h1>
+
+		<div>
+			{#if listFolder.length}
+				{#each listFolder as folder}
+					<div class="folder">
+						<a href={"/verses?id-folder=" + folder.id}>
+							{folder.name}
+						</a>
+						<button on:click={() => editFolder(folder.id)}
+							>Rename</button
+						>
+					</div>
+				{/each}
+			{:else}
+				<div>Buat folder baru, tekan tombol + dibawah :)</div>
+			{/if}
+		</div>
+		<div class="bottom-nav">
+			<button class="primary-button" on:click={toggleModal}>+</button>
+			<div class="center-nav">
+				
+				<button class="primary-button" on:click={toggleModal}>Chapter</button>
+				<button class="primary-button" on:click={toggleModal}>Custom list</button>
+			</div>
+		</div>
 	</div>
+
+	<!-- end of custom list -->
 	<Modal
 		on:closeModal={toggleModal}
 		isOpen={showModal}
