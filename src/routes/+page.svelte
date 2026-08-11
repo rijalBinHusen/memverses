@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
 	import Seo from "../components/seo.svelte";
 	import welcome_fallback from "$lib/images/svelte-welcome.png";
 	import Modal from "../components/Modal.svelte";
@@ -48,6 +49,28 @@
 		folderId = folderInfo.id;
 		toggleModal();
 	}
+
+	// verses list
+	
+    interface Chapter {
+        nomor: number,
+        nama_latin: string,
+        jumlah_ayat: number
+    }
+	
+	let listVersesAndInfo = <Chapter[]>[];
+
+    async function getListVerses (): Promise<Chapter[]|undefined> {
+        // retrieve on static json
+        const retrieve = await fetch("/verses.static.json", { cache: "force-cache"});
+
+        if(!retrieve) return;
+        const data = await retrieve.json() as Chapter[];
+        
+        listVersesAndInfo = data;
+    }
+
+    onMount(() => getListVerses());
 </script>
 
 <Seo
@@ -63,12 +86,21 @@
 	<div>
 	<!-- read quran by chapter -->
 		<h1>Baca al-Quran</h1>
+		<div>
+			{#each listVersesAndInfo as chapter}
+				<div class="folder">
+					<a href={"/verses?id-folder="}>
+						{chapter.nomor} - {chapter.nama_latin} - {chapter.jumlah_ayat} ayat
+					</a>
+				</div>
+			{/each}
+		</div>
 	<!-- end read quran by chapter -->
 	</div>
 	{:else}
 		<!-- custom list -->
 		<div>
-			<h1>Hafal al-Quran</h1>
+			<h1>Buat daftar al-Quran</h1>
 
 			<div>
 				{#if listFolder.length}
