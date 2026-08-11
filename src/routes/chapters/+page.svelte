@@ -1,12 +1,20 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import VerticalFeed from './VerticalFeed.svelte';
+  import { ChaptersOperation, type VerseToShow } from "./Chapter";
 
-  // Menyediakan data dari parent component
-  const myData = Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    title: `Konten ke-${i + 1}`,
-    desc: `Ini deskripsi untuk konten ${i + 1} dari parent component.`
-  }));
+  const chapterOperation = new ChaptersOperation();
+  const chapterNumber = 1; // Ganti dengan nomor chapter yang diinginkan
+  let verses: VerseToShow[] = [];
+
+  onMount(() => {
+    chapterOperation.getChapterAndVerses(chapterNumber).then((data) => {
+      if (data) {
+        verses = data;
+      }
+    });
+})
+
 </script>
 
-<VerticalFeed items={myData} />
+<VerticalFeed items={verses} />

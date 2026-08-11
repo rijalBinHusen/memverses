@@ -1,16 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-
-  // Interface data item
-  interface FeedItem {
-    id: string | number;
-    title: string;
-    desc: string;
-    [key: string]: any;
-  }
+  import { type VerseToShow } from "./Chapter";
 
   // Props yang diterima dari parent component
-  export let items: FeedItem[] = [];
+  export let items: VerseToShow[] = [];
 
   let containerEl: HTMLElement;
   let cards: HTMLElement[] = [];
@@ -31,8 +24,8 @@
     const descEl = card.querySelector('.desc');
 
     if (titleEl && descEl && data) {
-      titleEl.textContent = data.title;
-      descEl.textContent = data.desc;
+      titleEl.textContent = data.arabic;
+      descEl.textContent = data.translate;
     }
   }
 

@@ -9,6 +9,7 @@
 // retrieve every chapter every show
 
 import { Folder, type FolderInterface } from "../Folder"
+import { type ILastPosition, LastPosition } from "./LastPosition"
 
 interface ArabicQuran {
     [verse: string]: string
@@ -74,164 +75,146 @@ export class ChaptersOperation {
     #storageName = "memorize-quran-chapter";
     lists = <Chapter[]>[];
     folderInfo = <FolderInterface>{};
+    lastPosition = new LastPosition();
+    lastPositionInfo: ILastPosition|undefined = undefined;
 
     constructor() {
-        this.getIdFolder();
-        this.retrieveTitleFolder();
-        this.retrieveChapter();
+        this.lastPositionInfo = this.lastPosition.getLastPosition();
+        this.getLastPosition();
+        // this.retrieveTitleFolder();
+        // this.retrieveChapter();
     }
 
-    getIdFolder(): string | undefined {
+    getLastPosition(): string | undefined {
+
+        if(this.lastPositionInfo) {
+
+            this.#idFolder = this.lastPositionInfo.idFolder
+            return this.#idFolder;
+        }
+
+    }
+
+    getChapterAndVerse(): { chapter: number, verse: number } | undefined {
         if (typeof window === "undefined") return;
 
-        const fullQueryParam = window.location.search;
-        if (!fullQueryParam.length) return;
+        const params = new URLSearchParams(window.location.search);
+        const getChapter = params.get('id');
+        const getVerse = params.get('verse');
 
-        const queryParamSplitted = fullQueryParam.split("=");
-        if (queryParamSplitted.length !== 2) return;
+        const chapter = getChapter ? Number(getChapter) : 0;
+        const verse = getVerse ? Number(getVerse) : 0;
 
-        const folderId = queryParamSplitted[1];
-        if (!folderId || !folderId.length) return;
 
-        this.#idFolder = folderId;
-        return folderId
+        return { chapter, verse }
     }
 
-    retrieveTitleFolder(): string {
+    // retrieveTitleFolder(): string {
 
-        const folderClass = new Folder();
+    //     const folderClass = new Folder();
 
-        folderClass.getFolder();
-        const folderInfo = folderClass.getFolderInfoById(this.#idFolder);
-        if (!folderInfo) return "Folder tidak ditemukan";
+    //     folderClass.getFolder();
+    //     const folderInfo = folderClass.getFolderInfoById(this.#idFolder);
+    //     if (!folderInfo) return "Folder tidak ditemukan";
 
-        this.titleFolder = folderInfo.name;
-        this.folderInfo = folderInfo
-        return this.titleFolder;
-    }
+    //     this.titleFolder = folderInfo.name;
+    //     this.folderInfo = folderInfo
+    //     return this.titleFolder;
+    // }
 
-    retrieveChapter() {
-        if (typeof window === 'undefined') return;
-        const retrieveChapter = window.localStorage.getItem(this.#storageName);
+    // retrieveChapter() {
+    //     if (typeof window === 'undefined') return;
+    //     const retrieveChapter = window.localStorage.getItem(this.#storageName);
 
-        if (retrieveChapter === null) return
+    //     if (retrieveChapter === null) return
 
-        if (typeof Blob != "undefined") {
+    //     if (typeof Blob != "undefined") {
 
-            const sizeOfLocalStorage = new Blob(Object.values(localStorage)).size;
-            const isOnLimit = sizeOfLocalStorage >= 4500000;
-            if (isOnLimit) {
-                alert("Website menyimpan terlalu banyak data!")
-            }
-        }
+    //         const sizeOfLocalStorage = new Blob(Object.values(localStorage)).size;
+    //         const isOnLimit = sizeOfLocalStorage >= 4500000;
+    //         if (isOnLimit) {
+    //             alert("Website menyimpan terlalu banyak data!")
+    //         }
+    //     }
 
-        const versesParsed: Chapter[] = JSON.parse(retrieveChapter)
-        if (typeof versesParsed[0].id === 'undefined') {
+    //     const versesParsed: Chapter[] = JSON.parse(retrieveChapter)
+    //     if (typeof versesParsed[0].id === 'undefined') {
 
-            this.lists = versesParsed.map((vers) => ({
-                ...vers, id: (vers.chapter * 300) + vers.verse
-            }))
-        } else {
+    //         this.lists = versesParsed.map((vers) => ({
+    //             ...vers, id: (vers.chapter * 300) + vers.verse
+    //         }))
+    //     } else {
 
-            this.lists = versesParsed;
-        }
+    //         this.lists = versesParsed;
+    //     }
 
-        return this.lists;
-    }
+    //     return this.lists;
+    // }
 
-    sortChapterAndVerses() {
+    // sortChapterAndVerses() {
 
-        // sort list based on verses desc and chapter asc
-        if (this.folderInfo.orderChapterDesc === true) {
+    //     // sort list based on verses desc and chapter asc
+    //     if (this.folderInfo.orderChapterDesc === true) {
 
-            this.lists = this.lists.sort((a, b) => {
-                if (a.chapter !== b.chapter) return b.chapter - a.chapter;
-                return a.verse - b.verse;
-            })
-        }
-        else {
+    //         this.lists = this.lists.sort((a, b) => {
+    //             if (a.chapter !== b.chapter) return b.chapter - a.chapter;
+    //             return a.verse - b.verse;
+    //         })
+    //     }
+    //     else {
 
-            this.lists = this.lists.sort((a, b) => {
-                if (a.chapter !== b.chapter) return a.chapter - b.chapter;
-                return a.verse - b.verse;
-            })
-        }
-    }
+    //         this.lists = this.lists.sort((a, b) => {
+    //             if (a.chapter !== b.chapter) return a.chapter - b.chapter;
+    //             return a.verse - b.verse;
+    //         })
+    //     }
+    // }
 
-    saveToLocalStorage() {
-        if (typeof window === 'undefined') return;
-        window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
-    }
+    // saveToLocalStorage() {
+    //     if (typeof window === 'undefined') return;
+    //     window.localStorage.setItem(this.#storageName, JSON.stringify(this.lists));
+    // }
 
-    addChapter(chapter: number, start: number, end: number) {
+    // addChapter(chapter: number, start: number, end: number) {
 
-        for (let i = start; i <= end; i++) {
+    //     for (let i = start; i <= end; i++) {
 
-            const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
-            if (findIndex === -1) {
+    //         const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.chapter === chapter && vers.verse === i);
+    //         if (findIndex === -1) {
 
-                this.lists.push({
-                    idFolder: this.#idFolder,
-                    id: (chapter * 300) + i,
-                    chapter,
-                    verse: i,
-                    readed: 0
-                })
-            }
-        }
+    //             this.lists.push({
+    //                 idFolder: this.#idFolder,
+    //                 id: (chapter * 300) + i,
+    //                 chapter,
+    //                 verse: i,
+    //                 readed: 0
+    //             })
+    //         }
+    //     }
 
-        this.lists.sort((a, b) => a.id - b.id);
-        this.saveToLocalStorage();
-    }
+    //     this.lists.sort((a, b) => a.id - b.id);
+    //     this.saveToLocalStorage();
+    // }
 
-    async getUnReadedVerse(): Promise<VerseToShow[] | undefined> {
+    async getChapterAndVerses(chapter:number): Promise<VerseToShow[] | undefined> {
 
-        if (!this.lists.length) return;
-        this.sortChapterAndVerses();
-        this.retrieveTitleFolder();
-
-        const idFolder = this.folderInfo.id
-        const verseLimiter = this.folderInfo.verseToShow;
-
-        let verseToShow = <Chapter[]>[]
-
-        const filterList = <Chapter[]>[];
-        const filterUnreadedList = <Chapter[]>[];
-
-        this.lists.forEach((vers) => {
-            // filter folder id
-            if (vers.idFolder == idFolder) filterList.push(vers);
-            // filter folder id andn unreaded
-            if (vers.idFolder == idFolder && vers.readed < this.folderInfo.readTarget) filterUnreadedList.push(vers);
-        })
-
-        // return unreaded
-        if (filterUnreadedList.length) verseToShow = filterUnreadedList.slice(0, verseLimiter);
-        else if (filterList.length) {
-            // reset readed
-            this.resetVerseReaded(idFolder);
-            verseToShow = filterList.slice(0, verseLimiter);
-        }
-        else return;
-
+        const fetchVerse = await fetch(`/verses/${chapter}.json`, { cache: "force-cache" });
+        if (!fetchVerse) return;
+        const verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
 
         const result = <VerseToShow[]>[]
-        let verseRetrieved = <verseAndChapterDetail>{};
 
-        for (let chapter of verseToShow) {
+        for (let i = 1; i <= Number(verseRetrieved[chapter].number_of_ayah); i++) {
 
-            const chapterStr = chapter.chapter + ""
-            const verseStr = chapter.verse + "";
-
-            const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
-            if (!isVerseRetrieved) {
-                const fetchVerse = await fetch(`/verses/${chapter.chapter}.json`, { cache: "force-cache" });
-                if (!fetchVerse) return;
-                verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
-            }
+            const chapterStr = chapter + ""
+            const verseStr = i + "";
 
             result.push({
-                ...chapter,
+                chapter: chapter,
+                id: (chapter * 300) + i,
+                idFolder: this.#idFolder,
+                verse: i,
+                readed: 0,
                 arabic: verseRetrieved[chapterStr].text[verseStr],
                 translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
                 tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
@@ -243,48 +226,48 @@ export class ChaptersOperation {
         return result;
     }
 
-    readVerse(id: number) {
-        const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.id === id);
-        // not foound
-        if (findIndex === -1) return;
+    // readVerse(id: number) {
+    //     const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.id === id);
+    //     // not foound
+    //     if (findIndex === -1) return;
 
-        const record = { ...this.lists[findIndex] };
-        this.lists[findIndex] = { ...record, readed: record.readed + 1 }
-        this.saveToLocalStorage();
-    }
+    //     const record = { ...this.lists[findIndex] };
+    //     this.lists[findIndex] = { ...record, readed: record.readed + 1 }
+    //     this.saveToLocalStorage();
+    // }
 
-    moveVerseToFolder(verseId: number, idFolder: string) {
-        const findIndex = this.lists.findIndex((vers) => vers.id === verseId);
+    // moveVerseToFolder(verseId: number, idFolder: string) {
+    //     const findIndex = this.lists.findIndex((vers) => vers.id === verseId);
 
-        if (findIndex < 0) return;
+    //     if (findIndex < 0) return;
 
-        const record = { ...this.lists[findIndex] };
-        this.lists[findIndex] = { ...record, idFolder }
-        this.saveToLocalStorage();
-    }
+    //     const record = { ...this.lists[findIndex] };
+    //     this.lists[findIndex] = { ...record, idFolder }
+    //     this.saveToLocalStorage();
+    // }
 
-    resetVerseReaded(idFolder: string) {
+    // resetVerseReaded(idFolder: string) {
 
-        for (let i = 0; i < this.lists.length; i++) {
-            const record = this.lists[i];
+    //     for (let i = 0; i < this.lists.length; i++) {
+    //         const record = this.lists[i];
 
-            if (record.idFolder === idFolder) {
-                this.lists[i].readed = 0
-            }
-        }
-        this.saveToLocalStorage();
-    }
+    //         if (record.idFolder === idFolder) {
+    //             this.lists[i].readed = 0
+    //         }
+    //     }
+    //     this.saveToLocalStorage();
+    // }
 
-    getFolderInfo(): FolderInterface {
-        return this.folderInfo;
-    }
+    // getFolderInfo(): FolderInterface {
+    //     return this.folderInfo;
+    // }
 
-    getFoldersList() {
-        const folderClass = new Folder();
+    // getFoldersList() {
+    //     const folderClass = new Folder();
 
-        folderClass.getFolder();
+    //     folderClass.getFolder();
 
-        return folderClass.getListFolderExcept(this.#idFolder);
-    }
+    //     return folderClass.getListFolderExcept(this.#idFolder);
+    // }
 }
 
