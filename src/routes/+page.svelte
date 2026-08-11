@@ -5,9 +5,14 @@
 	import { Folder, type FolderInterface } from "./Folder";
 
 	let showModal = false;
+	let currentMode: "chapter" | "custom-list" = "chapter";
 
 	function toggleModal() {
 		showModal = !showModal;
+	}
+
+	function switchMode(mode: "chapter" | "custom-list") {
+		currentMode = mode;
 	}
 
 	let listFolder: FolderInterface[] = [];
@@ -54,43 +59,46 @@
 
 <section>
 
+	{#if currentMode === "chapter"}
 	<div>
 	<!-- read quran by chapter -->
 		<h1>Baca al-Quran</h1>
 	<!-- end read quran by chapter -->
 	</div>
-	<!-- custom list -->
-	<div>
-		<h1>Hafal al-Quran</h1>
-
+	{:else}
+		<!-- custom list -->
 		<div>
-			{#if listFolder.length}
-				{#each listFolder as folder}
-					<div class="folder">
-						<a href={"/verses?id-folder=" + folder.id}>
-							{folder.name}
-						</a>
-						<button on:click={() => editFolder(folder.id)}
-							>Rename</button
-						>
-					</div>
-				{/each}
-			{:else}
-				<div>Buat folder baru, tekan tombol + dibawah :)</div>
-			{/if}
-		</div>
-		<div class="bottom-nav">
-			<button class="primary-button" on:click={toggleModal}>+</button>
-		</div>
-		<div class="nav-container">
-			<div class="nav-bar">
-				<a id="home-anchor" href="#chapter" class="nav-item">
-					<button id="home-btn" class="nav-btn">Chapter</button>
-				</a>
-				<a id="updates-anchor" href="#custom-list" class="nav-item disabled">
-					<button class="nav-btn">Custom list</button>
-				</a>
+			<h1>Hafal al-Quran</h1>
+
+			<div>
+				{#if listFolder.length}
+					{#each listFolder as folder}
+						<div class="folder">
+							<a href={"/verses?id-folder=" + folder.id}>
+								{folder.name}
+							</a>
+							<button on:click={() => editFolder(folder.id)}
+								>Rename</button
+							>
+						</div>
+					{/each}
+				{:else}
+					<div>Buat folder baru, tekan tombol + dibawah :)</div>
+				{/if}
 			</div>
+			<div class="bottom-nav">
+				<button class="primary-button" on:click={toggleModal}>+</button>
+			</div>
+		</div>
+	{/if}
+	<div class="nav-container">
+		<div class="nav-bar">
+			<a id="home-anchor" on:click={() => switchMode("chapter")} href="#chapter" class={"nav-item" + (currentMode === "chapter" ? " disabled" : "")}>
+				<button id="home-btn" class="nav-btn">Chapter</button>
+			</a>
+			<a id="updates-anchor" on:click={() => switchMode("custom-list")} href="#custom-list" class={"nav-item" + (currentMode === "custom-list" ? " disabled" : "")}>
+				<button class="nav-btn">Custom list</button>
+			</a>
 		</div>
 	</div>
 
