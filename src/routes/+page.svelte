@@ -81,10 +81,15 @@
 		</div>
 		<div class="bottom-nav">
 			<button class="primary-button" on:click={toggleModal}>+</button>
-			<div class="center-nav">
-				
-				<button class="primary-button" on:click={toggleModal}>Chapter</button>
-				<button class="primary-button" on:click={toggleModal}>Custom list</button>
+		</div>
+		<div class="nav-container">
+			<div class="nav-bar">
+				<a id="home-anchor" href="#chapter" class="nav-item">
+					<button id="home-btn" class="nav-btn">Chapter</button>
+				</a>
+				<a id="updates-anchor" href="#custom-list" class="nav-item disabled">
+					<button class="nav-btn">Custom list</button>
+				</a>
 			</div>
 		</div>
 	</div>
