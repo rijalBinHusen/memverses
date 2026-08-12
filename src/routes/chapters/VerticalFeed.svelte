@@ -21,12 +21,12 @@
     card.dataset.index = dataIndex.toString();
     const data = items[dataIndex];
 
-    const titleEl = card.querySelector('.title');
-    const descEl = card.querySelector('.desc');
+    const arabicTextEl = card.querySelector('.arabic-text');
+    const idTextEl = card.querySelector('.id-text');
 
-    if (titleEl && descEl && data) {
-      titleEl.textContent = data.arabic;
-      descEl.textContent = data.translate;
+    if (arabicTextEl && idTextEl && data) {
+      arabicTextEl.textContent = data.arabic;
+      idTextEl.textContent = data.translate;
     }
   }
 
@@ -150,20 +150,20 @@
 <div class="feed-container" bind:this={containerEl}>
   <div class="reel-card" data-index="0">
     <div class="content">
-      <h3 class="title">Loading...</h3>
-      <p class="desc"></p>
+      <h1 class="arabic-text">Loading...</h1>
+      <p class="id-text"></p>
     </div>
   </div>
   <div class="reel-card" data-index="1">
     <div class="content">
-      <h3 class="title">Loading...</h3>
-      <p class="desc"></p>
+      <h1 class="arabic-text">Loading...</h1>
+      <p class="id-text"></p>
     </div>
   </div>
   <div class="reel-card" data-index="2">
     <div class="content">
-      <h3 class="title">Loading...</h3>
-      <p class="desc"></p>
+      <h1 class="arabic-text">Loading...</h1>
+      <p class="id-text"></p>
     </div>
   </div>
 </div>
@@ -231,12 +231,21 @@
     max-width: 600px;
   }
 
-  .title {
+  .arabic-text {
     margin-bottom: 1rem;
+    direction: rtl;
+
+    @font-face {
+        font-family: "Noto Naskh Arabic";
+        src: url("/src/lib/NotoNaskhArabic-Medium.ttf") format("truetype");
+    }
+
+    ;
+    font-family: 'Noto Naskh Arabic';
   }
 
-  .desc {
-    font-size: 1.2rem;
+  .id-text {
+    font-size: 1rem;
     color: var(--text-desc);
   }
 </style>
