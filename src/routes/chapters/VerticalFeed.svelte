@@ -125,10 +125,10 @@
 
     // Mouse wheel event
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      // const scrollableElement = isInsideScrollableElement(e.target as HTMLElement, e.deltaY);
-      // if (Math.abs(e.deltaY) < 30 || scrollableElement) return;
-      if (Math.abs(e.deltaY) < 30) return;
+      // e.preventDefault();
+      const scrollableElement = isInsideScrollableElement(e.target as HTMLElement, e.deltaY);
+      if (Math.abs(e.deltaY) < 30 || scrollableElement) return;
+      // if (Math.abs(e.deltaY) < 30) return;
       navigate(e.deltaY > 0 ? 'next' : 'prev');
     };
 
@@ -138,7 +138,7 @@
       touchStartY = e.touches[0].clientY;
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
+    const handleTouchMove = (e: TouchEvent) => {
       const touchEndY = e.changedTouches[0].clientY;
       const diffY = touchStartY - touchEndY;
 
@@ -157,13 +157,13 @@
 
     containerEl.addEventListener('wheel', handleWheel, { passive: false });
     containerEl.addEventListener('touchstart', handleTouchStart, { passive: true });
-    containerEl.addEventListener('touchend', handleTouchEnd, { passive: true });
+    containerEl.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       containerEl.removeEventListener('wheel', handleWheel);
       containerEl.removeEventListener('touchstart', handleTouchStart);
-      containerEl.removeEventListener('touchend', handleTouchEnd);
+      containerEl.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('keydown', handleKeyDown);
     };
   });
