@@ -9,7 +9,7 @@
   let containerEl: HTMLElement;
   let cards: HTMLElement[] = [];
 
-  let currentIndex = 0;
+  export let currentIndex = 0;
   let isScrolling = false;
 
   // Posisi slot untuk 3 card: [-1 (prev), 0 (current), 1 (next)]
@@ -150,19 +150,19 @@
 <div class="feed-container" bind:this={containerEl}>
   <div class="reel-card" data-index="0">
     <div class="content">
-      <h1 class="title">Loading...</h1>
+      <h3 class="title">Loading...</h3>
       <p class="desc"></p>
     </div>
   </div>
   <div class="reel-card" data-index="1">
     <div class="content">
-      <h1 class="title">Loading...</h1>
+      <h3 class="title">Loading...</h3>
       <p class="desc"></p>
     </div>
   </div>
   <div class="reel-card" data-index="2">
     <div class="content">
-      <h1 class="title">Loading...</h1>
+      <h3 class="title">Loading...</h3>
       <p class="desc"></p>
     </div>
   </div>
