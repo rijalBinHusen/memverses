@@ -103,36 +103,37 @@
   }
 
   onMount(() => {
+    
     cards = Array.from(containerEl.querySelectorAll<HTMLElement>('.reel-card'));
     initPositions();
 
     // Memeriksa apakah suatu elemen memiliki scrollbar dan tidak berada di batas atas/bawah
-  function isInsideScrollableElement(target: HTMLElement, deltaY: number): HTMLElement | null {
-    
-    let current:HTMLElement|null = target;
+    function isInsideScrollableElement(target: HTMLElement, deltaY: number): HTMLElement | null {
+      
+      let current:HTMLElement|null = target;
 
-    while (current && current !== document.body && current !== document.documentElement) {
-      const style = window.getComputedStyle(current);
-      const overflowY = style.overflowY;
-      const isScrollable = overflowY === 'auto' || overflowY === 'scroll';
+      while (current && current !== document.body && current !== document.documentElement) {
+        const style = window.getComputedStyle(current);
+        const overflowY = style.overflowY;
+        const isScrollable = overflowY === 'auto' || overflowY === 'scroll';
 
-      // Cek apakah elemen ini memiliki konten yang melebih kapasitasnya (dapat di-scroll)
-      if (isScrollable && current.scrollHeight > current.clientHeight) {
-        const isAtTop = current.scrollTop === 0;
-        const isAtBottom = Math.abs(current.scrollHeight - current.clientHeight - current.scrollTop) <= 1;
+        // Cek apakah elemen ini memiliki konten yang melebih kapasitasnya (dapat di-scroll)
+        if (isScrollable && current.scrollHeight > current.clientHeight) {
+          const isAtTop = current.scrollTop === 0;
+          const isAtBottom = Math.abs(current.scrollHeight - current.clientHeight - current.scrollTop) <= 1;
 
-        // Jika user scroll ke atas tetapi sudah di paling atas, biarkan swipe global bekerja
-        if (deltaY < 0 && !isAtTop) return current; 
-        
-        // Jika user scroll ke bawah tetapi sudah di paling bawah, biarkan swipe global bekerja
-        if (deltaY > 0 && !isAtBottom) return current;
+          // Jika user scroll ke atas tetapi sudah di paling atas, biarkan swipe global bekerja
+          if (deltaY < 0 && !isAtTop) return current; 
+          
+          // Jika user scroll ke bawah tetapi sudah di paling bawah, biarkan swipe global bekerja
+          if (deltaY > 0 && !isAtBottom) return current;
+        }
+
+        current = current.parentElement;
       }
 
-      current = current.parentElement;
+      return null; // Pengguna sedang swipe di area non-scrollable
     }
-
-    return null; // Pengguna sedang swipe di area non-scrollable
-  }
 
     // Mouse wheel event
     const handleWheel = (e: WheelEvent) => {
@@ -171,12 +172,19 @@
     containerEl.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
+    // Add class when mounting /chapters
+    document.body.classList.add('no-scroll');
+
     return () => {
       containerEl.removeEventListener('wheel', handleWheel);
       containerEl.removeEventListener('touchstart', handleTouchStart);
       containerEl.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('keydown', handleKeyDown);
+      // Cleanup: Remove class when navigating to / or another page
+      document.body.classList.remove('no-scroll');
     };
+
+    
   });
 
   // Re-initialize jika data items berubah dinamis dari parent
@@ -233,7 +241,7 @@
 </div>
 
 <style>
-  :global(body) {
+  :global(body.no-scroll) {
     scrollbar-width: none;
     -ms-overflow-style: none;
     overflow: hidden;
@@ -241,7 +249,7 @@
     color: var(--text-main, #000000);
   }
 
-  :global(body::-webkit-scrollbar) {
+  :global(body.no-scroll::-webkit-scrollbar) {
     display: none;
   }
 
