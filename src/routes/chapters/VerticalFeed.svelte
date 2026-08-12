@@ -4,6 +4,7 @@
 
   // Props yang diterima dari parent component
   export let items: VerseToShow[] = [];
+  export let onSwitchVerse: (verse: number) => void;
 
   let containerEl: HTMLElement;
   let cards: HTMLElement[] = [];
@@ -52,6 +53,9 @@
     // Geser semua card satu slot
     cardPositions = cardPositions.map((pos, i) => {
       const newPos = pos - dir;
+      // Jika card berada di posisi 0 (current), changes the url parameter verse
+      if (newPos === 0) onSwitchVerse(items[currentIndex].verse);
+
       if (cards[i]) {
         cards[i].style.transform = `translateY(${newPos * 100}%)`;
       }

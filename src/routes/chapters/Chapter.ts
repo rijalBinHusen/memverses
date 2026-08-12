@@ -109,6 +109,14 @@ export class ChaptersOperation {
         return { chapter, verse }
     }
 
+    updateVerseURLParams(verse: number) {
+        if (typeof window === "undefined") return;
+
+        const params = new URLSearchParams(window.location.search);
+        params.set('verse', verse.toString());
+        window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+    }
+
     // retrieveTitleFolder(): string {
 
     //     const folderClass = new Folder();

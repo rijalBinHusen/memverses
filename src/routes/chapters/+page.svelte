@@ -13,8 +13,12 @@
         verses = data;
       }
     });
-})
+  })
+
+  function switchVerse(verse: number) {
+    chapterOperation.updateVerseURLParams(verse);
+  }
 
 </script>
 
-<VerticalFeed items={verses} />
+<VerticalFeed items={verses} onSwitchVerse={switchVerse} />
