@@ -89,7 +89,7 @@
 		<div>
 			{#each listVersesAndInfo as chapter}
 				<div class="folder">
-					<a href={"/verses?id-folder="}>
+					<a href={"/chapters?id=" + chapter.nomor + "&verse=1"}>
 						{chapter.nomor} - {chapter.nama_latin} - {chapter.jumlah_ayat} ayat
 					</a>
 				</div>

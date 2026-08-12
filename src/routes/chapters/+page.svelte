@@ -4,11 +4,11 @@
   import { ChaptersOperation, type VerseToShow } from "./Chapter";
 
   const chapterOperation = new ChaptersOperation();
-  const chapterNumber = 1; // Ganti dengan nomor chapter yang diinginkan
   let verses: VerseToShow[] = [];
 
   onMount(() => {
-    chapterOperation.getChapterAndVerses(chapterNumber).then((data) => {
+    const chapterNumber = chapterOperation.getChapterAndVerse();
+    chapterOperation.getChapterAndVerses(chapterNumber?.chapter).then((data) => {
       if (data) {
         verses = data;
       }

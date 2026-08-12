@@ -95,15 +95,15 @@ export class ChaptersOperation {
 
     }
 
-    getChapterAndVerse(): { chapter: number, verse: number } | undefined {
-        if (typeof window === "undefined") return;
+    getChapterAndVerse(): { chapter: number, verse: number } {
+        if (typeof window === "undefined") return { chapter: 1, verse: 1 };
 
         const params = new URLSearchParams(window.location.search);
         const getChapter = params.get('id');
         const getVerse = params.get('verse');
 
-        const chapter = getChapter ? Number(getChapter) : 0;
-        const verse = getVerse ? Number(getVerse) : 0;
+        const chapter = getChapter ? Number(getChapter) : 1;
+        const verse = getVerse ? Number(getVerse) : 1;
 
 
         return { chapter, verse }
