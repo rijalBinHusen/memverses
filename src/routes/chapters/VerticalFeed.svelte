@@ -150,20 +150,20 @@
 <div class="feed-container" bind:this={containerEl}>
   <div class="reel-card" data-index="0">
     <div class="content">
-      <p class="arabic-text">Loading...</p>
-      <p class="id-text"></p>
+      <div class="content1"><p class="arabic-text">Loading...</p></div>
+      <div class="content2"><p class="id-text"></p></div>
     </div>
   </div>
   <div class="reel-card" data-index="1">
     <div class="content">
-      <p class="arabic-text">Loading...</p>
-      <p class="id-text"></p>
+      <div class="content1"><p class="arabic-text">Loading...</p></div>
+      <div class="content2"><p class="id-text"></p></div>
     </div>
   </div>
   <div class="reel-card" data-index="2">
     <div class="content">
-      <p class="arabic-text">Loading...</p>
-      <p class="id-text"></p>
+      <div class="content1"><p class="arabic-text">Loading...</p></div>
+      <div class="content2"><p class="id-text"></p></div>
     </div>
   </div>
 </div>
@@ -182,27 +182,25 @@
   }
 
   :root {
-    --bg-body: #ffffff;
+    --bg-body: aliceblue;
     --text-main: #000000;
-    --bg-feed: #ffffff;
     --text-feed: #000000;
-    --bg-card: aliceblue;
+    --bg-feed: aliceblue;
     --text-desc: #555555;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg-body: #000000;
+      --bg-body: #121212;
       --text-main: #ffffff;
-      --bg-feed: #000000;
       --text-feed: #ffffff;
-      --bg-card: #121212;
+      --bg-feed: #121212;
       --text-desc: #aaaaaa;
     }
   }
 
   .feed-container {
-    position: relative;
+    position: static;
     height: 100vh;
     overflow: hidden;
     background-color: var(--bg-feed);
@@ -224,11 +222,12 @@
     box-sizing: border-box;
     will-change: transform;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    background-color: var(--bg-card);
   }
 
   .content {
-    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
   }
 
   .arabic-text {
@@ -247,5 +246,25 @@
   .id-text {
     font-size: 1rem;
     color: var(--text-desc);
+  }
+
+  .content1,
+  .content2 {
+    flex: 1; /* Makes each content block take up 50% width */
+    width: 100%; /* Ensures they don't grow past half the card */
+    max-height: 100%; /* Spans the full height of the reel-card */
+    overflow-y: auto; /* Enables scrolling if content overflows */
+    
+    /* Creates the transparent fade effect at the bottom */
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    
+    /* Hides standard scrollbars for a cleaner visual look (optional) */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .content1::-webkit-scrollbar,
+  .content2::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
   }
 </style>
