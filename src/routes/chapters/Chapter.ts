@@ -114,7 +114,7 @@ export class ChaptersOperation {
 
         const params = new URLSearchParams(window.location.search);
         params.set('verse', verse.toString());
-        window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+        window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
     }
 
     // retrieveTitleFolder(): string {

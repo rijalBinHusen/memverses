@@ -254,7 +254,7 @@
 
   .feed-container {
     position: static;
-    height: 100vh;
+    height: 100svh;
     overflow: hidden;
     background-color: var(--bg-feed);
     color: var(--text-feed);
@@ -280,7 +280,7 @@
   .content {
     display: flex;
     flex-direction: column;
-    max-height: 90vh;
+    max-height: 90%;
   }
 
   .arabic-text {
@@ -305,7 +305,7 @@
   .content2 {
     flex: 1; /* Makes each content block take up 50% width */
     width: 100%; /* Ensures they don't grow past half the card */
-    max-height: 100%; /* Spans the full height of the reel-card */
+    max-height: 50%; /* Spans the full height of the reel-card */
     overflow-y: auto; /* Enables scrolling if content overflows */
     
     /* Creates the transparent fade effect at the bottom */
@@ -314,6 +314,7 @@
     
     /* Hides standard scrollbars for a cleaner visual look (optional) */
     scrollbar-width: none; /* Firefox */
+    padding-top:1rem;
   }
 
   .content1::-webkit-scrollbar,
