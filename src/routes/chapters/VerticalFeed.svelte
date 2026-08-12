@@ -150,19 +150,19 @@
 <div class="feed-container" bind:this={containerEl}>
   <div class="reel-card" data-index="0">
     <div class="content">
-      <h1 class="arabic-text">Loading...</h1>
+      <p class="arabic-text">Loading...</p>
       <p class="id-text"></p>
     </div>
   </div>
   <div class="reel-card" data-index="1">
     <div class="content">
-      <h1 class="arabic-text">Loading...</h1>
+      <p class="arabic-text">Loading...</p>
       <p class="id-text"></p>
     </div>
   </div>
   <div class="reel-card" data-index="2">
     <div class="content">
-      <h1 class="arabic-text">Loading...</h1>
+      <p class="arabic-text">Loading...</p>
       <p class="id-text"></p>
     </div>
   </div>
@@ -220,7 +220,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 2rem;
+    padding: 0.6rem;
     box-sizing: border-box;
     will-change: transform;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -238,10 +238,10 @@
     @font-face {
         font-family: "Noto Naskh Arabic";
         src: url("/src/lib/NotoNaskhArabic-Medium.ttf") format("truetype");
-    }
+    };
 
-    ;
     font-family: 'Noto Naskh Arabic';
+    font-size: 2.3rem;
   }
 
   .id-text {
