@@ -23,10 +23,12 @@
 
     const arabicTextEl = card.querySelector('.arabic-text');
     const idTextEl = card.querySelector('.id-text');
+    const contentInfoEl = card.querySelector('#content-info');
 
-    if (arabicTextEl && idTextEl && data) {
+    if (arabicTextEl && idTextEl && contentInfoEl && data) {
       arabicTextEl.textContent = data.arabic;
       idTextEl.textContent = data.translate;
+      contentInfoEl.textContent = `Surah ${data.chapter} - Ayat ${data.verse}`;
     }
   }
 
@@ -93,9 +95,39 @@
     cards = Array.from(containerEl.querySelectorAll<HTMLElement>('.reel-card'));
     initPositions();
 
+    // Memeriksa apakah suatu elemen memiliki scrollbar dan tidak berada di batas atas/bawah
+  function isInsideScrollableElement(target: HTMLElement, deltaY: number): HTMLElement | null {
+    
+    let current:HTMLElement|null = target;
+
+    while (current && current !== document.body && current !== document.documentElement) {
+      const style = window.getComputedStyle(current);
+      const overflowY = style.overflowY;
+      const isScrollable = overflowY === 'auto' || overflowY === 'scroll';
+
+      // Cek apakah elemen ini memiliki konten yang melebih kapasitasnya (dapat di-scroll)
+      if (isScrollable && current.scrollHeight > current.clientHeight) {
+        const isAtTop = current.scrollTop === 0;
+        const isAtBottom = Math.abs(current.scrollHeight - current.clientHeight - current.scrollTop) <= 1;
+
+        // Jika user scroll ke atas tetapi sudah di paling atas, biarkan swipe global bekerja
+        if (deltaY < 0 && !isAtTop) return current; 
+        
+        // Jika user scroll ke bawah tetapi sudah di paling bawah, biarkan swipe global bekerja
+        if (deltaY > 0 && !isAtBottom) return current;
+      }
+
+      current = current.parentElement;
+    }
+
+    return null; // Pengguna sedang swipe di area non-scrollable
+  }
+
     // Mouse wheel event
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
+      // const scrollableElement = isInsideScrollableElement(e.target as HTMLElement, e.deltaY);
+      // if (Math.abs(e.deltaY) < 30 || scrollableElement) return;
       if (Math.abs(e.deltaY) < 30) return;
       navigate(e.deltaY > 0 ? 'next' : 'prev');
     };
@@ -109,7 +141,10 @@
     const handleTouchEnd = (e: TouchEvent) => {
       const touchEndY = e.changedTouches[0].clientY;
       const diffY = touchStartY - touchEndY;
-      if (Math.abs(diffY) > 50) {
+
+      const scrollableElement = isInsideScrollableElement(e.target as HTMLElement, diffY);
+
+      if (!scrollableElement && Math.abs(diffY) > 50) {
         navigate(diffY > 0 ? 'next' : 'prev');
       }
     };
@@ -153,17 +188,35 @@
       <div class="content1"><p class="arabic-text">Loading...</p></div>
       <div class="content2"><p class="id-text"></p></div>
     </div>
+    <div class="btn-content">
+      <div id="content-info"></div>
+      <button>
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+      </button>
+    </div>
   </div>
   <div class="reel-card" data-index="1">
     <div class="content">
       <div class="content1"><p class="arabic-text">Loading...</p></div>
       <div class="content2"><p class="id-text"></p></div>
     </div>
+    <div class="btn-content">
+      <div id="content-info"></div>
+      <button>
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+      </button>
+    </div>
   </div>
   <div class="reel-card" data-index="2">
     <div class="content">
       <div class="content1"><p class="arabic-text">Loading...</p></div>
       <div class="content2"><p class="id-text"></p></div>
+    </div>
+    <div class="btn-content">
+      <div id="content-info"></div>
+      <button>
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+      </button>
     </div>
   </div>
 </div>
@@ -213,7 +266,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -227,7 +280,7 @@
   .content {
     display: flex;
     flex-direction: column;
-    max-height: 100%;
+    max-height: 90vh;
   }
 
   .arabic-text {
@@ -266,5 +319,43 @@
   .content1::-webkit-scrollbar,
   .content2::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Edge */
+  }
+
+  .btn-content {
+    /* Fix position to the bottom of the screen */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    /* Align content-info on the left and button on the right */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    /* Spacing and Styling */
+    padding: 2px 16px;
+  }
+
+  /* Style for the button */
+  .btn-content button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: var(--text-feed);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-content button:hover {
+    background-color: #0056b3;
   }
 </style>
