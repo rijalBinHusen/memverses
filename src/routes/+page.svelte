@@ -70,7 +70,29 @@
         listVersesAndInfo = data;
     }
 
-    onMount(() => getListVerses());
+	
+	let lastScrollTop = 0;
+
+	function toggleNavbar() {
+
+		const navbar = window.document.querySelector('.nav-container') as HTMLElement | null;
+
+		if(navbar === null) return;
+		let scrollTop = window.scrollY || document.documentElement.scrollTop;
+		if (scrollTop > lastScrollTop) {
+
+			navbar.style.bottom = "-80px";
+		} else {
+
+			navbar.style.bottom = "1rem";
+		}
+		lastScrollTop = scrollTop;
+	}
+
+    onMount(() => {
+		window.addEventListener("scroll", toggleNavbar);
+		getListVerses()
+	});
 </script>
 
 <Seo
