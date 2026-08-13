@@ -6,6 +6,7 @@
   const chapterOperation = new ChaptersOperation();
   let verses: VerseToShow[] = [];
   let currentVerse: number = 1;
+  let chapterName: string = '';
 
   onMount(() => {
     const chapterNumber = chapterOperation.getChapterAndVerse();
@@ -13,6 +14,7 @@
       if (data) {
         verses = data;
       }
+      chapterName = chapterOperation.chapterName;
     });
 
     currentVerse = chapterNumber?.verse || 1;
@@ -25,4 +27,4 @@
 
 </script>
 
-<VerticalFeed items={verses} onSwitchVerse={switchVerse} currentIndex={currentVerse - 1} />
+<VerticalFeed items={verses} onSwitchVerse={switchVerse} currentIndex={currentVerse - 1} chapterName={chapterName} />

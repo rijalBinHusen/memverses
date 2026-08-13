@@ -77,6 +77,7 @@ export class ChaptersOperation {
     folderInfo = <FolderInterface>{};
     lastPosition = new LastPosition();
     lastPositionInfo: ILastPosition|undefined = undefined;
+    chapterName: string = "";
 
     constructor() {
         this.lastPositionInfo = this.lastPosition.getLastPosition();
@@ -209,6 +210,7 @@ export class ChaptersOperation {
         const fetchVerse = await fetch(`/verses/${chapter}.json`, { cache: "force-cache" });
         if (!fetchVerse) return;
         const verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
+        this.chapterName = verseRetrieved[chapter].name_latin;
 
         const result = <VerseToShow[]>[]
 
