@@ -240,7 +240,9 @@
   </div>
 </div>
 
-<style>
+<style lang="scss">
+  @import "../../scss/variables";
+
   :global(body.no-scroll) {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -282,8 +284,9 @@
 
   .reel-card {
     position: absolute;
+    max-width: $width-max;
+    margin: 0 auto;
     top: 0;
-    left: 0;
     width: 100%;
     height: 100vh;
     display: flex;
