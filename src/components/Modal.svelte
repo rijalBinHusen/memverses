@@ -44,7 +44,8 @@
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: var(--bg-body, #ffffff);
+    color: var(--text-main, #000000);
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   }
 
@@ -54,7 +55,8 @@
   
   /* Modal Content */
   .modal-content {
-    background-color: #fefefe;
+    background-color: var(--bg-body, #ffffff);
+    color: var(--text-main, #000000);
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
@@ -68,7 +70,7 @@
     font-size: 28px;
     font-weight: bold;
     background-color: $danger-color;
-    color: black;
+    color:  var(--bg-body, #ffffff);
     padding: $padding-button;
     border-radius: 50%;
     border: 3px solid $primary-color;
