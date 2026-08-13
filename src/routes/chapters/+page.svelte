@@ -9,7 +9,7 @@
   let chapterName: string = '';
 
   onMount(() => {
-    const chapterNumber = chapterOperation.getChapterAndVerse();
+    const chapterNumber = chapterOperation.getChapterAndVerseOnQueryParameter();
     chapterOperation.getChapterAndVerses(chapterNumber?.chapter).then((data) => {
       if (data) {
         verses = data;

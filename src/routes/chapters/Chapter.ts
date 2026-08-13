@@ -78,12 +78,14 @@ export class ChaptersOperation {
     lastPosition = new LastPosition();
     lastPositionInfo: ILastPosition|undefined = undefined;
     chapterName: string = "";
+    #maxVersePosition = 0;
+    #minVersePosition = 0;
+    #distanceVersePosition = 20;
+    #maxLengthVerse = 0;
 
     constructor() {
         this.lastPositionInfo = this.lastPosition.getLastPosition();
         this.getLastPosition();
-        // this.retrieveTitleFolder();
-        // this.retrieveChapter();
     }
 
     getLastPosition(): string | undefined {
@@ -96,7 +98,7 @@ export class ChaptersOperation {
 
     }
 
-    getChapterAndVerse(): { chapter: number, verse: number } {
+    getChapterAndVerseOnQueryParameter(): { chapter: number, verse: number } {
         if (typeof window === "undefined") return { chapter: 1, verse: 1 };
 
         const params = new URLSearchParams(window.location.search);
@@ -234,6 +236,13 @@ export class ChaptersOperation {
 
         // return the completed verses and chapter
         return result;
+    }
+
+     getMinMaxNumber(minMaxDistance: number, currentValue: number, maxValue: number): { min: number; max: number } {
+        const min = currentValue - minMaxDistance < 1 ? 1 : currentValue - minMaxDistance;
+        const max = currentValue + minMaxDistance > maxValue ? maxValue : currentValue + minMaxDistance;
+
+        return { min, max };
     }
 
     // readVerse(id: number) {
