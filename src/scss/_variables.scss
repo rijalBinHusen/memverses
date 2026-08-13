@@ -1,3 +1,22 @@
+
+  :root {
+    --bg-body: aliceblue;
+    --text-main: #000000;
+    --text-feed: #000000;
+    --bg-feed: aliceblue;
+    --text-desc: #555555;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-body: #121212;
+      --text-main: #ffffff;
+      --text-feed: #ffffff;
+      --bg-feed: #121212;
+      --text-desc: #aaaaaa;
+    }
+  }
+
 // Global color variables
 $primary-color: #415edd;
 $secondary-color: gainsboro;

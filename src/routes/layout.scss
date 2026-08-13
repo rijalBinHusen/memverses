@@ -1,5 +1,14 @@
 @import "../scss/variables";
 
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: $font-family-sans-serif;
+    font-size: $font-size-base;
+    margin: 0;
+    padding: 0;
+}
+
 .container {
     max-width: $width-max;
     width: calc(100vw - 30px);

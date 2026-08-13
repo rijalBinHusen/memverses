@@ -194,14 +194,6 @@
   }
 </script>
 
-<svelte:head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-</svelte:head>
-
 <div class="feed-container" bind:this={containerEl}>
   <div class="reel-card" data-index="0">
     <div class="content">
@@ -278,24 +270,6 @@
 
   :global(body.no-scroll::-webkit-scrollbar) {
     display: none;
-  }
-
-  :root {
-    --bg-body: aliceblue;
-    --text-main: #000000;
-    --text-feed: #000000;
-    --bg-feed: aliceblue;
-    --text-desc: #555555;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-body: #121212;
-      --text-main: #ffffff;
-      --text-feed: #ffffff;
-      --bg-feed: #121212;
-      --text-desc: #aaaaaa;
-    }
   }
 
   .feed-container {
