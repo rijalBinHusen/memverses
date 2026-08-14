@@ -108,32 +108,48 @@
     cards = Array.from(containerEl.querySelectorAll<HTMLElement>('.reel-card'));
     initPositions();
 
-    // Memeriksa apakah suatu elemen memiliki scrollbar dan tidak berada di batas atas/bawah
+    // Menyimpan timestamp terakhir kali elemen tersebut di-scroll oleh user
+    const lastScrollTimeMap = new WeakMap<HTMLElement, number>();
+
+    // Durasi delay/cooldown dalam milidetik (misal: 800ms)
+    const SWIPE_DELAY_MS = 800;
+
     function isInsideScrollableElement(target: HTMLElement, deltaY: number): HTMLElement | null {
-      
-      let current:HTMLElement|null = target;
+      let current: HTMLElement | null = target;
 
       while (current && current !== document.body && current !== document.documentElement) {
         const style = window.getComputedStyle(current);
         const overflowY = style.overflowY;
         const isScrollable = overflowY === 'auto' || overflowY === 'scroll';
 
-        // Cek apakah elemen ini memiliki konten yang melebih kapasitasnya (dapat di-scroll)
         if (isScrollable && current.scrollHeight > current.clientHeight) {
           const isAtTop = current.scrollTop === 0;
           const isAtBottom = Math.abs(current.scrollHeight - current.clientHeight - current.scrollTop) <= 1;
-
-          // Jika user scroll ke atas tetapi sudah di paling atas, biarkan swipe global bekerja
-          if (deltaY < 0 && !isAtTop) return current; 
           
-          // Jika user scroll ke bawah tetapi sudah di paling bawah, biarkan swipe global bekerja
-          if (deltaY > 0 && !isAtBottom) return current;
+          const now = Date.now();
+          const lastScrollTime = lastScrollTimeMap.get(current) || 0;
+
+          // 1. Jika pengguna MASIH berada di tengah-tengah konten (belum mentok)
+          if ((deltaY < 0 && !isAtTop) || (deltaY > 0 && !isAtBottom)) {
+            // Catat waktu aktivitas scroll pengguna pada elemen ini
+            lastScrollTimeMap.set(current, now);
+            return current; // Pertahankan fokus pada elemen internal
+          }
+
+          // 2. Jika pengguna SUDAH mentok (atas/bawah), cek apakah jeda waktu baca sudah terpenuhi
+          if ((deltaY < 0 && isAtTop) || (deltaY > 0 && isAtBottom)) {
+            // Jika waktu sejak scroll terakhir masih KURANG dari delay yang ditentukan,
+            // tahan/blokir swipe global sementara waktu
+            if (now - lastScrollTime < SWIPE_DELAY_MS) {
+              return current; // Anggap masih di dalam elemen agar swipe global TIDAK berjalan
+            }
+          }
         }
 
         current = current.parentElement;
       }
 
-      return null; // Pengguna sedang swipe di area non-scrollable
+      return null; // Bebas beralih ke swipe global jika jeda waktu sudah habis
     }
 
     // Mouse wheel event
