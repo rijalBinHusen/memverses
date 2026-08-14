@@ -273,7 +273,7 @@
   }
 
   .feed-container {
-    position: static;
+    position: relative;
     max-width: $width-max;
     height: 100svh;
     overflow: hidden;
@@ -288,7 +288,7 @@
     margin: 0 auto;
     top: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;

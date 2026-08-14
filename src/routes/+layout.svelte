@@ -14,4 +14,8 @@
 
 <style lang="scss">
     @import "./layout.scss";
+    body {
+        height: 100svh;
+        width: 100svw;
+    }
 </style>
