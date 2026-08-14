@@ -23,20 +23,20 @@
 	if (retrieveFolder) listFolder = retrieveFolder;
 
 	// form operation
-	let folderName = "";
-	let folderId = "";
+	let readingListName = "";
+	let readingListId = "";
 
 	function handleSubmit() {
-		if (folderName === "") return;
+		if (readingListName === "") return;
 
-		if (folderId) {
-			folderOperation.updateFolder(folderId, { name: folderName });
+		if (readingListId) {
+			folderOperation.updateFolder(readingListId, { name: readingListName });
 		} else {
-			folderOperation.createFolder(folderName);
+			folderOperation.createFolder(readingListName);
 		}
 
-		folderName = ""; //empty the form
-		folderId = "";
+		readingListName = ""; //empty the form
+		readingListId = "";
 		toggleModal(); // close modal
 		listFolder = folderOperation.lists;
 	}
@@ -45,8 +45,8 @@
 		const folderInfo = folderOperation.getFolderInfoById(id);
 		if (typeof folderInfo === "undefined") return;
 
-		folderName = folderInfo.name;
-		folderId = folderInfo.id;
+		readingListName = folderInfo.name;
+		readingListId = folderInfo.id;
 		toggleModal();
 	}
 
@@ -122,7 +122,7 @@
 	{:else}
 		<!-- custom list -->
 		<div>
-			<h1>Buat daftar al-Quran</h1>
+			<h1>Buat daftar baca al-Quran</h1>
 
 			<div>
 				{#if listFolder.length}
@@ -137,7 +137,7 @@
 						</div>
 					{/each}
 				{:else}
-					<div>Buat folder baru, tekan tombol + dibawah :)</div>
+					<div>Buat daftar baca baru, tekan tombol + dibawah :)</div>
 				{/if}
 			</div>
 			<div class="bottom-nav">
@@ -160,18 +160,18 @@
 	<Modal
 		on:closeModal={toggleModal}
 		isOpen={showModal}
-		title="Buat folder baru"
+		title="Buat daftar baca baru"
 	>
 		<div class="form">
-			<label for="nama-folder">Masukkan nama folder</label>
+			<label for="nama-daftar-baca">Masukkan nama daftar baca</label>
 			<input
-				bind:value={folderName}
+				bind:value={readingListName}
 				type="text"
-				name="nama-folder"
-				id="nama-folder"
+				name="nama-daftar-baca"
+				id="nama-daftar-baca"
 			/>
 			<button class="primary-button" on:click={handleSubmit}
-				>{folderId ? "Update" : "Buat folder"}</button
+				>{readingListId ? "Update" : "Buat"}</button
 			>
 		</div>
 	</Modal>
