@@ -24,7 +24,7 @@
 }
 
 .folder button {
-    color: $primary-color;
+    color: var(--text-main, #000000);
     border: 2px solid $primary-color;
     padding: 5px 15px 5px 15px;
     font-family: $font-family-sans-serif;
@@ -32,6 +32,7 @@
     font-weight: bolder;
     cursor: pointer;
     border-radius: $border-radius;
+    background-color: var(--bg-body, #ffffff);
 
     &:hover {
         background-color: darken($secondary-color, 10%);
