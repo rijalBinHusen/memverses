@@ -60,6 +60,7 @@ export interface VerseToShow extends Chapter {
     translate: string
     tafsir: string
     showFirstLetter: boolean
+    chapterName: string
 }
 
 export interface ChapterFormInterface {
@@ -235,7 +236,8 @@ export class ChaptersOperation {
                 arabic: verseRetrieved[chapterStr].text[verseStr],
                 translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
                 tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
-                showFirstLetter: this.folderInfo.showFirstLetter
+                showFirstLetter: this.folderInfo.showFirstLetter,
+                chapterName: verseRetrieved[chapterStr].name_latin
             })
         }
 

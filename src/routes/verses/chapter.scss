@@ -4,6 +4,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    max-width: $width-max;
+    width: 100svw;
+    width: calc(100vw - 0.6rem);
 }
 
 .setting-btn button {

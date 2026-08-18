@@ -8,7 +8,9 @@
   const chapterOperation = new ChaptersOperation();
   let verses: VerseToShow[] = [];
   let currentVerse: number = 1;
-  let chapterName: string = '';
+
+  // There is no verses
+
 
   onMount(() => {
     const chapterNumber = chapterOperation.getChapterAndVerseOnQueryParameter();
@@ -16,7 +18,6 @@
       if (data) {
         verses = data;
       }
-      chapterName = chapterOperation.chapterName;
     });
 
     currentVerse = chapterNumber?.verse || 1;
@@ -37,14 +38,13 @@
 />
 
 <section>
-  <!-- {#if verses.length} -->
+  {#if verses.length}
     <VerticalFeed 
       items={verses} 
       onSwitchVerse={switchVerse} 
-      currentIndex={currentVerse - 1} 
-      chapterName={chapterName} 
+      currentIndex={currentVerse - 1}
     />
-  <!-- {:else}
+  {:else}
       <div>Tidak ayat untuk dibaca, tekan tombol + dibawah :)</div>
-  {/if} -->
+  {/if}
 </section>

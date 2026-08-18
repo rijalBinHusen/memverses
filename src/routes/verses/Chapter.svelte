@@ -13,6 +13,7 @@
 	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
 	import Chapter from "./Verse.svelte";
 	import { flip } from "svelte/animate";
+	import VerticalFeed from "../chapters/VerticalFeed.svelte";
 
 	let folderTitle = "";
 	let folderInfo = <FolderInterface>{};
@@ -124,7 +125,8 @@
 
 	<div class="wraper">
 		{#if chapters.length}
-			{#each chapters as chapt (chapt)}
+			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={() => {}}  />
+			<!-- {#each chapters as chapt (chapt)}
 				<div animate:flip>
 					<Chapter
 						verse={chapt}
@@ -135,7 +137,7 @@
 						on:move={moveToFolder}
 					/>
 				</div>
-			{/each}
+			{/each} -->
 		{:else}
 			<div>{messageToShow}</div>
 		{/if}

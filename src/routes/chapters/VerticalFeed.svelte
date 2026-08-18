@@ -5,7 +5,6 @@
   // Props yang diterima dari parent component
   export let items: VerseToShow[] = [];
   export let onSwitchVerse: (verse: number) => void;
-  export let chapterName: string = '';
 
   let containerEl: HTMLElement;
   let cards: HTMLElement[] = [];
@@ -29,7 +28,7 @@
     if (arabicTextEl && idTextEl && contentInfoEl && data) {
       arabicTextEl.textContent = data.arabic;
       idTextEl.textContent = data.translate;
-      contentInfoEl.textContent = `${chapterName} - ${data.chapter}:${data.verse}`;
+      contentInfoEl.textContent = `${data.chapterName} - ${data.chapter}:${data.verse}`;
     }
   }
 

@@ -9,7 +9,6 @@
 // retrieve every chapter every show
 
 import { Folder, type FolderInterface } from "../Folder"
-import { type ILastPosition, LastPosition } from "./LastPosition"
 
 interface ArabicQuran {
     [verse: string]: string
@@ -75,146 +74,27 @@ export class ChaptersOperation {
     #storageName = "memorize-quran-chapter";
     lists = <Chapter[]>[];
     folderInfo = <FolderInterface>{};
-    lastPosition = new LastPosition();
-    lastPositionInfo: ILastPosition|undefined = undefined;
-    chapterName: string = "";
-    #maxVersePosition = 0;
-    #minVersePosition = 0;
-    #distanceVersePosition = 20;
-    #maxLengthVerse = 0;
 
     constructor() {
-        this.lastPositionInfo = this.lastPosition.getLastPosition();
-        this.getLastPosition();
+        this.getIdFolder();
+        this.retrieveTitleFolder();
+        this.retrieveChapter();
     }
 
-    getLastPosition(): string | undefined {
-
-        if(this.lastPositionInfo) {
-
-            this.#idFolder = this.lastPositionInfo.idFolder
-            return this.#idFolder;
-        }
-
-    }
-
-    getChapterAndVerseOnQueryParameter(): { chapter: number, verse: number, idFolder: string} {
-        if (typeof window === "undefined") return { chapter: 1, verse: 1, idFolder: "0" };
-
-        const params = new URLSearchParams(window.location.search);
-        const getChapter = params.get('id');
-        const getVerse = params.get('verse');
-        const getIdFolder = params.get('id-folder');
-
-        const chapter = getChapter ? Number(getChapter) : 1;
-        const verse = getVerse ? Number(getVerse) : 1;
-        this.#idFolder = getIdFolder ? getIdFolder : "0";
-
-
-        return { chapter, verse, idFolder: this.#idFolder }
-    }
-
-    updateVerseURLParams(verse: number) {
+    getIdFolder(): string | undefined {
         if (typeof window === "undefined") return;
 
-        const params = new URLSearchParams(window.location.search);
-        params.set('verse', verse.toString());
-        window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
-    }
+        const fullQueryParam = window.location.search;
+        if (!fullQueryParam.length) return;
 
-    async getChapterAndVerses(chapter:number): Promise<VerseToShow[] | undefined> {
+        const queryParamSplitted = fullQueryParam.split("=");
+        if (queryParamSplitted.length !== 2) return;
 
-        if(this.#idFolder) {
-            const verses = await this.getUnReadedVerseOnIdFolder();
-            if(verses && verses.length) return verses;
-        }
+        const folderId = queryParamSplitted[1];
+        if (!folderId || !folderId.length) return;
 
-        const fetchVerse = await fetch(`/verses/${chapter}.json`, { cache: "force-cache" });
-        if (!fetchVerse) return;
-        const verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
-        this.chapterName = verseRetrieved[chapter].name_latin;
-
-        const result = <VerseToShow[]>[]
-
-        for (let i = 1; i <= Number(verseRetrieved[chapter].number_of_ayah); i++) {
-
-            const chapterStr = chapter + ""
-            const verseStr = i + "";
-
-            result.push({
-                chapter: chapter,
-                id: (chapter * 300) + i,
-                idFolder: this.#idFolder,
-                verse: i,
-                readed: 0,
-                arabic: verseRetrieved[chapterStr].text[verseStr],
-                translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
-                tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
-                showFirstLetter: this.folderInfo.showFirstLetter
-            })
-        }
-
-        // return the completed verses and chapter
-        return result;
-    }     
-     
-    async getUnReadedVerseOnIdFolder(): Promise<VerseToShow[] | undefined> {
-
-        if (!this.lists.length) return;
-        this.sortChapterAndVerses();
-        this.retrieveTitleFolder();
-
-        const idFolder = this.folderInfo.id
-        const verseLimiter = this.folderInfo.verseToShow;
-
-        let verseToShow = <Chapter[]>[]
-
-        const filterList = <Chapter[]>[];
-        const filterUnreadedList = <Chapter[]>[];
-
-        this.lists.forEach((vers) => {
-            // filter folder id
-            if (vers.idFolder == idFolder) filterList.push(vers);
-            // filter folder id andn unreaded
-            if (vers.idFolder == idFolder && vers.readed < this.folderInfo.readTarget) filterUnreadedList.push(vers);
-        })
-
-        // return unreaded
-        if (filterUnreadedList.length) verseToShow = filterUnreadedList.slice(0, verseLimiter);
-        else if (filterList.length) {
-            // reset readed
-            this.resetVerseReaded(idFolder);
-            verseToShow = filterList.slice(0, verseLimiter);
-        }
-        else return;
-
-
-        const result = <VerseToShow[]>[]
-        let verseRetrieved = <verseAndChapterDetail>{};
-
-        for (let chapter of verseToShow) {
-
-            const chapterStr = chapter.chapter + ""
-            const verseStr = chapter.verse + "";
-
-            const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
-            if (!isVerseRetrieved) {
-                const fetchVerse = await fetch(`/verses/${chapter.chapter}.json`, { cache: "force-cache" });
-                if (!fetchVerse) return;
-                verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
-            }
-
-            result.push({
-                ...chapter,
-                arabic: verseRetrieved[chapterStr].text[verseStr],
-                translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
-                tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
-                showFirstLetter: this.folderInfo.showFirstLetter
-            })
-        }
-
-        // return the completed verses and chapter
-        return result;
+        this.#idFolder = folderId;
+        return folderId
     }
 
     retrieveTitleFolder(): string {
@@ -304,6 +184,64 @@ export class ChaptersOperation {
         this.saveToLocalStorage();
     }
 
+    async getUnReadedVerse(): Promise<VerseToShow[] | undefined> {
+
+        if (!this.lists.length) return;
+        this.sortChapterAndVerses();
+        this.retrieveTitleFolder();
+
+        const idFolder = this.folderInfo.id
+        const verseLimiter = this.folderInfo.verseToShow;
+
+        let verseToShow = <Chapter[]>[]
+
+        const filterList = <Chapter[]>[];
+        const filterUnreadedList = <Chapter[]>[];
+
+        this.lists.forEach((vers) => {
+            // filter folder id
+            if (vers.idFolder == idFolder) filterList.push(vers);
+            // filter folder id andn unreaded
+            if (vers.idFolder == idFolder && vers.readed < this.folderInfo.readTarget) filterUnreadedList.push(vers);
+        })
+
+        // return unreaded
+        if (filterUnreadedList.length) verseToShow = filterUnreadedList.slice(0, verseLimiter);
+        else if (filterList.length) {
+            // reset readed
+            this.resetVerseReaded(idFolder);
+            verseToShow = filterList.slice(0, verseLimiter);
+        }
+        else return;
+
+
+        const result = <VerseToShow[]>[]
+        let verseRetrieved = <verseAndChapterDetail>{};
+
+        for (let chapter of verseToShow) {
+
+            const chapterStr = chapter.chapter + ""
+            const verseStr = chapter.verse + "";
+
+            const isVerseRetrieved = verseRetrieved && verseRetrieved[chapterStr] && verseRetrieved[chapterStr].number === chapterStr;
+            if (!isVerseRetrieved) {
+                const fetchVerse = await fetch(`/verses/${chapter.chapter}.json`, { cache: "force-cache" });
+                if (!fetchVerse) return;
+                verseRetrieved = await fetchVerse.json() as verseAndChapterDetail;
+            }
+
+            result.push({
+                ...chapter,
+                arabic: verseRetrieved[chapterStr].text[verseStr],
+                translate: verseRetrieved[chapterStr].translations["id"].text[verseStr],
+                tafsir: verseRetrieved[chapterStr].tafsir["id"]["kemenag"].text[verseStr],
+                showFirstLetter: this.folderInfo.showFirstLetter
+            })
+        }
+
+        // return the completed verses and chapter
+        return result;
+    }
 
     readVerse(id: number) {
         const findIndex = this.lists.findIndex((vers) => vers.idFolder === this.#idFolder && vers.id === id);
