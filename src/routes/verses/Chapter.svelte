@@ -134,12 +134,12 @@
 				/>
 			</VerticalFeed>
 		{:else}
-			<div>{messageToShow}</div>
+			<div style="margin-top:5rem">{messageToShow}</div>
+			<div class="bottom-nav">
+				<button on:click={() => toggleModal("form")}>+</button>
+			</div>
 		{/if}
 	</div>
-	<!-- <div class="bottom-nav">
-		<button on:click={() => toggleModal("form")}>+</button>
-	</div> -->
 	<Modal
 		on:closeModal={() => toggleModal()}
 		isOpen={showModal}
