@@ -11,9 +11,8 @@
 	import { onMount } from "svelte";
 	import SettingForm from "./SettingForm.svelte";
 	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
-	import Chapter from "./Verse.svelte";
-	import { flip } from "svelte/animate";
 	import VerticalFeed from "../chapters/VerticalFeed.svelte";
+	import ChapterBtn from "./Chapter-btn.svelte";
 
 	let folderTitle = "";
 	let folderInfo = <FolderInterface>{};
@@ -125,26 +124,23 @@
 
 	<div class="wraper">
 		{#if chapters.length}
-			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={() => {}}  />
-			<!-- {#each chapters as chapt (chapt)}
-				<div animate:flip>
-					<Chapter
-						verse={chapt}
-						arabicSize={folderInfo.arabicSize}
-						showTafseer={folderInfo.showTafseer}
-						on:readed={readChapter}
-						{folderList}
-						on:move={moveToFolder}
-					/>
-				</div>
-			{/each} -->
+			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={() => {}} >
+				<!-- <button slot="right-btn" class="btn-content">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+						<circle cx="12" cy="5" r="2" />
+						<circle cx="12" cy="12" r="2" />
+						<circle cx="12" cy="19" r="2" />
+					</svg>
+				</button> -->
+				<ChapterBtn slot="right-btn" />
+			</VerticalFeed>
 		{:else}
 			<div>{messageToShow}</div>
 		{/if}
 	</div>
-	<div class="bottom-nav">
+	<!-- <div class="bottom-nav">
 		<button on:click={() => toggleModal("form")}>+</button>
-	</div>
+	</div> -->
 	<Modal
 		on:closeModal={() => toggleModal()}
 		isOpen={showModal}

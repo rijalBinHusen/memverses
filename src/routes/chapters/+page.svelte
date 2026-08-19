@@ -48,7 +48,6 @@
 
 <style>
 
-
   /* Style for the button */
   .btn-content {
     display: inline-flex;
