@@ -125,14 +125,13 @@
 	<div class="wraper">
 		{#if chapters.length}
 			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={() => {}} >
-				<!-- <button slot="right-btn" class="btn-content">
-					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-						<circle cx="12" cy="5" r="2" />
-						<circle cx="12" cy="12" r="2" />
-						<circle cx="12" cy="19" r="2" />
-					</svg>
-				</button> -->
-				<ChapterBtn slot="right-btn" />
+				<ChapterBtn 
+					slot="right-btn" 
+					onAddVerse={() => toggleModal("form")}
+					onDelete={() => console.log("")}
+					onMoveTo={() => console.log("")}
+					onShare={() => console.log("")}
+				/>
 			</VerticalFeed>
 		{:else}
 			<div>{messageToShow}</div>

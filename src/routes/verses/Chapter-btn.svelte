@@ -5,6 +5,11 @@
     isOpen = !isOpen;
   }
 
+  export let onAddVerse: () => void;
+  export let onMoveTo: () => void;
+  export let onShare: () => void;
+  export let onDelete: () => void;
+
   function handleOption(action: string) {
     console.log(`Action selected: ${action}`);
     isOpen = false;
@@ -31,9 +36,10 @@
   <!-- Floating Menu (positioned above) -->
   {#if isOpen}
     <div class="options-menu">
-      <button on:click={() => handleOption('Edit')}>Edit</button>
-      <button on:click={() => handleOption('Duplicate')}>Duplicate</button>
-      <button class="delete-btn" on:click={() => handleOption('Delete')}>Delete</button>
+      <button on:click={() => onAddVerse() }>Tambah</button>
+      <button on:click={() => onMoveTo() }>Pindah ke</button>
+      <button on:click={() => onShare() }>Bagikan</button>
+      <button class="delete-btn" on:click={() => onDelete() }>Delete</button>
     </div>
   {/if}
 
