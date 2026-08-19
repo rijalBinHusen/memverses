@@ -13,7 +13,6 @@
         {/each}
     </select>
 
-    {#if startVerse > 0 }
     <div class="select-chapter">
 
         <label for="start-chapter">Mulai dari ayat</label>
@@ -22,7 +21,6 @@
         <label for="end-chapter">Sampai dengan ayat</label>
         <input type="number" min={startVerse} max={currentChapter.jumlah_ayat} bind:value={endVerse} name="end-chapter" id="end-chapter">
     </div>
-    {/if}
 
     <button class="primary-button" on:click={submitVerseChapter}>Tambahkan</button>
 </div>
