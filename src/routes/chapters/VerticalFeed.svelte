@@ -28,7 +28,7 @@
     if (arabicTextEl && idTextEl && contentInfoEl && data) {
       arabicTextEl.textContent = data.arabic;
       idTextEl.textContent = data.translate;
-      contentInfoEl.textContent = `${data.chapterName} - ${data.chapter}:${data.verse}`;
+      contentInfoEl.textContent = `${data.chapterName} - ${data.chapter}:${data.verse} ${data.readed > 0 ? data.readed + "x dibaca" : ""}`;
     }
   }
 
