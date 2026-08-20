@@ -10,6 +10,7 @@
 	import VersesForm from "./ChapterForm.svelte";
 	import { onMount } from "svelte";
 	import SettingForm from "./SettingForm.svelte";
+	import MoveFolderForm from "./MoveFolderForm.svelte";
 	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
 	import VerticalFeed from "../chapters/VerticalFeed.svelte";
 	import ChapterBtn from "./Chapter-btn.svelte";
@@ -28,7 +29,13 @@
 	let showModal = false;
 	let currentForm = "";
 
-	async function toggleModal(form?: "setting" | "form") {
+	async function toggleModal(form?: "setting" | "form" | "move") {
+		const isOnlyOneFolderAndFormMove = form === "move" && (!folderList || folderList?.length == 0);
+		
+		if(isOnlyOneFolderAndFormMove) {
+			alert("Total folder hanya 1");
+			return;
+		}
 		showModal = !showModal;
 		if (!form) currentForm = "";
 		else currentForm = form;
@@ -170,7 +177,7 @@
 					slot="right-btn" 
 					onAddVerse={() => toggleModal("form")}
 					onDelete={() => deleteVerse()}
-					onMoveTo={() => console.log("")}
+					onMoveTo={() => toggleModal("move")}
 					onShare={() => copyCurrentUrl()}
 				/>
 			</VerticalFeed>
@@ -187,9 +194,13 @@
 		title={currentForm === "setting" ? "Setting" : "Tambahkan ayat"}
 	>
 		{#if currentForm === "setting"}
-			<SettingForm
+		<SettingForm
 				setting={folderInfo}
 				on:updateSetting={updateFolderSetting}
+			/>
+		{:else if currentForm === "move"}
+			<MoveFolderForm 
+				folderList={folderList}
 			/>
 		{:else}
 			<VersesForm on:verseAndChapterSubmitted={addVersesToMemorize} />
