@@ -85,17 +85,13 @@ export class ChaptersOperation {
     getIdFolder(): string | undefined {
         if (typeof window === "undefined") return;
 
-        const fullQueryParam = window.location.search;
-        if (!fullQueryParam.length) return;
+        const params = new URLSearchParams(window.location.search);
+        const folderId = params.get('id-folder');
 
-        const queryParamSplitted = fullQueryParam.split("=");
-        if (queryParamSplitted.length !== 2) return;
-
-        const folderId = queryParamSplitted[1];
-        if (!folderId || !folderId.length) return;
+        if(!folderId) return;
 
         this.#idFolder = folderId;
-        return folderId
+        return folderId;
     }
 
     retrieveTitleFolder(): string {

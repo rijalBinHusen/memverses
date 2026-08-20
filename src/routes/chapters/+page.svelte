@@ -18,7 +18,7 @@
     currentVerse = chapterNumber?.verse || 1;
   })
 
-  function switchVerse(verse: number) {
+  function switchVerse(chapter: number, verse: number) {
     chapterOperation.updateVerseURLParams(verse);
     currentVerse = verse;
   }

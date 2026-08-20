@@ -106,7 +106,14 @@
 
 	async function copyCurrentUrl() {
 		try {
-			await navigator.clipboard.writeText(window.location.href);
+			const fullURL = new URL(window.location.href);
+			// Update the path
+			fullURL.pathname = "/chapters";
+
+			// Remove the unwanted query parameter
+			fullURL.searchParams.delete("id-folder");
+
+			await navigator.clipboard.writeText(fullURL.toString());
 			alert('URL copied to clipboard!');
 			return true;
 		} catch (err) {
@@ -114,6 +121,15 @@
 			return false;
 		}
 	}
+
+	function updateVerseURLParams(chapter: number, verse: number) {
+        if (typeof window === "undefined") return;
+
+        const params = new URLSearchParams(window.location.search);
+		params.set('id', chapter.toString());
+        params.set('verse', verse.toString());
+        window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
+    }
 
 	onMount(() => retrieveChapterToRead());
 </script>
@@ -135,7 +151,7 @@
 
 	<div class="wraper">
 		{#if chapters.length}
-			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={() => {}} >
+			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={updateVerseURLParams} >
 				<ChapterBtn 
 					slot="right-btn" 
 					onAddVerse={() => toggleModal("form")}

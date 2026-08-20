@@ -122,7 +122,7 @@
 	{:else}
 		<!-- custom list -->
 		<div>
-			<h1>Buat daftar baca al-Quran</h1>
+			<h1>Daftar baca al-Quran</h1>
 
 			<div>
 				{#if listFolder.length}
