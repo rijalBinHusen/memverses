@@ -6,6 +6,7 @@
   export let items: VerseToShow[] = [];
   export let onSwitchVerse: (chapter: number, verse: number) => void;
   export let onGetNewVerses: () => void;
+  export let arabicSize = 25;
 
   let containerEl: HTMLElement;
   let cards: HTMLElement[] = [];
@@ -220,7 +221,7 @@
 <div class="feed-container" bind:this={containerEl}>
   <div class="reel-card" data-index="0">
     <div class="content">
-      <div class="content1"><p class="arabic-text">Loading...</p></div>
+      <div class="content1"><p class="arabic-text" style={"font-size:" + arabicSize + "px"}>Loading...</p></div>
       <div class="content2"><p class="id-text"></p></div>
     </div>
     <div class="btn-content">
@@ -238,7 +239,7 @@
   </div>
   <div class="reel-card" data-index="1">
     <div class="content">
-      <div class="content1"><p class="arabic-text">Loading...</p></div>
+      <div class="content1"><p class="arabic-text" style={"font-size:" + arabicSize + "px"}>Loading...</p></div>
       <div class="content2"><p class="id-text"></p></div>
     </div>
     <div class="btn-content">
@@ -256,7 +257,7 @@
   </div>
   <div class="reel-card" data-index="2">
     <div class="content">
-      <div class="content1"><p class="arabic-text">Loading...</p></div>
+      <div class="content1"><p class="arabic-text" style={"font-size:" + arabicSize + "px"}>Loading...</p></div>
       <div class="content2"><p class="id-text"></p></div>
     </div>
     <div class="btn-content">

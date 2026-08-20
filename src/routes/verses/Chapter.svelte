@@ -176,7 +176,13 @@
 
 	<div class="wraper">
 		{#if chapters.length}
-			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={updateVerseURLParams} onGetNewVerses={retrieveChapterToRead} >
+			<VerticalFeed 
+				items={chapters}  
+				currentIndex={0} 
+				onSwitchVerse={updateVerseURLParams} 
+				onGetNewVerses={retrieveChapterToRead} 
+				arabicSize={folderInfo.arabicSize}
+			>
 				<ChapterBtn 
 					slot="right-btn" 
 					onAddVerse={() => toggleModal("form")}
