@@ -92,7 +92,7 @@
         const verseNumber = params.get('verse'); // verse number
 		const findIndex = chapters.findIndex((rec) => rec.idFolder == folderId && rec.chapter == Number(chaptersId) && rec.verse == Number(verseNumber))
 
-		return chapters[findIndex].id;
+		return chapters[findIndex]?.id;
 	}
 
 	function moveToFolder(e: any) {
@@ -112,20 +112,9 @@
 		toggleModal();
 	}
 
-	function readChapter(e: any) {
-		const id = e.detail as number;
-		chapterOperation.readVerse(id);
-
-		const findIndex = chapters.findIndex((chap) => chap.id === id);
-		if (findIndex === -1) return;
-
-		if (chapters.length > 1) {
-			const allChapter = [...chapters];
-			allChapter.splice(findIndex, 1);
-			chapters = allChapter;
-		} else {
-			retrieveChapterToRead();
-		}
+	function readChapter() {
+		const verseId = getVerseId();
+		if(verseId) chapterOperation.readVerse(verseId);
 	}
 
 	async function copyCurrentUrl() {
@@ -153,6 +142,7 @@
 		params.set('id', chapter.toString());
         params.set('verse', verse.toString());
         window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
+		readChapter()
     }
 
 	function deleteVerse() {
@@ -186,7 +176,7 @@
 
 	<div class="wraper">
 		{#if chapters.length}
-			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={updateVerseURLParams} >
+			<VerticalFeed items={chapters}  currentIndex={0} onSwitchVerse={updateVerseURLParams} onGetNewVerses={retrieveChapterToRead} >
 				<ChapterBtn 
 					slot="right-btn" 
 					onAddVerse={() => toggleModal("form")}

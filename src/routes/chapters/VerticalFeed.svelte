@@ -5,6 +5,7 @@
   // Props yang diterima dari parent component
   export let items: VerseToShow[] = [];
   export let onSwitchVerse: (chapter: number, verse: number) => void;
+  export let onGetNewVerses: () => void;
 
   let containerEl: HTMLElement;
   let cards: HTMLElement[] = [];
@@ -42,6 +43,9 @@
       updateCardContent(card, dataIdx);
       card.style.transform = `translateY(${pos * 100}%)`;
     });
+
+    onSwitchVerse(items[currentIndex].chapter, items[currentIndex].verse);
+
   }
 
   function navigate(direction: 'next' | 'prev') {
@@ -51,6 +55,10 @@
     const totalItems = items.length;
     const dir = direction === 'next' ? 1 : -1;
     currentIndex = (currentIndex + dir + totalItems) % totalItems;
+
+    const isNeedToGetNewVerses = (currentIndex + 1) == totalItems;
+    
+    if(isNeedToGetNewVerses) onGetNewVerses();
 
     // Geser semua card satu slot
     cardPositions = cardPositions.map((pos, i) => {
@@ -63,7 +71,7 @@
       }
       return newPos;
     });
-
+    
     // Daur ulang card setelah transisi animasi selesai
     setTimeout(() => {
       cardPositions.forEach((pos, i) => {
