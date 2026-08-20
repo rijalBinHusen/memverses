@@ -26,8 +26,7 @@
     const dispatch = createEventDispatcher();
 
     function submitIdFolder() {
-        console.log(folderId)
-        dispatch("verseAndChapterSubmitted", folderId)
+        dispatch("idFolderSubmitted", folderId)
     }
 
 </script>

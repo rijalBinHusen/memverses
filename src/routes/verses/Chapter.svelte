@@ -85,14 +85,22 @@
 	}
 
 	function moveToFolder(e: any) {
-		const verseInfo = e.detail as { idFolder: string; idVerse: number };
+		
+        if (typeof window === "undefined") return;
+		const idFolderDestination = e.detail as string
+        const params = new URLSearchParams(window.location.search);
+		const folderId = params.get('id-folder'); // folder id
+		const chaptersId = params.get('id'); // chapter id
+        const verseNumber = params.get('verse'); // verse number
+		const findIndex = chapters.findIndex((rec) => rec.idFolder == folderId && rec.chapter == Number(chaptersId) && rec.verse == Number(verseNumber))
 
 		chapterOperation.moveVerseToFolder(
-			verseInfo.idVerse,
-			verseInfo.idFolder,
+			chapters[findIndex].id,
+			idFolderDestination,
 		);
 
 		retrieveChapterToRead();
+		toggleModal();
 	}
 
 	function readChapter(e: any) {
@@ -201,6 +209,7 @@
 		{:else if currentForm === "move"}
 			<MoveFolderForm 
 				folderList={folderList}
+				on:idFolderSubmitted={moveToFolder}
 			/>
 		{:else}
 			<VersesForm on:verseAndChapterSubmitted={addVersesToMemorize} />
