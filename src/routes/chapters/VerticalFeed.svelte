@@ -356,7 +356,7 @@
   .btn-content {
     /* Fix position to the bottom of the screen */
     position: fixed;
-    bottom: 0;
+    bottom: 10px;
     left: 0;
     right: 0;
     z-index: 1000;
@@ -365,6 +365,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-right: 5px;
   }
 
   /* Style for the button */

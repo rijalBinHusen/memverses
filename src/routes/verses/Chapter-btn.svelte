@@ -94,7 +94,7 @@
         position: absolute;
         bottom: 100%; /* Positions bottom edge at top edge of button */
         right: 0;
-        margin-bottom: 8px; /* Gap between button and menu */
+        margin: 0 8px 8px 0; /* Gap between button and menu */
         display: flex;
         flex-direction: column;
         min-width: 140px;
