@@ -365,9 +365,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    /* Spacing and Styling */
-    padding: 2px 16px;
   }
 
   /* Style for the button */

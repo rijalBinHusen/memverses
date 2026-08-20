@@ -104,6 +104,17 @@
 		}
 	}
 
+	async function copyCurrentUrl() {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			alert('URL copied to clipboard!');
+			return true;
+		} catch (err) {
+			console.error('Failed to copy URL: ', err);
+			return false;
+		}
+	}
+
 	onMount(() => retrieveChapterToRead());
 </script>
 
@@ -130,7 +141,7 @@
 					onAddVerse={() => toggleModal("form")}
 					onDelete={() => console.log("")}
 					onMoveTo={() => console.log("")}
-					onShare={() => console.log("")}
+					onShare={() => copyCurrentUrl()}
 				/>
 			</VerticalFeed>
 		{:else}
