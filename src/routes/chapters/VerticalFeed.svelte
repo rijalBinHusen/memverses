@@ -194,7 +194,7 @@
 
     containerEl.addEventListener('wheel', handleWheel, { passive: false });
     containerEl.addEventListener('touchstart', handleTouchStart, { passive: true });
-    containerEl.addEventListener('touchmove', handleTouchMove, { passive: true });
+    containerEl.addEventListener('touchend', handleTouchMove, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     // Add class when mounting /chapters
@@ -203,7 +203,7 @@
     return () => {
       containerEl.removeEventListener('wheel', handleWheel);
       containerEl.removeEventListener('touchstart', handleTouchStart);
-      containerEl.removeEventListener('touchmove', handleTouchMove);
+      containerEl.removeEventListener('touchend', handleTouchMove);
       window.removeEventListener('keydown', handleKeyDown);
       // Cleanup: Remove class when navigating to / or another page
       document.body.classList.remove('no-scroll');
