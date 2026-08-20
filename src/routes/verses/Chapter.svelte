@@ -131,6 +131,20 @@
         window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
     }
 
+	function deleteVerse() {
+        if (typeof window === "undefined") return;
+
+		const confirm = window.confirm("Apakah anda yakin untuk hapus ayat");
+		if(!confirm) return;
+        const params = new URLSearchParams(window.location.search);
+		const folderId = params.get('id-folder'); // folder id
+		const chaptersId = params.get('id'); // chapter id
+        const verseNumber = params.get('verse'); // verse number
+		const findIndex = chapters.findIndex((rec) => rec.idFolder == folderId && rec.chapter == Number(chaptersId) && rec.verse == Number(verseNumber))
+		chapterOperation.removeVerse(chapters[findIndex].id)
+		retrieveChapterToRead()
+	}
+
 	onMount(() => retrieveChapterToRead());
 </script>
 
@@ -155,7 +169,7 @@
 				<ChapterBtn 
 					slot="right-btn" 
 					onAddVerse={() => toggleModal("form")}
-					onDelete={() => console.log("")}
+					onDelete={() => deleteVerse()}
 					onMoveTo={() => console.log("")}
 					onShare={() => copyCurrentUrl()}
 				/>

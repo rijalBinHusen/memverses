@@ -261,6 +261,14 @@ export class ChaptersOperation {
         this.saveToLocalStorage();
     }
 
+    removeVerse(verseId: number) {
+        const findIndex = this.lists.findIndex((vers) => vers.id === verseId);
+
+        if (findIndex < 0) return;
+        this.lists.splice(findIndex, 1);
+        this.saveToLocalStorage();
+    }
+
     resetVerseReaded(idFolder: string) {
 
         for (let i = 0; i < this.lists.length; i++) {
