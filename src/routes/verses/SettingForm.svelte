@@ -75,7 +75,7 @@
         <span>Pixel</span>
     </div>
 
-    <div class="checkbox">
+    <!-- <div class="checkbox">
         <input
             checked={setting.showFirstLetter}
             type="checkbox"
@@ -84,7 +84,7 @@
                 (setting.showFirstLetter = !setting.showFirstLetter)}
         />
         <label for="show-only-first-letter">Hanya tampilkan kata pertama</label>
-    </div>
+    </div> -->
 
     <div class="checkbox">
         <input
@@ -97,7 +97,7 @@
         />
         <label for="show-tafsir">Urutkan dari surah terbesar</label>
     </div>
-    <div class="checkbox">
+    <!-- <div class="checkbox">
         <input
             checked={setting.showTafseer}
             type="checkbox"
@@ -106,7 +106,7 @@
             on:change={() => (setting.showTafseer = !setting.showTafseer)}
         />
         <label for="show-tafsir">Tampilkan tafsir</label>
-    </div>
+    </div> -->
     <button class="primary-button" on:click={submitSetting}> Terapkan </button>
 </div>
 
