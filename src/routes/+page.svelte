@@ -147,12 +147,20 @@
 	{/if}
 	<div class="nav-container">
 		<div class="nav-bar">
-			<a id="home-anchor" on:click={() => switchMode("chapter")} href="#chapter" class={"nav-item" + (currentMode === "chapter" ? " disabled" : "")}>
-				<button id="home-btn" class="nav-btn">Chapter</button>
-			</a>
-			<a id="updates-anchor" on:click={() => switchMode("custom-list")} href="#custom-list" class={"nav-item" + (currentMode === "custom-list" ? " disabled" : "")}>
-				<button class="nav-btn">Custom list</button>
-			</a>
+			<button 
+				id="home-btn"
+				on:click={() => switchMode("chapter")} 
+				class={"nav-item nav-btn" + (currentMode === "chapter" ? " disabled" : "")}
+			>
+				Chapter
+			</button>
+			
+			<button 
+				on:click={() => switchMode("custom-list")} 
+				class={"nav-item nav-btn" + (currentMode === "custom-list" ? " disabled" : "")}
+			>
+				Custom list
+			</button>
 		</div>
 	</div>
 
