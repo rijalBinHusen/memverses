@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
 	import Seo from "../components/seo.svelte";
-	import welcome_fallback from "$lib/images/svelte-welcome.png";
 	import Modal from "../components/Modal.svelte";
 	import { Folder, type FolderInterface } from "./Folder";
 
@@ -97,9 +96,7 @@
 
 <Seo
 	title="Halaman utama"
-	description="Halaman utama kita"
-	link="localhost:3000"
-	thumbnail={welcome_fallback}
+	description="Halaman utama memverses"
 />
 
 <section>

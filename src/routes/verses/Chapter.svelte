@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Seo from "../../components/seo.svelte";
-	import welcome_fallback from "$lib/images/svelte-welcome.png";
 	import Modal from "../../components/Modal.svelte";
 	import {
 		ChaptersOperation,
@@ -162,8 +161,6 @@
 <Seo
 	title="Hafalan surah alquran"
 	description="Daftar surah alquran untuk dihafalkan"
-	link="localhost:3000"
-	thumbnail={welcome_fallback}
 />
 
 <section>

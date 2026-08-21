@@ -4,16 +4,21 @@
   import { ChaptersOperation, type VerseToShow } from "./Chapter";
   import Modal from '../../components/Modal.svelte';
   import SettingForm from './SettingForm.svelte';
+  import Seo from '../../components/seo.svelte';
 
   const chapterOperation = new ChaptersOperation();
   let verses: VerseToShow[] = [];
   let currentVerse: number = 1;
+
+  let titlePage = "Halaman utama";
+  let descriptionPage = "Doom scrolling quran"
 
   onMount(() => {
     const chapterNumber = chapterOperation.getChapterAndVerseOnQueryParameter();
     chapterOperation.getChapterAndVerses(chapterNumber?.chapter).then((data) => {
       if (data) {
         verses = data;
+        titlePage = "Surah " + data[chapterNumber.verse].chapterName + " ayat " + chapterNumber.verse
       }
     });
 
@@ -58,6 +63,12 @@
   }
 
 </script>
+
+<Seo
+	title={titlePage}
+	description={descriptionPage}
+>
+</Seo>
 
 <section>
 

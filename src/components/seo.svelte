@@ -1,8 +1,11 @@
 <script lang="ts">
+    import { page } from '$app/stores';
+	import welcome_fallback from "$lib/images/svelte-welcome.png";
+
     export let title:string = "";
     export let description:string = "";
-    export let link: string = "";
-    export let thumbnail: string = "";
+    let link: string = $page.url.href
+    let thumbnail: string = welcome_fallback;
 </script>
 
 <svelte:head>
