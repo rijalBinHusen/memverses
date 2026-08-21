@@ -19,6 +19,11 @@
     <meta name="title" content={title} />
     <meta name="description" content={description} />
 
+    <meta property="og:image:secure_url" content={thumbnail}>
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="330">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={link} />
