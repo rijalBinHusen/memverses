@@ -47,7 +47,7 @@
 
   
 	let showModal = false;
-	let arabicSize = 25;
+	let arabicSize = 40;
 
 	async function toggleModal() {
 		showModal = !showModal;

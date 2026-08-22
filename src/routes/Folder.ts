@@ -40,7 +40,7 @@ export class Folder {
             readTarget: 1,
             showFirstLetter: false,
             showTafseer: false,
-            arabicSize: 30,
+            arabicSize: 40,
             orderChapterDesc: false
         });
         this.saveToLocalStorage();
