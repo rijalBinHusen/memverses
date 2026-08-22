@@ -28,6 +28,9 @@
 	let showModal = false;
 	let currentForm = "";
 
+	let currentVerseId:undefined|number;
+	let oldVerseId:undefined|number;
+
 	async function toggleModal(form?: "setting" | "form" | "move") {
 		const isOnlyOneFolderAndFormMove = form === "move" && (!folderList || folderList?.length == 0);
 		
@@ -111,8 +114,7 @@
 		toggleModal();
 	}
 
-	function readChapter() {
-		const verseId = getVerseId();
+	function readChapter(verseId: number) {
 		if(verseId) chapterOperation.readVerse(verseId);
 	}
 
@@ -141,7 +143,10 @@
 		params.set('id', chapter.toString());
         params.set('verse', verse.toString());
         window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
-		readChapter()
+
+		oldVerseId = currentVerseId;
+		currentVerseId = getVerseId();
+		if(oldVerseId) readChapter(oldVerseId);
     }
 
 	function deleteVerse() {
