@@ -45,8 +45,6 @@
       card.style.transform = `translateY(${pos * 100}%)`;
     });
 
-    onSwitchVerse(items[currentIndex].chapter, items[currentIndex].verse);
-
   }
 
   function navigate(direction: 'next' | 'prev') {

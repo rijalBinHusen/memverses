@@ -145,8 +145,12 @@
         window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
 
 		oldVerseId = currentVerseId;
+		if(oldVerseId) {
+			console.log("Readed ", oldVerseId)
+			readChapter(oldVerseId);
+		}
 		currentVerseId = getVerseId();
-		if(oldVerseId) readChapter(oldVerseId);
+		console.log("Current id", currentVerseId)
     }
 
 	function deleteVerse() {
