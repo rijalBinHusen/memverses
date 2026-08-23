@@ -146,11 +146,9 @@
 
 		oldVerseId = currentVerseId;
 		if(oldVerseId) {
-			console.log("Readed ", oldVerseId)
 			readChapter(oldVerseId);
 		}
 		currentVerseId = getVerseId();
-		console.log("Current id", currentVerseId)
     }
 
 	function deleteVerse() {
