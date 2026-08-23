@@ -3,7 +3,7 @@
     export let title:string = "";
     export let description:string = "";
     let link: string = $page.url.href
-    let thumbnail: string = "/svelte-welcome.png";
+    let thumbnail: string = $page.url.origin + "/svelte-welcome.png";
 </script>
 
 <svelte:head>
