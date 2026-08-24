@@ -84,6 +84,7 @@
     onSwitchVerse={switchVerse} 
     currentIndex={currentVerse - 1}
     onGetNewVerses={() => {}}
+    onSwipeVerse={() => {}}
     arabicSize={arabicSize}
   >
     <button slot="right-btn" class="btn-content" on:click={copyCurrentUrl}>

@@ -143,10 +143,6 @@
 		params.set('id', chapter.toString());
         params.set('verse', verse.toString());
         window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
-
-		oldVerseId = currentVerseId;
-		if(oldVerseId) readChapter(oldVerseId);
-		currentVerseId = getVerseId();
     }
 
 	function deleteVerse() {
@@ -184,6 +180,7 @@
 				onSwitchVerse={updateVerseURLParams} 
 				onGetNewVerses={retrieveChapterToRead} 
 				arabicSize={folderInfo.arabicSize}
+				onSwipeVerse={readChapter}
 			>
 				<ChapterBtn 
 					slot="right-btn" 

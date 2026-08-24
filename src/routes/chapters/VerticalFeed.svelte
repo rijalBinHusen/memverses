@@ -6,6 +6,7 @@
   export let items: VerseToShow[] = [];
   export let onSwitchVerse: (chapter: number, verse: number) => void;
   export let onGetNewVerses: () => void;
+  export let onSwipeVerse: (verse: number) => void;
   export let arabicSize = 25;
 
   let containerEl: HTMLElement;
@@ -51,13 +52,18 @@
     if (isScrolling || !items || items.length === 0) return;
     isScrolling = true;
 
+    // use for mark the verse as readed
+    onSwipeVerse(items[currentIndex].id);
+    
     const totalItems = items.length;
     const dir = direction === 'next' ? 1 : -1;
-    currentIndex = (currentIndex + dir + totalItems) % totalItems;
-
-    const isNeedToGetNewVerses = (currentIndex + 1) == totalItems;
     
+    // checker is it last of data
+    const isNeedToGetNewVerses = (currentIndex + dir) == totalItems;
     if(isNeedToGetNewVerses) onGetNewVerses();
+    // end of checker is it last of data
+
+    currentIndex = (currentIndex + dir + totalItems) % totalItems;
 
     // Geser semua card satu slot
     cardPositions = cardPositions.map((pos, i) => {
