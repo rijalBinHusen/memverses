@@ -44,7 +44,7 @@
       updateCardContent(card, dataIdx);
       card.style.transform = `translateY(${pos * 100}%)`;
     });
-
+    onSwitchVerse(items[currentIndex].chapter, items[currentIndex].verse);
   }
 
   function navigate(direction: 'next' | 'prev') {
@@ -206,14 +206,7 @@
       // Cleanup: Remove class when navigating to / or another page
       document.body.classList.remove('no-scroll');
     };
-
-    
   });
-
-  // Re-initialize jika data items berubah dinamis dari parent
-  $: if (items && cards.length > 0) {
-    initPositions();
-  }
 </script>
 
 <div class="feed-container" bind:this={containerEl}>

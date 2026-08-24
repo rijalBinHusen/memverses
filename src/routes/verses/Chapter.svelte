@@ -145,9 +145,7 @@
         window.history.pushState({ verse }, '', `${window.location.pathname}?${params.toString()}`);
 
 		oldVerseId = currentVerseId;
-		if(oldVerseId) {
-			readChapter(oldVerseId);
-		}
+		if(oldVerseId) readChapter(oldVerseId);
 		currentVerseId = getVerseId();
     }
 
