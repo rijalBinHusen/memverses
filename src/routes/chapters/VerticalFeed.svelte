@@ -104,21 +104,16 @@
     }, 300);
   }
 
-  async function copyCurrentUrl() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      alert('URL copied to clipboard!');
-      return true;
-    } catch (err) {
-      console.error('Failed to copy URL: ', err);
-      return false;
-    }
+
+  // 2. Watch for changes using reactive statements
+  $: {
+    console.log('myProp changed from parent:', items.length);
+    initPositions();
   }
 
   onMount(() => {
     
     cards = Array.from(containerEl.querySelectorAll<HTMLElement>('.reel-card'));
-    initPositions();
 
     // Menyimpan timestamp terakhir kali elemen tersebut di-scroll oleh user
     const lastScrollTimeMap = new WeakMap<HTMLElement, number>();
