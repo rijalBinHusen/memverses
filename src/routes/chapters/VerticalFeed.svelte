@@ -104,10 +104,8 @@
     }, 300);
   }
 
-
   // 2. Watch for changes using reactive statements
   $: {
-    console.log('myProp changed from parent:', items.length);
     initPositions();
   }
 
