@@ -104,14 +104,10 @@
     }, 300);
   }
 
-  // 2. Watch for changes using reactive statements
-  $: {
-    initPositions();
-  }
-
   onMount(() => {
     
     cards = Array.from(containerEl.querySelectorAll<HTMLElement>('.reel-card'));
+    initPositions();
 
     // Menyimpan timestamp terakhir kali elemen tersebut di-scroll oleh user
     const lastScrollTimeMap = new WeakMap<HTMLElement, number>();
