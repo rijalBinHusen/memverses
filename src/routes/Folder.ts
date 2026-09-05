@@ -14,7 +14,7 @@ export type FolderUpdate = {
     [K in keyof FolderInterface]?: FolderInterface[K];
 }
 
-export class Folder {
+class Folder {
 
     #storageName = "memorize-quran";
     lists = <FolderInterface[]>[];
@@ -77,4 +77,14 @@ export class Folder {
         if (filters.length) return filters;
     }
 
+}
+
+let folderOperator:Folder;
+
+export function folderOperations() {
+    if (!folderOperator) {
+        folderOperator = new Folder();
+    
+    }
+    return folderOperator;
 }

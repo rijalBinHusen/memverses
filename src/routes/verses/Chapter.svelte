@@ -10,7 +10,7 @@
 	import { onMount } from "svelte";
 	import SettingForm from "./SettingForm.svelte";
 	import MoveFolderForm from "./MoveFolderForm.svelte";
-	import { type FolderUpdate, type FolderInterface, Folder } from "../Folder";
+	import { type FolderUpdate, type FolderInterface, folderOperations } from "../Folder";
 	import VerticalFeed from "../chapters/VerticalFeed.svelte";
 	import ChapterBtn from "./Chapter-btn.svelte";
 
@@ -76,7 +76,7 @@
 
 	function updateFolderSetting(e: any) {
 		const settingInfo = e.detail as FolderUpdate;
-		const folderOperation = new Folder();
+		const folderOperation = folderOperations();
 		if (!folderInfo.id) return;
 
 		folderOperation.updateFolder(folderInfo.id, settingInfo);

@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
 	import Seo from "../components/seo.svelte";
 	import Modal from "../components/Modal.svelte";
-	import { Folder, type FolderInterface } from "./Folder";
+	import { type FolderInterface, folderOperations } from "./Folder";
 
 	let showModal = false;
 	let currentMode: "chapter" | "custom-list" = "chapter";
@@ -17,7 +17,7 @@
 
 	let listFolder: FolderInterface[] = [];
 
-	const folderOperation = new Folder();
+	const folderOperation = folderOperations();
 	const retrieveFolder = folderOperation.getFolder();
 	if (retrieveFolder) listFolder = retrieveFolder;
 

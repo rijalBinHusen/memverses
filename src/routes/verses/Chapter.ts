@@ -8,7 +8,7 @@
 // reate static chpater all verses
 // retrieve every chapter every show
 
-import { Folder, type FolderInterface } from "../Folder"
+import { type FolderInterface, folderOperations } from "../Folder"
 
 interface ArabicQuran {
     [verse: string]: string
@@ -96,7 +96,7 @@ export class ChaptersOperation {
 
     retrieveTitleFolder(): string {
 
-        const folderClass = new Folder();
+        const folderClass = folderOperations();
 
         folderClass.getFolder();
         const folderInfo = folderClass.getFolderInfoById(this.#idFolder);
@@ -184,8 +184,8 @@ export class ChaptersOperation {
     async getUnReadedVerse(): Promise<VerseToShow[] | undefined> {
 
         if (!this.lists.length) return;
-        this.sortChapterAndVerses();
         this.retrieveTitleFolder();
+        this.sortChapterAndVerses();
 
         const idFolder = this.folderInfo.id
         const verseLimiter = this.folderInfo.verseToShow;
@@ -286,7 +286,7 @@ export class ChaptersOperation {
     }
 
     getFoldersList() {
-        const folderClass = new Folder();
+        const folderClass = folderOperations();
 
         folderClass.getFolder();
 
