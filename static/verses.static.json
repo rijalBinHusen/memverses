@@ -1,5 +1,15 @@
 [
     {
+      "nomor": 115,
+      "nama_latin": "Dzikir petang",
+      "jumlah_ayat": 41
+    },
+    {
+      "nomor": 116,
+      "nama_latin": "Dzikir pagi",
+      "jumlah_ayat": 41
+    },
+    {
       "nomor": 1,
       "nama_latin": "Al-Fatihah",
       "jumlah_ayat": 7

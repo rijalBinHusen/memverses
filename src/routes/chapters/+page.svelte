@@ -26,7 +26,7 @@
 
     if(typeof window === "undefined") return;
     const getArabicSize = window.localStorage.getItem("memverses-arabic-size")
-    arabicSize = Number(getArabicSize) || 25;
+    arabicSize = Number(getArabicSize) || 40;
   })
 
   function switchVerse(chapter: number, verse: number) {
